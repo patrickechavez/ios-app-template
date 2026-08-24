@@ -4,25 +4,55 @@
 //
 
 #include "Shared.xcconfig"
+
+// "?" = optional, so a fresh clone still builds without it
 #include? "Secrets.xcconfig"
 
-// Identity
-PRODUCT_BUNDLE_IDENTIFIER = com.patrick.AppTemplate.dev
-APP_DISPLAY_NAME = Development
-APP_URL_SCHEME = apptemplate
 
-// API — short timeout and no retries so failures surface fast
+// Identity — differs per environment so all three can install side by side
+
+// The app's unique ID on iOS
+PRODUCT_BUNDLE_IDENTIFIER = com.patrick.AppTemplate.dev
+
+// Name under the Home Screen icon
+APP_DISPLAY_NAME = Development
+
+// Deep links: apptemplate-dev://items/5
+APP_URL_SCHEME = apptemplate-dev
+
+
+// API
+
+// "//" is a comment here, so escape the double slash as /$()/
 API_BASE_URL = https:/$()/dummyjson.com
+
+// Short, so failures show up fast
 API_TIMEOUT_SECONDS = 20
+
+// Fail right away instead of hiding the error behind retries
 API_MAX_RETRIES = 0
+
+// Prints requests to the console; tokens are redacted
 API_LOGGING_ENABLED = YES
 
-// Force update
+
+// Force update — scaffolding, no code reads these yet
+
+// Where the Update button sends the user
 UPDATE_URL = itms-apps:/$()/apple.com/app/id000000000
+
+// Read by APIConfig, but nothing acts on it
 FORCE_UPDATE_ENABLED = YES
 
-// Pinning off so local proxies (Charles, Proxyman) and self-signed certs work
+
+// Certificate pinning
+
+// Off so Charles/Proxyman can inspect traffic
 CERT_PINNING_ENABLED = NO
+
+// Base64 SHA-256 of your server's public key
 PINNED_PUBLIC_KEY_HASHES =
 
+
+// Enables #if DEVELOPMENT in Swift
 SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) DEVELOPMENT
