@@ -4,7 +4,7 @@
 //  Created by John Patrick Echavez on 7/29/26.
 //
 
-import CryptoKit
+import ImageIO
 import SwiftUI
 import UIKit
 import os
@@ -22,37 +22,52 @@ enum ImageLoaderError: Error, Equatable {
     case httpStatus(Int)
 }
 
+// Two layers: decoded images in memory, raw bytes on disk via URLCache.
 actor ImageLoader: ImageLoading {
 
     static let shared = ImageLoader()
 
-    private let memoryCountLimit = 100
-    private let memoryCostLimit = 100 * 1024 * 1024
-
-    private let diskCapacity = 200 * 1024 * 1024
-
-    private let ttl: TimeInterval
-
     private let memory = NSCache<NSURL, UIImage>()
-    private let directory: URL
-    private let session: URLSession
-    private let fileManager = FileManager.default
 
+    private let session: URLSession
+
+    // Longest edge an image is decoded to. Covers a full-width image on the
+    // biggest phone; past that is memory we could never show.
+    private let maxPixelSize: CGFloat
+
+    // One download per URL, however many callers ask for it at once.
     private var inFlight: [URL: Task<UIImage, any Error>] = [:]
 
-    private var bytesWrittenSinceSweep = 0
-    private let sweepThreshold = 10 * 1024 * 1024
+    private var urlCache: URLCache? { session.configuration.urlCache }
 
-    init(ttl: TimeInterval = 7 * 24 * 60 * 60, session: URLSession = .shared) {
-        self.ttl = ttl
+    init(maxPixelSize: CGFloat = 1600, session: URLSession = ImageLoader.makeSession()) {
+        self.maxPixelSize = maxPixelSize
         self.session = session
 
-        let caches = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
-        self.directory = caches.appendingPathComponent("ImageCache", isDirectory: true)
-        try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        memory.countLimit = 100
+        memory.totalCostLimit = 100 * 1024 * 1024
+    }
 
-        memory.countLimit = memoryCountLimit
-        memory.totalCostLimit = memoryCostLimit
+    // Its own cache, so images don't crowd out API responses.
+    static func makeSession(diskCapacity: Int = 256 * 1024 * 1024) -> URLSession {
+        let caches = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+
+        let configuration = URLSessionConfiguration.default
+        configuration.urlCache = URLCache(
+            memoryCapacity: 16 * 1024 * 1024,
+            diskCapacity: diskCapacity,
+            directory: caches.appendingPathComponent("ImageCache", isDirectory: true)
+        )
+        return URLSession(configuration: configuration)
+    }
+
+    // Cached bytes are used as they are, without asking the server whether they
+    // are stale — the picture at an image URL does not change. When it does,
+    // like a new avatar, the caller evicts that URL.
+    private static func request(for url: URL) -> URLRequest {
+        var request = URLRequest(url: url)
+        request.cachePolicy = .returnCacheDataElseLoad
+        return request
     }
 
     func image(for url: URL) async throws -> UIImage {
@@ -60,17 +75,13 @@ actor ImageLoader: ImageLoading {
             return cached
         }
 
-        if let onDisk = diskImage(for: url) {
-            store(onDisk, inMemoryFor: url)
-            return onDisk
-        }
-
         if let existing = inFlight[url] {
             return try await existing.value
         }
 
-        let task = Task<UIImage, any Error> { [session] in
-            let (data, response) = try await session.data(from: url)
+        let task = Task<UIImage, any Error> { [session, urlCache, maxPixelSize] in
+            let request = Self.request(for: url)
+            let (data, response) = try await session.data(for: request)
 
             guard let http = response as? HTTPURLResponse else {
                 throw ImageLoaderError.invalidImageData
@@ -78,9 +89,16 @@ actor ImageLoader: ImageLoading {
             guard (200..<300).contains(http.statusCode) else {
                 throw ImageLoaderError.httpStatus(http.statusCode)
             }
-            guard let image = UIImage(data: data) else {
+            guard let image = Self.decode(data, maxPixelSize: maxPixelSize) else {
                 throw ImageLoaderError.invalidImageData
             }
+
+            // Image CDNs often send `no-store`, which would leave the disk empty.
+            // Save it ourselves; URLCache still enforces the size limit.
+            urlCache?.storeCachedResponse(
+                CachedURLResponse(response: response, data: data, storagePolicy: .allowed),
+                for: request
+            )
 
             return image
         }
@@ -89,8 +107,7 @@ actor ImageLoader: ImageLoading {
         do {
             let image = try await task.value
             inFlight[url] = nil
-            store(image, inMemoryFor: url)
-            writeToDisk(image, for: url)
+            memory.setObject(image, forKey: url as NSURL, cost: image.estimatedBytes)
             return image
         } catch {
             inFlight[url] = nil
@@ -98,100 +115,38 @@ actor ImageLoader: ImageLoading {
         }
     }
 
+    // For when the URL stays the same but the picture behind it changed.
     func evict(_ url: URL) {
         memory.removeObject(forKey: url as NSURL)
-        try? fileManager.removeItem(at: fileURL(for: url))
+        urlCache?.removeCachedResponse(for: Self.request(for: url))
     }
 
     func clear() {
         memory.removeAllObjects()
-        try? fileManager.removeItem(at: directory)
-        try? fileManager.createDirectory(at: directory, withIntermediateDirectories: true)
-        bytesWrittenSinceSweep = 0
+        urlCache?.removeAllCachedResponses()
     }
 
+    // On a memory warning. The disk copy survives.
     func trimMemory() {
         memory.removeAllObjects()
     }
 
-    private func store(_ image: UIImage, inMemoryFor url: URL) {
-        memory.setObject(image, forKey: url as NSURL, cost: image.estimatedBytes)
-    }
+    // Decodes straight to the size we draw at. `.frame(width: 56)` only scales
+    // the drawing — the full bitmap would still sit in memory.
+    private static func decode(_ data: Data, maxPixelSize: CGFloat) -> UIImage? {
+        let options: [CFString: Any] = [
+            kCGImageSourceCreateThumbnailFromImageAlways: true,
+            kCGImageSourceCreateThumbnailWithTransform: true,   // honours EXIF rotation
+            kCGImageSourceShouldCacheImmediately: true,
+            kCGImageSourceThumbnailMaxPixelSize: maxPixelSize,
+        ]
 
-    private func diskImage(for url: URL) -> UIImage? {
-        let file = fileURL(for: url)
-
-        guard let attributes = try? fileManager.attributesOfItem(atPath: file.path),
-              let modified = attributes[.modificationDate] as? Date else {
+        guard let source = CGImageSourceCreateWithData(data as CFData, nil),
+              let cgImage = CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary)
+        else {
             return nil
         }
-
-        guard Date().timeIntervalSince(modified) <= ttl else {
-            try? fileManager.removeItem(at: file)
-            return nil
-        }
-
-        guard let data = try? Data(contentsOf: file) else { return nil }
-        return UIImage(data: data)
-    }
-
-    private func writeToDisk(_ image: UIImage, for url: URL) {
-
-        guard let data = image.jpegData(compressionQuality: 0.9) else { return }
-
-        do {
-            try data.write(to: fileURL(for: url), options: .atomic)
-            bytesWrittenSinceSweep += data.count
-
-            if bytesWrittenSinceSweep >= sweepThreshold {
-                bytesWrittenSinceSweep = 0
-                sweepDiskCache()
-            }
-        } catch {
-            AppLogger.images.error("Could not write cache entry: \(error.localizedDescription, privacy: .public)")
-        }
-    }
-
-    private func sweepDiskCache() {
-        let keys: [URLResourceKey] = [.contentModificationDateKey, .fileSizeKey]
-
-        guard let files = try? fileManager.contentsOfDirectory(
-            at: directory,
-            includingPropertiesForKeys: keys
-        ) else {
-            return
-        }
-
-        let entries = files.compactMap { url -> (url: URL, date: Date, size: Int)? in
-            guard let values = try? url.resourceValues(forKeys: Set(keys)),
-                  let date = values.contentModificationDate,
-                  let size = values.fileSize else { return nil }
-            return (url, date, size)
-        }
-
-        let total = entries.reduce(0) { $0 + $1.size }
-        guard total > diskCapacity else { return }
-
-        let target = Int(Double(diskCapacity) * 0.8)
-        var remaining = total
-
-        for entry in entries.sorted(by: { $0.date < $1.date }) {
-            guard remaining > target else { break }
-            try? fileManager.removeItem(at: entry.url)
-            remaining -= entry.size
-        }
-
-        let before = total / 1024 / 1024
-        let after = remaining / 1024 / 1024
-        AppLogger.images.debug(
-            "Swept image cache: \(before, privacy: .public)MB → \(after, privacy: .public)MB"
-        )
-    }
-
-    private func fileURL(for url: URL) -> URL {
-        let digest = SHA256.hash(data: Data(url.absoluteString.utf8))
-        let name = digest.map { String(format: "%02x", $0) }.joined()
-        return directory.appendingPathComponent(name)
+        return UIImage(cgImage: cgImage)
     }
 }
 
