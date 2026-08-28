@@ -39,7 +39,7 @@ rm -rf .git && git init && git add -A && git commit -m "Initial commit"
 The app builds and runs as-is. Three things the script can't do for you.
 
 - **Your API** — set `API_BASE_URL` in each of the three `Config/*.xcconfig`
-- **App icon** — `Assets.xcassets/AppIcon.appiconset` ships empty
+- **App icon and colours** — all ship empty. See [Branding](#branding)
 - **Firebase** — *optional*. Without a `GoogleService-Info.plist` the app builds fine and analytics and crash reporting are off. See [Firebase](#firebase) to turn it on, or to remove it.
 
 ```bash
@@ -89,6 +89,47 @@ APIClient (one send path + interceptors)
 
 Each layer depends on the protocol below it. `AppDependencies` is the one place concrete types meet, which is what makes it testable and swappable.
 
+## Branding
+
+Everything you replace per project lives in `AppTemplate/Assets.xcassets`. All three ship empty.
+
+### App icon
+
+Open `Assets.xcassets` -> `AppIcon` and drag a PNG onto each well. There are three 1024x1024 slots:
+
+| Slot | Used when |
+|---|---|
+| **Any Appearance** | Always. The only one that is required. |
+| **Dark** | Home screen in dark mode |
+| **Tinted** | Home screen with a tint applied |
+
+Fill the first and iOS derives the other two. Fill all three when you want control over each.
+
+**Rules Apple enforces:**
+
+- **1024 x 1024**, square
+- **No alpha channel.** Transparency is rejected at upload with `ITMS-90717`, and iOS composites it against black. Check yours with `sips -g hasAlpha icon.png`
+- **Edge to edge**, no padding of your own. iOS applies a rounded mask that crops the corners, so keep important detail inside the middle 80%
+- **No rounded corners, no shadows.** iOS adds those
+
+The icon renders at 60 x 60 pt on the home screen, about 17x smaller than the file. A small mark floating in empty space disappears at that size.
+
+### Accent colour
+
+`AccentColor` has no value set, so SwiftUI falls back to system blue. Give it **Any** and **Dark** appearances in the asset catalog.
+
+Everything that reads `Theme.Color.accent` picks it up - buttons, links, control tints.
+
+### Launch background
+
+`LaunchBackground` is used by `RootView` while the session is bootstrapping, and by `PrivacyShieldView` in the app switcher.
+
+It does **not** set the system launch screen, which is currently the default background. To match them and remove the flash on launch, add this to `Config/Shared.xcconfig`:
+
+```
+INFOPLIST_KEY_UILaunchScreen_BackgroundColor = LaunchBackground
+```
+
 ## Environments
 
 Three configs, one shared base. All install side by side on one device.
@@ -114,7 +155,9 @@ Four opt-in protections. Two of them — jailbreak and anti-debug — are heuris
 
 ### Certificate pinning
 
-Pins the server's **public key** (SPKI), not the certificate, so a certificate renewal with the same key doesn't break the app. Off in Development and Staging so local proxies (Charles, Proxyman) and self-signed certs still work; on in Production.
+Pins the server's **public key** (SPKI), not the certificate, so a certificate renewal with the same key doesn't break the app.
+
+`CERT_PINNING_ENABLED = NO` in all three configs, because there is no backend to pin against yet. Keep it off in Development and Staging even after you have one, so local proxies (Charles, Proxyman) and self-signed certs still work. Turn it on in Production only once `PINNED_PUBLIC_KEY_HASHES` has real values — enabling it with an empty list claims pinning while performing none.
 
 1. Generate the base64 SPKI hash for each endpoint's leaf certificate:
 
