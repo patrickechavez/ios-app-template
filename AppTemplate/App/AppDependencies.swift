@@ -49,8 +49,10 @@ final class AppDependencies {
     }
 
     static func live() -> AppDependencies {
-        let analytics = FirebaseAnalyticsTracker()
-        let crashes = FirebaseCrashReporter()
+        // No plist, or no Firebase at all — the no-op adapters take over.
+        let (analytics, crashes) = FirebaseBootstrap.start()
+            ?? (NoopAnalyticsTracker(), NoopCrashReporter())
+
         Observability.install(analytics: analytics, crashes: crashes)
 
         let events = SessionEventBus()

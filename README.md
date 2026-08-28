@@ -36,11 +36,11 @@ rm -rf .git && git init && git add -A && git commit -m "Initial commit"
 
 ### 3. Finish the setup
 
-Three things the script can't do for you.
+The app builds and runs as-is. Three things the script can't do for you.
 
 - **Your API** — set `API_BASE_URL` in each of the three `Config/*.xcconfig`
-- **Firebase** — create a project and download its `GoogleService-Info.plist` (see below)
 - **App icon** — `Assets.xcassets/AppIcon.appiconset` ships empty
+- **Firebase** — *optional*. Without a `GoogleService-Info.plist` the app builds fine and analytics and crash reporting are off. See [Firebase](#firebase) to turn it on, or to remove it.
 
 ```bash
 xcodebuild -scheme Development -destination 'platform=iOS Simulator,name=iPhone 16' build
@@ -144,11 +144,21 @@ A `PrivacyShieldView` covers the UI whenever the app is not active, so the task-
 
 ## Firebase
 
-Crashlytics, Analytics, and Messaging via SPM. `GoogleService-Info.plist` is gitignored — supply your own.
+Analytics and Crashlytics via SPM, behind protocols — only `FirebaseObservability.swift` imports Firebase.
 
-1. Create three Firebase projects, one per environment.
-2. Register an iOS app in each using that environment's bundle ID.
-3. Download each `GoogleService-Info.plist` into its matching folder, creating the folders as you go. Development is enough to start — the Staging and Production schemes fail with `Missing Firebase plist` until you add theirs, which is the guard working rather than a broken checkout.
+**It is optional.** With no `GoogleService-Info.plist` the app builds and runs; analytics and crash reporting fall back to no-ops and the build prints:
+
+```
+warning: No Firebase plist at ... - building without Firebase.
+```
+
+That is the normal state of a fresh clone, not a broken checkout.
+
+### Turning it on
+
+1. Create a Firebase project per environment.
+2. Register an iOS app in each, using that environment's bundle ID.
+3. Drop each `GoogleService-Info.plist` into its folder, creating folders as needed.
 
 ```
 AppTemplate/Firebase/
@@ -157,23 +167,52 @@ AppTemplate/Firebase/
 └── Production/GoogleService-Info.plist
 ```
 
-The folders are absent from git because they hold nothing but ignored files.
+Nothing else — `FirebaseBootstrap.start()` finds the plist at launch and installs the Firebase adapters. Add only the environments you need; the others keep building without it.
 
-Leave **Target Membership unchecked** on every plist. The `Copy GoogleService-Info.plist` build phase picks the right one from `$CONFIGURATION` and fails the build if its `BUNDLE_ID` doesn't match. Checking membership makes Xcode copy it too, and the build stops with `Multiple commands produce`.
+The folders are absent from git because the plists are gitignored.
 
-Crashlytics symbols upload automatically. The `Upload Crashlytics dSYM` phase skips Development, which keeps its symbols in the binary, and sends Staging and Production to whichever Firebase project that configuration points at.
+Leave **Target Membership unchecked** on every plist. The `Copy GoogleService-Info.plist` phase picks the right one from `$CONFIGURATION` and fails the build if its `BUNDLE_ID` doesn't match the target's. Checking membership makes Xcode copy it too, and the build stops with `Multiple commands produce`.
 
-### Push is scaffolded, not wired
+Crashlytics symbols upload automatically. `Upload Crashlytics dSYM` skips Development, which keeps its symbols in the binary, and skips any configuration with no plist.
 
-`FirebaseMessaging` is installed and configured, and `UserRepository` declares `registerForPushNotifications(token:)`. **Nothing calls it.** The app logs its FCM token and discards it, so no notification can reach a device. Finish it before relying on it.
+### Removing it
 
+For a project that doesn't use Firebase:
+
+1. Delete `AppTemplate/Core/Observability/FirebaseObservability.swift`
+2. Remove the `firebase-ios-sdk` package in Xcode
+3. Delete `AppTemplate/Firebase/` and both build phases — `Copy GoogleService-Info.plist` and `Upload Crashlytics dSYM`
+
+Nothing else changes. Every `Observability.analytics.track(...)` and `Observability.crashes.record(...)` call keeps compiling and does nothing.
+
+### Using something else
+
+Write one file conforming to `AnalyticsTracking` and `CrashReporting`:
+
+```swift
+struct SentryCrashReporter: CrashReporting {
+    func record(_ error: any Error) { SentrySDK.capture(error: error) }
+    func log(_ message: String) { SentrySDK.addBreadcrumb(.init(message: message)) }
+    func setUser(id: String?) { SentrySDK.setUser(id.map { User(userId: $0) }) }
+}
+```
+
+Then change the one line in `AppDependencies.live()` that calls `FirebaseBootstrap.start()`. No view, view model, or call site changes.
+
+### Push is not wired
+
+`UserRepository` declares `registerForPushNotifications(token:)` and `unregisterForPushNotifications(token:)`. **Nothing calls them**, and `FirebaseMessaging` is no longer configured — the `MessagingDelegate` conformance was removed to keep Firebase out of the app's entry point.
+
+To finish it:
+
+- Add `import FirebaseMessaging` and the `MessagingDelegate` conformance back to `AppDelegate`, and set `Messaging.messaging().delegate` after `FirebaseBootstrap.start()` has run
 - Ask for permission and call `registerForRemoteNotifications()`
 - Set `Messaging.messaging().apnsToken` in `didRegisterForRemoteNotificationsWithDeviceToken`
 - Send the FCM token to your backend, and clear it on sign-out
 - Route taps through `AppNavigator`, which already handles deep links
 - Add the **Push Notifications** capability, and upload an APNs `.p8` to each Firebase project
 
-The last one needs a paid Apple Developer membership. FCM does not replace APNs on iOS — it forwards through it, and the `.p8` is what authorizes Firebase to do that on your behalf.
+The last one needs a paid Apple Developer membership. FCM does not replace APNs on iOS — it forwards through it, and the `.p8` authorises Firebase to do that on your behalf.
 
 ## Structure
 

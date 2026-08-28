@@ -7,21 +7,15 @@
 import SwiftUI
 import UIKit
 import os
-import FirebaseCore
-import FirebaseMessaging
 
-final class AppDelegate: NSObject, UIApplicationDelegate, MessagingDelegate {
+final class AppDelegate: NSObject, UIApplicationDelegate {
 
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-        FirebaseApp.configure()
-        Messaging.messaging().delegate = self
-
-        // Here rather than in App.init(), which runs before the line above and
-        // would drop the events. Debug builds always have a debugger attached,
-        // so reporting from them would be noise.
+        // Not in App.init() — the reporters aren't installed yet there. Debug
+        // builds always have a debugger attached, so reporting would be noise.
         #if !DEBUG
         reportDeviceSecurity()
         #endif
@@ -39,10 +33,6 @@ final class AppDelegate: NSObject, UIApplicationDelegate, MessagingDelegate {
             Observability.analytics.track("debugger_attached")
             AppLogger.lifecycle.warning("Debugger is attached to the process")
         }
-    }
-
-    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        AppLogger.lifecycle.debug("FCM token \(fcmToken ?? "nil")")
     }
 }
 
