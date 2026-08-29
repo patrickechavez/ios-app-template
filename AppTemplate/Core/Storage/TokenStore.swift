@@ -9,13 +9,10 @@ import Security
 import os
 
 enum KeychainError: LocalizedError, Equatable {
-    case unexpectedData
     case unhandled(status: OSStatus)
 
     var errorDescription: String? {
         switch self {
-        case .unexpectedData:
-            return "Stored credentials were in an unexpected format."
         case let .unhandled(status):
 
             let detail = SecCopyErrorMessageString(status, nil) as String? ?? "OSStatus \(status)"

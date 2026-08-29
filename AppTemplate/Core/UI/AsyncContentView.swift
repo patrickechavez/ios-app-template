@@ -112,26 +112,3 @@ struct SkeletonView: View {
             .accessibilityHidden(true)
     }
 }
-
-struct SkeletonList: View {
-
-    var rows = 6
-
-    var body: some View {
-        VStack(spacing: Theme.Spacing.md) {
-            ForEach(0..<rows, id: \.self) { _ in
-                HStack(spacing: Theme.Spacing.md) {
-                    SkeletonView(cornerRadius: Theme.Radius.md)
-                        .frame(width: Theme.Size.thumbnail, height: Theme.Size.thumbnail)
-
-                    VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-                        SkeletonView().frame(height: 14)
-                        SkeletonView().frame(width: 80, height: 12)
-                    }
-                }
-            }
-        }
-        .screenPadding()
-        .accessibilityHidden(true)
-    }
-}
