@@ -6,6 +6,7 @@
 
 import SwiftUI
 
+// The label, box and error message every text field sits inside.
 struct FieldContainer<Content: View>: View {
     let label: String?
     let isRequired: Bool
@@ -15,34 +16,37 @@ struct FieldContainer<Content: View>: View {
     private var hasError: Bool { !(error ?? "").isEmpty }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
             if let label {
-                HStack(spacing: 2) {
+                HStack(spacing: Theme.Spacing.xs) {
                     Text(label)
-                    if isRequired { Text("*").foregroundStyle(.red) }
+                    if isRequired { Text("*").foregroundStyle(Theme.Color.danger) }
                 }
-                .font(.footnote)
-                .foregroundStyle(.secondary)
+                .font(Theme.Font.fieldLabel)
+                .foregroundStyle(Theme.Color.secondaryText)
             }
 
-            HStack(spacing: 8) {
+            HStack(spacing: Theme.Spacing.sm) {
                 content()
                 if isRequired && label == nil {
-                    Text("*").foregroundStyle(.red)
+                    Text("*").foregroundStyle(Theme.Color.danger)
                 }
             }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 12)
+            .padding(.horizontal, Theme.Spacing.lg)
+            .padding(.vertical, Theme.Spacing.md)
             .frame(maxWidth: .infinity, alignment: .leading)
             .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(hasError ? Color.red : Color.secondary.opacity(0.4), lineWidth: 1)
+                RoundedRectangle(cornerRadius: Theme.Radius.md)
+                    .stroke(
+                        hasError ? Theme.Color.danger : Theme.Color.separator,
+                        lineWidth: 1
+                    )
             )
 
             if hasError, let error {
                 Text(error)
-                    .font(.caption)
-                    .foregroundStyle(.red)
+                    .font(Theme.Font.fieldError)
+                    .foregroundStyle(Theme.Color.danger)
             }
         }
     }
