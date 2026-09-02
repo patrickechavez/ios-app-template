@@ -35,7 +35,6 @@ struct AsyncContentView<Value: Sendable, Content: View>: View {
             } description: {
                 if let emptyMessage { Text(emptyMessage) }
             }
-            .testID(AccessibilityID.Home.emptyState)
 
         case let .failed(error):
             ErrorStateView(error: error, retry: retry)
@@ -61,10 +60,8 @@ struct ErrorStateView: View {
                     Text("Try Again", comment: "Button that retries a failed network request")
                 }
                 .buttonStyle(.borderedProminent)
-                .testID(AccessibilityID.Home.retryButton)
             }
         }
-        .testID(AccessibilityID.Home.errorState)
     }
 
     private var title: LocalizedStringKey {

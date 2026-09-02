@@ -20,7 +20,6 @@ struct OfflineBanner: View {
         .frame(maxWidth: .infinity)
         .background(Theme.Color.danger)
         .accessibilityElement(children: .combine)
-        .testID(AccessibilityID.Shell.offlineBanner)
     }
 }
 

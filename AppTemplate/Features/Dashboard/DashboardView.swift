@@ -33,6 +33,5 @@ struct DashboardView: View {
                 .tabItem { Label(AppTab.settings.title, systemImage: AppTab.settings.systemImage) }
                 .tag(AppTab.settings)
         }
-        .testID(AccessibilityID.Shell.tabBar)
     }
 }

@@ -17,8 +17,6 @@ struct PasswordField: View {
     var error: String?
     var isRequired: Bool = false
     var isNewPassword: Bool = false
-    var identifier: String?
-
     @State private var isRevealed = false
     @FocusState private var isFocused: Bool
 
@@ -35,7 +33,6 @@ struct PasswordField: View {
             .autocorrectionDisabled()
             .textContentType(isNewPassword ? .newPassword : .password)
             .focused($isFocused)
-            .accessibilityIdentifier(identifier ?? "")
             .accessibilityLabel(label.map(Text.init) ?? Text(placeholder))
 
             Button {

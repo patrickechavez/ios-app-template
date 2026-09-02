@@ -15,7 +15,6 @@ struct UsernameField: View {
     var label: String? = String(localized: "Username", comment: "Label for the username field")
     var error: String?
     var isRequired: Bool = false
-    var identifier: String?
 
     var body: some View {
         AppTextField(
@@ -26,8 +25,7 @@ struct UsernameField: View {
             isRequired: isRequired,
             capitalization: .never,
             contentType: .username,
-            disableAutocorrection: true,
-            identifier: identifier
+            disableAutocorrection: true
         )
     }
 }

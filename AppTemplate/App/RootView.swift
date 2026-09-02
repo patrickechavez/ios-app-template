@@ -62,7 +62,6 @@ struct LaunchView: View {
             Color("LaunchBackground").ignoresSafeArea()
             ProgressView()
                 .controlSize(.large)
-                .testID(AccessibilityID.Shell.launchProgress)
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(Text("Starting up", comment: "Accessibility label for the launch screen"))
@@ -120,7 +119,6 @@ struct ServiceStatusView: View {
         }
         .padding(Theme.Spacing.xxl)
         .interactiveDismissDisabled(isUpdateRequired)
-        .testID(AccessibilityID.Shell.updateRequired)
     }
 
     private var isUpdateRequired: Bool {

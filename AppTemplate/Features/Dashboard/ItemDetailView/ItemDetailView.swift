@@ -52,12 +52,10 @@ struct ItemDetailView: View {
                 VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
                     Text(item.title)
                         .font(Theme.Font.sectionTitle)
-                        .testID(AccessibilityID.ItemDetail.title)
 
                     Text(item.price, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
                         .font(Theme.Font.cardTitle)
                         .foregroundStyle(Theme.Color.accent)
-                        .testID(AccessibilityID.ItemDetail.price)
                 }
 
                 Text(item.description)

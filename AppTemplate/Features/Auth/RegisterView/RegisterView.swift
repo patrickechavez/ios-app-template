@@ -26,8 +26,7 @@ struct RegisterView: View {
                     error: viewModel.firstNameError,
                     isRequired: true,
                     capitalization: .words,
-                    contentType: .givenName,
-                    identifier: AccessibilityID.Register.firstNameField
+                    contentType: .givenName
                 )
 
                 AppTextField(
@@ -37,30 +36,26 @@ struct RegisterView: View {
                     error: viewModel.lastNameError,
                     isRequired: true,
                     capitalization: .words,
-                    contentType: .familyName,
-                    identifier: AccessibilityID.Register.lastNameField
+                    contentType: .familyName
                 )
 
                 EmailField(
                     text: $viewModel.email,
                     error: viewModel.emailError,
-                    isRequired: true,
-                    identifier: AccessibilityID.Register.emailField
+                    isRequired: true
                 )
 
                 UsernameField(
                     text: $viewModel.username,
                     error: viewModel.usernameError,
-                    isRequired: true,
-                    identifier: AccessibilityID.Register.usernameField
+                    isRequired: true
                 )
 
                 PasswordField(
                     text: $viewModel.password,
                     error: viewModel.passwordError,
                     isRequired: true,
-                    isNewPassword: true,
-                    identifier: AccessibilityID.Register.passwordField
+                    isNewPassword: true
                 )
 
                 if let error = viewModel.generalError {
@@ -73,7 +68,6 @@ struct RegisterView: View {
                     action: { await viewModel.submit() }
                 )
                 .disabled(!viewModel.canSubmit)
-                .testID(AccessibilityID.Register.submitButton)
             }
             .padding(Theme.Spacing.lg)
         }
