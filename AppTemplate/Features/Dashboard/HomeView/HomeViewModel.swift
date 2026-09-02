@@ -10,7 +10,7 @@ import os
 
 @Observable
 @MainActor
-final class HomeViewModel: LoadableViewModel {
+final class HomeViewModel {
 
     var state: LoadState<[Item]> = .idle
 
@@ -34,13 +34,28 @@ final class HomeViewModel: LoadableViewModel {
         let term = searchText.trimmed
         let request = PageRequest.first
 
-        await perform(isRefresh: isRefresh) { [repository] in
+        if !isRefresh, state.value == nil {
+            state = .loading
+        }
+
+        do {
             let page = term.isEmpty
                 ? try await repository.items(request)
                 : try await repository.search(term, page: request)
 
-            await MainActor.run { self.nextPage = request.next(after: page) }
-            return page.items
+            try Task.checkCancellation()
+            nextPage = request.next(after: page)
+            state = page.items.isEmpty ? .empty : .loaded(page.items)
+        } catch {
+            let apiError = error as? APIError ?? APIError.from(transportError: error)
+
+            if apiError.isWorthReporting { Observability.crashes.record(apiError) }
+
+            guard apiError.isUserFacing else { return }
+
+            if isRefresh, state.value != nil { return }
+
+            state = .failed(apiError)
         }
     }
 
