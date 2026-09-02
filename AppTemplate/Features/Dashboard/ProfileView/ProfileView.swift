@@ -20,13 +20,25 @@ struct ProfileView: View {
     }
 
     var body: some View {
-        AsyncContentView(
-            state: viewModel.state,
-            emptyTitle: "Profile unavailable",
-            emptyIcon: "person.crop.circle.badge.exclamationmark",
-            retry: { await viewModel.load() }
-        ) { user in
-            profile(user)
+        Group {
+            switch viewModel.state {
+            case .idle, .loading:
+                ProgressView()
+                    .controlSize(.large)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .accessibilityLabel(Text("Loading", comment: "Accessibility label for a loading spinner"))
+
+            case let .loaded(user):
+                profile(user)
+
+            case .empty:
+                ContentUnavailableView {
+                    Label("Profile unavailable", systemImage: "person.crop.circle.badge.exclamationmark")
+                }
+
+            case let .failed(error):
+                ErrorStateView(error: error, retry: { await viewModel.load() })
+            }
         }
         .navigationTitle(Text("Profile", comment: "Title of the profile screen"))
         .task {
