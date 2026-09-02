@@ -24,7 +24,7 @@ struct AuthFlowView: View {
                     case .forgotPassword:
                         ForgotPasswordView(viewModel: dependencies.makeForgotPasswordViewModel())
                     case let .resetPassword(token):
-                        ResetPasswordView(token: token)
+                        ResetPasswordView(viewModel: dependencies.makeResetPasswordViewModel(token: token))
                     }
                 }
         }

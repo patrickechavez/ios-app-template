@@ -60,50 +60,68 @@ struct ForgotPasswordView: View {
 
 struct ResetPasswordView: View {
 
-    let token: String
+    @State private var viewModel: ResetPasswordViewModel
 
-    @State private var password = ""
-    @State private var confirmation = ""
+    init(viewModel: ResetPasswordViewModel) {
+        _viewModel = State(wrappedValue: viewModel)
+    }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: Theme.Spacing.lg) {
-                Text("Choose a new password for your account.",
-                     comment: "Explanatory text on the reset-password screen")
-                    .font(Theme.Font.secondary)
-                    .foregroundStyle(Theme.Color.secondaryText)
+                if viewModel.didReset {
+                    ContentUnavailableView {
+                        Label {
+                            Text("Password changed", comment: "Title shown after a password has been reset")
+                        } icon: {
+                            Image(systemName: "checkmark.circle")
+                        }
+                    } description: {
+                        Text(viewModel.confirmationMessage)
+                    }
+                } else {
+                    Text("Choose a new password for your account.",
+                         comment: "Explanatory text on the reset-password screen")
+                        .font(Theme.Font.secondary)
+                        .foregroundStyle(Theme.Color.secondaryText)
 
-                PasswordField(
-                    text: $password,
-                    label: String(localized: "New password", comment: "Label for the new password field"),
-                    isRequired: true,
-                    isNewPassword: true
-                )
+                    PasswordField(
+                        text: $viewModel.password,
+                        label: String(localized: "New password", comment: "Label for the new password field"),
+                        error: viewModel.passwordError,
+                        isRequired: true,
+                        isNewPassword: true
+                    )
 
-                PasswordField(
-                    text: $confirmation,
-                    label: String(localized: "Confirm password", comment: "Label for the password confirmation field"),
-                    error: mismatchError,
-                    isRequired: true,
-                    isNewPassword: true
-                )
+                    PasswordField(
+                        text: $viewModel.confirmation,
+                        label: String(
+                            localized: "Confirm password",
+                            comment: "Label for the password confirmation field"
+                        ),
+                        error: viewModel.confirmationError,
+                        isRequired: true,
+                        isNewPassword: true
+                    )
 
-                AsyncButton(
-                    title: Text("Set New Password", comment: "Button that submits a new password"),
-                    isRunning: false,
-                    action: {}
-                )
-                .disabled(password.isEmpty || password != confirmation)
+                    if let error = viewModel.generalError {
+                        InlineErrorText(error)
+                    }
+
+                    AsyncButton(
+                        title: Text("Set New Password", comment: "Button that submits a new password"),
+                        isRunning: viewModel.action.isRunning,
+                        action: { await viewModel.submit() }
+                    )
+                    .disabled(!viewModel.canSubmit)
+                }
             }
             .padding(Theme.Spacing.lg)
         }
+        .scrollDismissesKeyboard(.interactively)
+        .animation(Theme.Animation.standard, value: viewModel.didReset)
         .navigationTitle(Text("Choose a Password", comment: "Title of the reset-password screen"))
         .navigationBarTitleDisplayMode(.inline)
-    }
-
-    private var mismatchError: String? {
-        guard !confirmation.isEmpty, password != confirmation else { return nil }
-        return String(localized: "Passwords don't match.", comment: "Validation message when passwords differ")
     }
 }
 
