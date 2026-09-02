@@ -11,8 +11,7 @@ import os
 struct ImagePicker<Label: View>: View {
 
     @Binding var image: UIImage?
-    @ViewBuilder var label: () -> Label
-
+    @ViewBuilder var label: @Sendable () -> Label
     var onError: ((any Error) -> Void)?
 
     @State private var selection: PhotosPickerItem?
