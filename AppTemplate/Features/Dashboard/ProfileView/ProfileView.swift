@@ -13,6 +13,7 @@ struct ProfileView: View {
     @State private var pickedImage: UIImage?
 
     @Environment(Router<ProfileRoute>.self) private var router
+    @Environment(AppNavigator.self) private var navigator
 
     init(viewModel: ProfileViewModel) {
         _viewModel = State(wrappedValue: viewModel)
@@ -118,8 +119,10 @@ struct ProfileView: View {
 
     private var settingsSection: some View {
         Section {
+            // Settings is its own tab now, so this switches tabs rather than
+            // pushing a screen onto the profile stack.
             Button {
-                router.push(.settings)
+                navigator.selectedTab = .settings
             } label: {
                 Label {
                     Text("Settings", comment: "Button that opens the settings screen")
@@ -163,6 +166,7 @@ struct ProfileView: View {
             ProfileView(viewModel: dependencies.makeProfileViewModel())
         }
         .environment(Router<ProfileRoute>())
+        .environment(AppNavigator())
     }
 }
 

@@ -1,0 +1,76 @@
+//
+//  HomeTab.swift
+//  AppTemplate
+//  Created by John Patrick Echavez on 9/2/26.
+//
+
+import SwiftUI
+
+private enum HomeSheet: Identifiable { case example; var id: Self { self } }
+private enum HomeCover: Identifiable { case example; var id: Self { self } }
+
+struct HomeTab: View {
+
+    let dependencies: AppDependencies
+
+    @Environment(AppNavigator.self) private var navigator
+    @State private var sheet: HomeSheet?
+    @State private var cover: HomeCover?
+
+    @SceneStorage("home.path") private var storedPath: Data?
+
+    var body: some View {
+        @Bindable var router = navigator.home
+
+        NavigationStack(path: $router.path) {
+            HomeView(viewModel: dependencies.makeHomeViewModel())
+                .navigationDestination(for: HomeRoute.self) { route in
+                    switch route {
+                    case let .itemDetail(id):
+                        ItemDetailView(viewModel: dependencies.makeItemDetailViewModel(id: id))
+                    case let .itemReviews(id):
+                        ItemReviewsView(itemID: id)
+                    }
+                }
+                .toolbar { modalMenu }
+        }
+        .environment(navigator.home)
+        .appAlert($router.alert)
+        .sheet(item: $sheet) { route in
+            switch route {
+            case .example: HomeSheetView(viewModel: dependencies.makeHomeSheetViewModel())
+            }
+        }
+        .fullScreenCover(item: $cover) { route in
+            switch route {
+            case .example: HomeCoverView(viewModel: dependencies.makeHomeCoverViewModel())
+            }
+        }
+        .task {
+            navigator.home.restore(from: storedPath)
+        }
+        .onChange(of: navigator.home.path) { _, _ in
+            storedPath = navigator.home.restorationData
+        }
+    }
+
+    private var modalMenu: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Menu {
+                Button {
+                    sheet = .example
+                } label: {
+                    Text("Show Sheet", comment: "Menu item that presents an example sheet")
+                }
+                Button {
+                    cover = .example
+                } label: {
+                    Text("Show Cover", comment: "Menu item that presents an example full-screen cover")
+                }
+            } label: {
+                Image(systemName: "ellipsis.circle")
+            }
+            .accessibilityLabel(Text("More", comment: "Accessibility label for the overflow menu"))
+        }
+    }
+}
