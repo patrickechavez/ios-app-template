@@ -83,6 +83,11 @@ echo "renamed  ${OLD_NAME}.xcodeproj → ${NEW_NAME}.xcodeproj"
 echo "renamed  ${OLD_NAME}/ → ${NEW_NAME}/"
 echo "renamed  ${NEW_NAME}/App/${OLD_NAME}App.swift → ${NEW_NAME}/App/${NEW_NAME}App.swift"
 
+if [ -d "${OLD_NAME}Tests" ]; then
+    git mv "${OLD_NAME}Tests" "${NEW_NAME}Tests"
+    echo "renamed  ${OLD_NAME}Tests/ → ${NEW_NAME}Tests/"
+fi
+
 # ---------------------------------------------------------------------------
 # Rewrite file contents.
 #
