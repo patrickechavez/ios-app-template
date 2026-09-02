@@ -59,7 +59,6 @@ struct ProfileView: View {
         Section {
             HStack(spacing: Theme.Spacing.lg) {
                 AvatarView(user: user, size: Theme.Size.avatarMedium)
-                    .testID(AccessibilityID.Profile.avatar)
                     .overlay {
                         if viewModel.avatarUpload.isRunning {
                             Circle()
@@ -71,12 +70,10 @@ struct ProfileView: View {
                 VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
                     Text(user.fullName)
                         .font(Theme.Font.cardTitle)
-                        .testID(AccessibilityID.Profile.fullName)
 
                     Text(user.email)
                         .font(Theme.Font.secondary)
                         .foregroundStyle(Theme.Color.secondaryText)
-                        .testID(AccessibilityID.Profile.email)
                 }
             }
             .padding(.vertical, Theme.Spacing.xs)
@@ -90,7 +87,6 @@ struct ProfileView: View {
                 }
             }
             .disabled(viewModel.avatarUpload.isRunning)
-            .testID(AccessibilityID.Profile.changePhotoButton)
 
             if let error = viewModel.avatarUpload.errorMessage {
                 InlineErrorText(error)
@@ -153,7 +149,6 @@ struct ProfileView: View {
             } label: {
                 Text("Sign Out", comment: "Button that signs the user out")
             }
-            .testID(AccessibilityID.Profile.signOutButton)
         }
     }
 }

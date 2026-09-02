@@ -26,8 +26,7 @@ struct LoginView: View {
             VStack(spacing: Theme.Spacing.lg) {
                 UsernameField(
                     text: $viewModel.username,
-                    error: viewModel.usernameError,
-                    identifier: AccessibilityID.Auth.usernameField
+                    error: viewModel.usernameError
                 )
                 .focused($focusedField, equals: .username)
                 .submitLabel(.next)
@@ -35,8 +34,7 @@ struct LoginView: View {
 
                 PasswordField(
                     text: $viewModel.password,
-                    error: viewModel.passwordError,
-                    identifier: AccessibilityID.Auth.passwordField
+                    error: viewModel.passwordError
                 )
                 .focused($focusedField, equals: .password)
                 .submitLabel(.go)
@@ -44,7 +42,6 @@ struct LoginView: View {
 
                 if let error = viewModel.generalError {
                     InlineErrorText(error)
-                        .testID(AccessibilityID.Auth.errorMessage)
                 }
 
                 AsyncButton(
@@ -53,7 +50,6 @@ struct LoginView: View {
                     action: { await viewModel.signIn() }
                 )
                 .disabled(!viewModel.canSubmit)
-                .testID(AccessibilityID.Auth.signInButton)
 
                 HStack {
                     Button {
@@ -61,7 +57,6 @@ struct LoginView: View {
                     } label: {
                         Text("Create an account", comment: "Link to the registration screen")
                     }
-                    .testID(AccessibilityID.Auth.registerButton)
 
                     Spacer()
 
@@ -70,7 +65,6 @@ struct LoginView: View {
                     } label: {
                         Text("Forgot password?", comment: "Link to the password reset screen")
                     }
-                    .testID(AccessibilityID.Auth.forgotPasswordButton)
                 }
                 .font(Theme.Font.secondary)
                 .padding(.top, Theme.Spacing.xs)

@@ -13,7 +13,6 @@ struct SearchField: View {
     @Binding var text: String
 
     var placeholder: String = String(localized: "Search", comment: "Placeholder for a search field")
-    var identifier: String?
 
     var body: some View {
         HStack(spacing: Theme.Spacing.sm) {
@@ -25,7 +24,6 @@ struct SearchField: View {
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .submitLabel(.search)
-                .accessibilityIdentifier(identifier ?? "")
 
             if !text.isEmpty {
                 Button {
