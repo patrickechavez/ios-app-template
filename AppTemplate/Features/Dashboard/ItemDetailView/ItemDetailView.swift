@@ -39,7 +39,7 @@ struct ItemDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: Theme.Spacing.lg) {
                 CachedAsyncImage(url: item.thumbnailURL) { image in
-                    image.resizable().aspectRatio(contentMode: .fit)
+                    image.resizable().scaledToFit()
                 } placeholder: {
                     SkeletonView(cornerRadius: Theme.Radius.lg)
                         .aspectRatio(4 / 3, contentMode: .fit)

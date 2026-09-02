@@ -52,7 +52,7 @@ struct AvatarView: View {
 
     var body: some View {
         CachedAsyncImage(url: user?.avatarURL) { image in
-            image.resizable().aspectRatio(contentMode: .fill)
+            image.resizable().scaledToFill()
         } placeholder: {
             ZStack {
                 Theme.Color.placeholder
