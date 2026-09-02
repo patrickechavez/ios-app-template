@@ -29,9 +29,9 @@ struct ClientMetadata: RequestMetadataProviding {
     static let platform = "iOS"
 
     static let osVersion: String = {
-        let v = ProcessInfo.processInfo.operatingSystemVersion
-        let base = "\(v.majorVersion).\(v.minorVersion)"
-        return v.patchVersion > 0 ? "\(base).\(v.patchVersion)" : base
+        let version = ProcessInfo.processInfo.operatingSystemVersion
+        let base = "\(version.majorVersion).\(version.minorVersion)"
+        return version.patchVersion > 0 ? "\(base).\(version.patchVersion)" : base
     }()
 
     static let deviceModel: String = {
