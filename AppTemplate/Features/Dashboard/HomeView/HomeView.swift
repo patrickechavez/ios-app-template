@@ -16,16 +16,30 @@ struct HomeView: View {
     }
 
     var body: some View {
-        AsyncContentView(
-            state: viewModel.state,
-            emptyTitle: viewModel.isSearching ? "No matches" : "No items yet",
-            emptyMessage: viewModel.isSearching
-                ? "Try a different search term."
-                : "Items you add will appear here.",
-            emptyIcon: viewModel.isSearching ? "magnifyingglass" : "tray",
-            retry: { await viewModel.load() }
-        ) { items in
-            list(items)
+        Group {
+            switch viewModel.state {
+            case .idle, .loading:
+                ProgressView()
+                    .controlSize(.large)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .accessibilityLabel(Text("Loading", comment: "Accessibility label for a loading spinner"))
+
+            case let .loaded(items):
+                list(items)
+
+            case .empty:
+                ContentUnavailableView {
+                    Label(
+                        viewModel.isSearching ? "No matches" : "No items yet",
+                        systemImage: viewModel.isSearching ? "magnifyingglass" : "tray"
+                    )
+                } description: {
+                    Text(viewModel.isSearching ? "Try a different search term." : "Items you add will appear here.")
+                }
+
+            case let .failed(error):
+                ErrorStateView(error: error, retry: { await viewModel.load() })
+            }
         }
         .navigationTitle(Text("Items", comment: "Title of the items list screen"))
         .searchable(

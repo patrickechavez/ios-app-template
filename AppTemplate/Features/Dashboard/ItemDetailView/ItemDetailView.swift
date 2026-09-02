@@ -17,13 +17,25 @@ struct ItemDetailView: View {
     }
 
     var body: some View {
-        AsyncContentView(
-            state: viewModel.state,
-            emptyTitle: "Item unavailable",
-            emptyIcon: "questionmark.folder",
-            retry: { await viewModel.load() }
-        ) { item in
-            detail(item)
+        Group {
+            switch viewModel.state {
+            case .idle, .loading:
+                ProgressView()
+                    .controlSize(.large)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .accessibilityLabel(Text("Loading", comment: "Accessibility label for a loading spinner"))
+
+            case let .loaded(item):
+                detail(item)
+
+            case .empty:
+                ContentUnavailableView {
+                    Label("Item unavailable", systemImage: "questionmark.folder")
+                }
+
+            case let .failed(error):
+                ErrorStateView(error: error, retry: { await viewModel.load() })
+            }
         }
         .navigationTitle(viewModel.state.value?.title ?? "")
         .navigationBarTitleDisplayMode(.inline)
