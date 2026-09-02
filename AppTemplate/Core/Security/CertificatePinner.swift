@@ -47,7 +47,9 @@ final class CertificatePinner: NSObject, URLSessionDelegate, @unchecked Sendable
     /// `openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | base64`.
     static func spkiHash(for serverTrust: SecTrust) -> String? {
         guard
-            let certificate = SecTrustGetCertificateAtIndex(serverTrust, 0),
+            // The chain runs leaf first, and the leaf is what gets pinned.
+            let chain = SecTrustCopyCertificateChain(serverTrust) as? [SecCertificate],
+            let certificate = chain.first,
             let publicKey = SecCertificateCopyKey(certificate),
             let spki = spkiDER(for: publicKey)
         else {
