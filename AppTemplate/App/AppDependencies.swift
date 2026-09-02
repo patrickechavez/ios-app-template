@@ -136,6 +136,10 @@ final class AppDependencies {
         ForgotPasswordViewModel(auth: auth)
     }
 
+    func makeResetPasswordViewModel(token: String) -> ResetPasswordViewModel {
+        ResetPasswordViewModel(token: token, auth: auth)
+    }
+
     func makeHomeViewModel() -> HomeViewModel {
         HomeViewModel(repository: items)
     }
