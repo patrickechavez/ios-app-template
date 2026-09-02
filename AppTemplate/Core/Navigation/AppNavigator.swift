@@ -15,7 +15,9 @@ final class AppNavigator {
     var selectedTab: AppTab = .home
 
     let home = Router<HomeRoute>()
+    let favorites = Router<FavoritesRoute>()
     let profile = Router<ProfileRoute>()
+    let settings = Router<SettingsRoute>()
     let auth = Router<AuthRoute>()
 
     private(set) var pendingLink: DeepLink?
@@ -68,7 +70,9 @@ final class AppNavigator {
     func reset() {
         selectedTab = .home
         home.popToRoot()
+        favorites.popToRoot()
         profile.popToRoot()
+        settings.popToRoot()
         auth.popToRoot()
         pendingLink = nil
     }
@@ -89,8 +93,8 @@ final class AppNavigator {
             profile.popToRoot()
 
         case .settings:
-            selectedTab = .profile
-            profile.set([.settings])
+            selectedTab = .settings
+            settings.popToRoot()
 
         case let .resetPassword(token):
 
