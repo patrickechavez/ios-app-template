@@ -82,7 +82,7 @@ final class AppDependencies {
                 metadata,
                 AuthInterceptor(coordinator: coordinator),
                 SessionPolicyInterceptor(events: events),
-                logging,
+                logging
             ]
         )
 
