@@ -25,7 +25,7 @@ struct DefaultJailbreakDetector: JailbreakDetecting {
         "/etc/apt",
         "/private/var/lib/apt",
         "/private/var/lib/cydia",
-        "/private/var/stash",
+        "/private/var/stash"
     ]
 
     var isJailbroken: Bool {
