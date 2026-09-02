@@ -68,7 +68,9 @@ struct AsyncButton: View {
             ZStack {
                 title.opacity(isRunning ? 0 : 1)
                 if isRunning {
-                    ProgressView().tint(.white)
+                    ProgressView()
+                        .tint(.white)
+                        .controlSize(.regular)
                 }
             }
             .frame(maxWidth: .infinity)
