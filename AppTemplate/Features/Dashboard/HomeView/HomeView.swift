@@ -88,7 +88,7 @@ private struct ItemRow: View {
     var body: some View {
         HStack(spacing: Theme.Spacing.md) {
             CachedAsyncImage(url: item.thumbnailURL) { image in
-                image.resizable().aspectRatio(contentMode: .fill)
+                image.resizable().scaledToFill()
             } placeholder: {
                 SkeletonView(cornerRadius: Theme.Radius.md)
             }
