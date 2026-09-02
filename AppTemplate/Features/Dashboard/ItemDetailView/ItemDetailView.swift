@@ -10,6 +10,8 @@ struct ItemDetailView: View {
 
     @State private var viewModel: ItemDetailViewModel
 
+    @Environment(Router<HomeRoute>.self) private var router
+
     init(viewModel: ItemDetailViewModel) {
         _viewModel = State(wrappedValue: viewModel)
     }
@@ -61,6 +63,12 @@ struct ItemDetailView: View {
                 Text(item.description)
                     .font(Theme.Font.body)
                     .foregroundStyle(Theme.Color.secondaryText)
+
+                Button {
+                    router.push(.itemReviews(id: item.id))
+                } label: {
+                    Text("Reviews", comment: "Button that opens the item reviews screen")
+                }
             }
             .padding(Theme.Spacing.lg)
         }
@@ -74,6 +82,7 @@ struct ItemDetailView: View {
         NavigationStack {
             ItemDetailView(viewModel: dependencies.makeItemDetailViewModel(id: 1))
         }
+        .environment(Router<HomeRoute>())
     }
 }
 
