@@ -388,9 +388,6 @@
     "Notes" : {
       "comment" : "Title of the favorite notes screen"
     },
-    "Nothing here yet" : {
-
-    },
     "Notifications" : {
       "comment" : "Row that opens the notification settings screen\nTitle of the notification settings screen"
     },
