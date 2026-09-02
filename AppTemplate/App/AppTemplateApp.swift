@@ -41,7 +41,7 @@ struct AppTemplateApp: App {
 
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 
-    @State private var dependencies = AppDependencies.live()
+    @State private var dependencies: AppDependencies
     @State private var navigator: AppNavigator
 
     @Environment(\.scenePhase) private var scenePhase
