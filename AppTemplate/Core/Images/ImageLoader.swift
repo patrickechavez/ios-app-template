@@ -138,7 +138,7 @@ actor ImageLoader: ImageLoading {
             kCGImageSourceCreateThumbnailFromImageAlways: true,
             kCGImageSourceCreateThumbnailWithTransform: true,   // honours EXIF rotation
             kCGImageSourceShouldCacheImmediately: true,
-            kCGImageSourceThumbnailMaxPixelSize: maxPixelSize,
+            kCGImageSourceThumbnailMaxPixelSize: maxPixelSize
         ]
 
         guard let source = CGImageSourceCreateWithData(data as CFData, nil),

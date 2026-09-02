@@ -10,12 +10,12 @@ import os
 struct LoggingInterceptor: RequestInterceptor {
 
     private static let redactedHeaders: Set<String> = [
-        "authorization", "cookie", "set-cookie", "x-api-key", "proxy-authorization",
+        "authorization", "cookie", "set-cookie", "x-api-key", "proxy-authorization"
     ]
 
     private static let redactedBodyKeys: Set<String> = [
         "password", "current_password", "new_password", "password_confirmation",
-        "token", "access_token", "refresh_token", "secret", "otp", "pin", "code",
+        "token", "access_token", "refresh_token", "secret", "otp", "pin", "code"
     ]
 
     private static let maxBodyBytes = 4_000
