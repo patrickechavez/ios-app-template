@@ -145,7 +145,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				2DB884B030482E010098899D /* PBXTargetDependency */,
+				2DB884B4304834430098899D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				2D1CA87E301A21BA00C6EFD2 /* AppTemplate */,
@@ -190,8 +190,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				2DFCD23A302F3424006F0921 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
-				2DB884AC30482DAE0098899D /* XCRemoteSwiftPackageReference "SwiftLint" */,
-				2DB884B1304830A60098899D /* XCRemoteSwiftPackageReference "SwiftFormat" */,
+				2DB884B2304834340098899D /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2D1CA87D301A21BA00C6EFD2 /* Products */;
@@ -284,9 +283,9 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		2DB884B030482E010098899D /* PBXTargetDependency */ = {
+		2DB884B4304834430098899D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			productRef = 2DB884AF30482E010098899D /* SwiftLintBuildToolPlugin */;
+			productRef = 2DB884B3304834430098899D /* SwiftLintBuildToolPlugin */;
 		};
 		CAF625863F243C2DF9EB8ADE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -676,20 +675,12 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		2DB884AC30482DAE0098899D /* XCRemoteSwiftPackageReference "SwiftLint" */ = {
+		2DB884B2304834340098899D /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/realm/SwiftLint";
+			repositoryURL = "https://github.com/SimplyDanny/SwiftLintPlugins";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 0.65.1;
-			};
-		};
-		2DB884B1304830A60098899D /* XCRemoteSwiftPackageReference "SwiftFormat" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/nicklockwood/SwiftFormat";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.63.0;
 			};
 		};
 		2DFCD23A302F3424006F0921 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
@@ -703,9 +694,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		2DB884AF30482E010098899D /* SwiftLintBuildToolPlugin */ = {
+		2DB884B3304834430098899D /* SwiftLintBuildToolPlugin */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 2DB884AC30482DAE0098899D /* XCRemoteSwiftPackageReference "SwiftLint" */;
+			package = 2DB884B2304834340098899D /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */;
 			productName = "plugin:SwiftLintBuildToolPlugin";
 		};
 		2DFCD23B302F3424006F0921 /* FirebaseAnalytics */ = {
