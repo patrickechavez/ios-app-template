@@ -54,7 +54,6 @@ struct HomeView: View {
                     ItemRow(item: item)
                 }
                 .buttonStyle(.plain)
-                .testID(AccessibilityID.Home.row(item.id))
                 .task {
 
                     if viewModel.shouldLoadMore(after: item) {
@@ -77,7 +76,6 @@ struct HomeView: View {
             }
         }
         .listStyle(.plain)
-        .testID(AccessibilityID.Home.list)
     }
 }
 

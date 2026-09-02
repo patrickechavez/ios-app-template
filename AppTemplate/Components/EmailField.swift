@@ -15,7 +15,6 @@ struct EmailField: View {
     var label: String? = String(localized: "Email", comment: "Label for the email field")
     var error: String?
     var isRequired: Bool = false
-    var identifier: String?
 
     var body: some View {
         AppTextField(
@@ -27,8 +26,7 @@ struct EmailField: View {
             keyboard: .emailAddress,
             capitalization: .never,
             contentType: .emailAddress,
-            disableAutocorrection: true,
-            identifier: identifier
+            disableAutocorrection: true
         )
     }
 }

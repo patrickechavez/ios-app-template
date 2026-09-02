@@ -22,8 +22,6 @@ struct AppTextField: View {
     var disableAutocorrection: Bool = false
     var submitLabel: SubmitLabel = .return
 
-    var identifier: String?
-
     var body: some View {
         FieldContainer(label: label, isRequired: isRequired, error: error) {
             TextField(placeholder, text: $text)
@@ -32,7 +30,6 @@ struct AppTextField: View {
                 .textContentType(contentType)
                 .autocorrectionDisabled(disableAutocorrection)
                 .submitLabel(submitLabel)
-                .accessibilityIdentifier(identifier ?? "")
                 .accessibilityLabel(label.map(Text.init) ?? Text(placeholder))
         }
     }
