@@ -31,8 +31,17 @@
         }
       }
     },
+    "Back" : {
+      "comment" : "Button that returns to the previous screen"
+    },
     "Back Soon" : {
 
+    },
+    "Back to Root" : {
+      "comment" : "Button that returns to the first screen of the tab"
+    },
+    "Blocked Users" : {
+      "comment" : "Button that opens the blocked users screen\nTitle of the blocked users screen"
     },
     "Cancelled." : {
       "comment" : "A request was cancelled",
@@ -45,6 +54,9 @@
           }
         }
       }
+    },
+    "Change Password" : {
+      "comment" : "Button that opens the change password screen\nTitle of the change password screen"
     },
     "Change Photo" : {
       "comment" : "Button that opens the photo picker",
@@ -208,6 +220,12 @@
         }
       }
     },
+    "Favorite" : {
+      "comment" : "Title of the favorite detail screen"
+    },
+    "Favorites" : {
+      "comment" : "Favorites tab title\nTitle of the favorites screen"
+    },
     "First name" : {
       "comment" : "Placeholder for the first name field",
       "extractionState" : "manual",
@@ -349,6 +367,9 @@
         }
       }
     },
+    "Next" : {
+      "comment" : "Button that opens the next screen"
+    },
     "No access" : {
 
     },
@@ -364,8 +385,14 @@
     "Not found" : {
 
     },
+    "Notes" : {
+      "comment" : "Title of the favorite notes screen"
+    },
     "Nothing here yet" : {
 
+    },
+    "Notifications" : {
+      "comment" : "Row that opens the notification settings screen\nTitle of the notification settings screen"
     },
     "OK" : {
       "comment" : "Alert dismiss button",
@@ -379,6 +406,9 @@
         }
       }
     },
+    "Open a favorite" : {
+      "comment" : "Row that opens the favorite detail screen"
+    },
     "Password" : {
       "comment" : "Label for the password field",
       "extractionState" : "manual",
@@ -390,6 +420,9 @@
           }
         }
       }
+    },
+    "Password changed" : {
+      "comment" : "Title shown after a password has been reset"
     },
     "Passwords don't match." : {
       "comment" : "Validation message when passwords differ",
@@ -456,6 +489,12 @@
           }
         }
       }
+    },
+    "Reviews" : {
+      "comment" : "Button that opens the item reviews screen\nTitle of the item reviews screen"
+    },
+    "Reviews for item %lld" : {
+      "comment" : "Placeholder line on the item reviews screen"
     },
     "Search" : {
       "comment" : "Placeholder for a search field",
@@ -870,6 +909,9 @@
     },
     "You're offline" : {
 
+    },
+    "Your password has been changed. You can now sign in with it." : {
+      "comment" : "Confirmation shown after a password has been reset"
     },
     "Your session has expired. Please sign in again." : {
       "comment" : "Error shown when the session is no longer valid",
