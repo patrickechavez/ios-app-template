@@ -26,11 +26,15 @@ struct HomeCoverView: View {
                     .multilineTextAlignment(.center)
             }
             .padding()
-            .navigationTitle("Full-Screen Cover")
+            .navigationTitle(Text("Full-Screen Cover", comment: "Title of the example full-screen cover"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") { dismiss() }
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text("Close", comment: "Button that dismisses the example full-screen cover")
+                    }
                 }
             }
         }

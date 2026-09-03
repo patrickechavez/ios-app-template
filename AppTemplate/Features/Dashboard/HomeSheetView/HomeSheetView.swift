@@ -26,11 +26,15 @@ struct HomeSheetView: View {
                     .multilineTextAlignment(.center)
             }
             .padding()
-            .navigationTitle("Sheet")
+            .navigationTitle(Text("Sheet", comment: "Title of the example sheet screen"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text("Done", comment: "Button that dismisses the example sheet")
+                    }
                 }
             }
         }
