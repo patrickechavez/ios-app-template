@@ -9,7 +9,7 @@ import Observation
 
 @Observable
 @MainActor
-final class ItemDetailViewModel {
+final class ItemDetailViewModel: LoadableViewModel {
 
     var state: LoadState<Item> = .idle
 
@@ -28,27 +28,8 @@ final class ItemDetailViewModel {
     }
 
     func load(isRefresh: Bool = false) async {
-        let isRefresh = isRefresh || state.value != nil
-
-        if !isRefresh, state.value == nil {
-            state = .loading
-        }
-
-        do {
-            let item = try await repository.item(id: itemID)
-
-            try Task.checkCancellation()
-            state = .loaded(item)
-        } catch {
-            let apiError = error as? APIError ?? APIError.from(transportError: error)
-
-            if apiError.isWorthReporting { Observability.crashes.record(apiError) }
-
-            guard apiError.isUserFacing else { return }
-
-            if isRefresh, state.value != nil { return }
-
-            state = .failed(apiError)
+        await perform(isRefresh: isRefresh || state.value != nil) { [repository, itemID] in
+            try await repository.item(id: itemID)
         }
     }
 }

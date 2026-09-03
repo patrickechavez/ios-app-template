@@ -10,7 +10,7 @@ import os
 
 @Observable
 @MainActor
-final class HomeViewModel {
+final class HomeViewModel: LoadableViewModel {
 
     var state: LoadState<[Item]> = .idle
 
@@ -45,17 +45,9 @@ final class HomeViewModel {
 
             try Task.checkCancellation()
             nextPage = request.next(after: page)
-            state = page.items.isEmpty ? .empty : .loaded(page.items)
+            state = .from(page.items)
         } catch {
-            let apiError = error as? APIError ?? APIError.from(transportError: error)
-
-            if apiError.isWorthReporting { Observability.crashes.record(apiError) }
-
-            guard apiError.isUserFacing else { return }
-
-            if isRefresh, state.value != nil { return }
-
-            state = .failed(apiError)
+            fail(with: error, isRefresh: isRefresh)
         }
     }
 
@@ -79,8 +71,7 @@ final class HomeViewModel {
             state = .loaded(current + fresh)
             nextPage = request.next(after: page)
         } catch {
-
-            let apiError = error as? APIError ?? APIError.from(transportError: error)
+            let apiError = APIError.classify(error)
             guard apiError.isUserFacing else { return }
             AppLogger.data.error("Pagination failed: \(apiError.localizedDescription, privacy: .public)")
             nextPage = nil

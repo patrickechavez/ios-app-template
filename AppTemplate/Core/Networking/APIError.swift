@@ -233,6 +233,15 @@ enum APIError: LocalizedError, Equatable, Sendable {
         }
     }
 
+    /// One funnel for every catch block: converts any thrown error to its
+    /// typed form and reports the ones that mean the app or backend is broken.
+    @MainActor
+    static func classify(_ error: any Error) -> APIError {
+        let apiError = error as? APIError ?? .from(transportError: error)
+        if apiError.isWorthReporting { Observability.crashes.record(apiError) }
+        return apiError
+    }
+
     static func from(statusCode: Int, data: Data, headers: [AnyHashable: Any] = [:]) -> APIError {
         let body = APIErrorBody(data: data)
         let message = body.message
