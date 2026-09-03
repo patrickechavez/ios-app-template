@@ -48,7 +48,7 @@ final class AppDependencies {
         self.network = network
     }
 
-    static func live() -> AppDependencies {
+    static func live(tokenStore: any TokenStore = KeychainTokenStore()) -> AppDependencies {
         // No plist, or no Firebase at all — the no-op adapters take over.
         let (analytics, crashes) = FirebaseBootstrap.start()
             ?? (NoopAnalyticsTracker(), NoopCrashReporter())
@@ -57,8 +57,6 @@ final class AppDependencies {
 
         let events = SessionEventBus()
         let session = Self.urlSession()
-
-        let tokenStore: any TokenStore = KeychainTokenStore()
 
         let metadata = MetadataInterceptor()
         let logging = LoggingInterceptor()

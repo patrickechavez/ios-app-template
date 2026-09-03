@@ -133,26 +133,8 @@ private struct ItemRow: View {
 
 #if DEBUG
 
-#Preview("Loaded") {
+#Preview {
     PreviewHost { dependencies in
-        NavigationStack {
-            HomeView(viewModel: dependencies.makeHomeViewModel())
-        }
-        .environment(Router<HomeRoute>())
-    }
-}
-
-#Preview("Empty") {
-    PreviewHost(scenario: .empty) { dependencies in
-        NavigationStack {
-            HomeView(viewModel: dependencies.makeHomeViewModel())
-        }
-        .environment(Router<HomeRoute>())
-    }
-}
-
-#Preview("Offline") {
-    PreviewHost(scenario: .failure(.offline)) { dependencies in
         NavigationStack {
             HomeView(viewModel: dependencies.makeHomeViewModel())
         }
