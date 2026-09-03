@@ -13,8 +13,7 @@ struct LoginViewModelTests {
     private func makeViewModel(auth: MockAuthRepository = MockAuthRepository()) -> LoginViewModel {
         let session = SessionManager(
             tokenStore: InMemoryTokenStore(),
-            users: MockUserRepository(),
-            events: SessionEventBus()
+            users: MockUserRepository()
         )
         return LoginViewModel(auth: auth, session: session)
     }
@@ -61,8 +60,7 @@ struct LoginViewModelTests {
         let auth = MockAuthRepository()
         let session = SessionManager(
             tokenStore: InMemoryTokenStore(),
-            users: MockUserRepository(),
-            events: SessionEventBus()
+            users: MockUserRepository()
         )
         let viewModel = LoginViewModel(auth: auth, session: session)
         viewModel.username = "raven"

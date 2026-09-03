@@ -64,18 +64,18 @@ struct AuthInterceptor: RequestInterceptor {
 
 struct SessionPolicyInterceptor: RequestInterceptor {
 
-    private let events: SessionEventBus
+    private let link: SessionLink
 
-    init(events: SessionEventBus) {
-        self.events = events
+    init(link: SessionLink) {
+        self.link = link
     }
 
     func handle(_ error: APIError, for endpoint: Endpoint, attempt: Int) async -> InterceptorDecision {
         switch error {
         case let .updateRequired(message):
-            events.send(.updateRequired(message: message))
+            await link.session?.show(serviceStatus: .updateRequired(message: message))
         case let .maintenance(message):
-            events.send(.maintenance(message: message))
+            await link.session?.show(serviceStatus: .maintenance(message: message))
         default:
             break
         }

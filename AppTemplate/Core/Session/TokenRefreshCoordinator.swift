@@ -15,14 +15,14 @@ actor TokenRefreshCoordinator {
 
     private let store: any TokenStore
     private let refresher: any TokenRefreshing
-    private let events: SessionEventBus
+    private let link: SessionLink
 
     private var inFlight: Task<AuthTokens, any Error>?
 
-    init(store: any TokenStore, refresher: any TokenRefreshing, events: SessionEventBus) {
+    init(store: any TokenStore, refresher: any TokenRefreshing, link: SessionLink) {
         self.store = store
         self.refresher = refresher
-        self.events = events
+        self.link = link
     }
 
     func currentTokens() async -> AuthTokens? {
@@ -80,7 +80,7 @@ actor TokenRefreshCoordinator {
 
     func invalidate() async {
         await store.clear()
-        events.send(.expired)
+        await link.session?.expire()
     }
 }
 

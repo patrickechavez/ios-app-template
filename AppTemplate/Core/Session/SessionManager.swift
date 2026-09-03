@@ -32,25 +32,16 @@ final class SessionManager {
 
     @ObservationIgnored private let tokenStore: any TokenStore
     @ObservationIgnored private let users: any UserRepository
-    @ObservationIgnored private let events: SessionEventBus
     @ObservationIgnored private let crashes: any CrashReporting
-    @ObservationIgnored private var eventTask: Task<Void, Never>?
 
     init(
         tokenStore: any TokenStore,
         users: any UserRepository,
-        events: SessionEventBus,
         crashes: any CrashReporting = NoopCrashReporter()
     ) {
         self.tokenStore = tokenStore
         self.users = users
-        self.events = events
         self.crashes = crashes
-        observeEvents()
-    }
-
-    deinit {
-        eventTask?.cancel()
     }
 
     func bootstrap() async {
@@ -119,28 +110,17 @@ final class SessionManager {
         serviceStatus = nil
     }
 
-    private func observeEvents() {
-        eventTask = Task { [weak self, events] in
-            for await event in events.events {
-                guard let self else { return }
-                await self.handle(event)
-            }
-        }
+    /// Called by the networking layer when tokens can't be refreshed. Ends the
+    /// session, unless it has already ended.
+    func expire() async {
+        guard state == .authenticated else { return }
+        AppLogger.auth.notice("Session expired — returning to sign-in")
+        await signOut()
     }
 
-    private func handle(_ event: SessionEvent) async {
-        switch event {
-        case .expired:
-
-            guard state == .authenticated else { return }
-            AppLogger.auth.notice("Session expired — returning to sign-in")
-            await signOut()
-
-        case let .updateRequired(message):
-            serviceStatus = .updateRequired(message: message)
-
-        case let .maintenance(message):
-            serviceStatus = .maintenance(message: message)
-        }
+    /// Called by the networking layer when the backend says the app is too old
+    /// or is down for maintenance.
+    func show(serviceStatus: ServiceStatus) {
+        self.serviceStatus = serviceStatus
     }
 }
