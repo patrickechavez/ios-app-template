@@ -8,74 +8,33 @@
 
 import SwiftUI
 
-enum PreviewScenario: Sendable {
-    case loaded
-    case empty
-    case loading
-    case failure(APIError)
-}
-
+// Signs in for real, then hands the screen a real, working AppDependencies.
 struct PreviewHost<Content: View>: View {
 
-    let scenario: PreviewScenario
     @ViewBuilder let content: (AppDependencies) -> Content
 
-    @State private var dependencies: AppDependencies
-    @State private var navigator = AppNavigator()
-
-    init(scenario: PreviewScenario = .loaded, @ViewBuilder content: @escaping (AppDependencies) -> Content) {
-        self.scenario = scenario
-        self.content = content
-        _dependencies = State(wrappedValue: AppDependencies.preview(scenario))
-    }
+    // In-memory so a preview doesn't leave a real token in the Mac's keychain.
+    @State private var dependencies = AppDependencies.live(tokenStore: InMemoryTokenStore())
+    @State private var isSignedIn = false
 
     var body: some View {
-        content(dependencies)
-            .environment(navigator)
-    }
-}
-
-extension AppDependencies {
-
-    static func preview(_ scenario: PreviewScenario = .loaded) -> AppDependencies {
-        let events = SessionEventBus()
-        let tokenStore = InMemoryTokenStore(tokens: SampleData.tokens)
-
-        let auth = MockAuthRepository()
-        let users = MockUserRepository()
-        let items = MockItemRepository()
-
-        switch scenario {
-        case .loaded:
-            break
-
-        case .empty:
-            items.pages = [Page(items: [], total: 0, offset: 0, limit: 20)]
-
-        case .loading:
-
-            items.delay = .seconds(60)
-
-        case let .failure(error):
-            items.error = error
-            auth.loginResult = .failure(error)
-            users.currentUserResult = .failure(error)
+        Group {
+            if isSignedIn {
+                content(dependencies)
+                    .environment(AppNavigator())
+            } else {
+                ProgressView()
+            }
         }
+        .task {
+            // Public test account. Swap for your own once you have a backend.
+            let login = dependencies.makeLoginViewModel()
+            login.username = "emilys"
+            login.password = "emilyspass"
+            await login.signIn()
 
-        let session = SessionManager(tokenStore: tokenStore, users: users, events: events)
-
-        return AppDependencies(
-            session: session,
-            auth: auth,
-            users: users,
-            items: items,
-            imageLoader: MockImageLoader(),
-            tokenStore: tokenStore,
-            events: events,
-            deepLinks: DeepLinkParser(),
-            analytics: NoopAnalyticsTracker(),
-            crashes: NoopCrashReporter()
-        )
+            isSignedIn = true
+        }
     }
 }
 

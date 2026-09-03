@@ -83,17 +83,8 @@ struct LoginView: View {
 
 #if DEBUG
 
-#Preview("Sign in") {
+#Preview {
     PreviewHost { dependencies in
-        NavigationStack {
-            LoginView(viewModel: dependencies.makeLoginViewModel())
-        }
-        .environment(Router<AuthRoute>())
-    }
-}
-
-#Preview("Sign in — wrong password") {
-    PreviewHost(scenario: .failure(.unauthorized(message: "Incorrect username or password."))) { dependencies in
         NavigationStack {
             LoginView(viewModel: dependencies.makeLoginViewModel())
         }
