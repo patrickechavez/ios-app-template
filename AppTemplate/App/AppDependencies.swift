@@ -20,7 +20,6 @@ final class AppDependencies {
     private let items: any ItemRepository
     private let imageLoader: any ImageLoading
     private let tokenStore: any TokenStore
-    private let events: SessionEventBus
 
     init(
         session: SessionManager,
@@ -29,7 +28,6 @@ final class AppDependencies {
         items: any ItemRepository,
         imageLoader: any ImageLoading,
         tokenStore: any TokenStore,
-        events: SessionEventBus,
         deepLinks: DeepLinkParser,
         analytics: any AnalyticsTracking,
         crashes: any CrashReporting,
@@ -41,7 +39,6 @@ final class AppDependencies {
         self.items = items
         self.imageLoader = imageLoader
         self.tokenStore = tokenStore
-        self.events = events
         self.deepLinks = deepLinks
         self.analytics = analytics
         self.crashes = crashes
@@ -55,7 +52,7 @@ final class AppDependencies {
 
         Observability.install(analytics: analytics, crashes: crashes)
 
-        let events = SessionEventBus()
+        let link = SessionLink()
         let session = Self.urlSession()
 
         let metadata = MetadataInterceptor()
@@ -71,7 +68,7 @@ final class AppDependencies {
         let coordinator = TokenRefreshCoordinator(
             store: tokenStore,
             refresher: LiveTokenRefresher(api: refreshClient),
-            events: events
+            link: link
         )
 
         let api = URLSessionAPIClient(
@@ -79,26 +76,29 @@ final class AppDependencies {
             interceptors: [
                 metadata,
                 AuthInterceptor(coordinator: coordinator),
-                SessionPolicyInterceptor(events: events),
+                SessionPolicyInterceptor(link: link),
                 logging
             ]
         )
 
         let users = LiveUserRepository(api: api)
 
+        let sessionManager = SessionManager(
+            tokenStore: tokenStore,
+            users: users,
+            crashes: crashes
+        )
+
+        // The one place the link is set — everything above already holds it.
+        link.session = sessionManager
+
         return AppDependencies(
-            session: SessionManager(
-                tokenStore: tokenStore,
-                users: users,
-                events: events,
-                crashes: crashes
-            ),
+            session: sessionManager,
             auth: LiveAuthRepository(api: api),
             users: users,
             items: LiveItemRepository(api: api),
             imageLoader: ImageLoader.shared,
             tokenStore: tokenStore,
-            events: events,
             deepLinks: DeepLinkParser(),
             analytics: analytics,
             crashes: crashes
