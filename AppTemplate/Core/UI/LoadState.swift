@@ -71,3 +71,75 @@ extension LoadState where Value: Collection {
         value.isEmpty ? .empty : .loaded(value)
     }
 }
+
+// MARK: - Loading and failing
+//
+// View models that load content conform to `LoadableViewModel` and call
+// `perform` / `fail` instead of hand-writing do/catch blocks.
+
+@MainActor
+protocol LoadableViewModel: AnyObject {
+
+    associatedtype Value: Sendable
+
+    var state: LoadState<Value> { get set }
+}
+
+extension LoadableViewModel {
+
+    /// Runs `operation` and moves `state` through `.loading` to
+    /// `.loaded`, `.empty`, or `.failed`.
+    ///
+    /// `isRefresh` keeps old content on screen when a reload fails.
+    ///
+    /// Named `perform`, not `load`, so it never shadows a view model's own
+    /// `load()` — that overlap reads like recursion, and becomes recursion
+    /// if the closure is ever left off.
+    func perform(
+        isRefresh: Bool = false,
+        isEmpty: @escaping (Value) -> Bool = { _ in false },
+        _ operation: @Sendable () async throws -> Value
+    ) async {
+        if !isRefresh, state.value == nil {
+            state = .loading
+        }
+
+        do {
+            let newValue = try await operation()
+            try Task.checkCancellation()
+            state = .from(newValue, isEmpty: isEmpty)
+        } catch {
+            fail(with: error, isRefresh: isRefresh)
+        }
+    }
+
+    /// Shared failure path for loads that also update other properties
+    /// (like pagination cursors).
+    func fail(with error: any Error, isRefresh: Bool = false) {
+        let apiError = APIError.classify(error)
+
+        // A cancelled first load goes back to `.idle` so the view can retry.
+        if case .cancelled = apiError, case .loading = state {
+            state = .idle
+            return
+        }
+
+        guard apiError.isUserFacing else { return }
+
+        // Failing silently while refreshing content that's already visible.
+        if isRefresh, state.value != nil { return }
+
+        state = .failed(apiError)
+    }
+}
+
+extension LoadableViewModel where Value: Collection {
+
+    /// Same as `perform`, with empty results shown as `.empty`.
+    func perform(
+        isRefresh: Bool = false,
+        _ operation: @Sendable () async throws -> Value
+    ) async {
+        await perform(isRefresh: isRefresh, isEmpty: { $0.isEmpty }, operation)
+    }
+}

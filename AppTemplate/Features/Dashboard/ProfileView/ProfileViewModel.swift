@@ -11,7 +11,7 @@ import os
 
 @Observable
 @MainActor
-final class ProfileViewModel {
+final class ProfileViewModel: LoadableViewModel {
 
     var state: LoadState<User> = .idle
 
@@ -42,27 +42,8 @@ final class ProfileViewModel {
     }
 
     func load(isRefresh: Bool = false) async {
-        let isRefresh = isRefresh || state.value != nil
-
-        if !isRefresh, state.value == nil {
-            state = .loading
-        }
-
-        do {
-            let user = try await repository.currentUser()
-
-            try Task.checkCancellation()
-            state = .loaded(user)
-        } catch {
-            let apiError = error as? APIError ?? APIError.from(transportError: error)
-
-            if apiError.isWorthReporting { Observability.crashes.record(apiError) }
-
-            guard apiError.isUserFacing else { return }
-
-            if isRefresh, state.value != nil { return }
-
-            state = .failed(apiError)
+        await perform(isRefresh: isRefresh || state.value != nil) { [repository] in
+            try await repository.currentUser()
         }
 
         if let user = state.value {
