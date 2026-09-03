@@ -119,7 +119,7 @@
       }
     },
     "Close" : {
-
+      "comment" : "Button that dismisses the example full-screen cover"
     },
     "Confirm password" : {
       "comment" : "Label for the password confirmation field",
@@ -170,7 +170,7 @@
       }
     },
     "Done" : {
-
+      "comment" : "Button that dismisses the example sheet"
     },
     "Edit Profile" : {
       "comment" : "Title of the placeholder edit-profile screen",
@@ -251,7 +251,7 @@
       }
     },
     "Full-Screen Cover" : {
-
+      "comment" : "Title of the example full-screen cover"
     },
     "Hide password" : {
       "comment" : "Accessibility label for the password reveal toggle",
@@ -554,7 +554,7 @@
       }
     },
     "Sheet" : {
-
+      "comment" : "Title of the example sheet screen"
     },
     "Show Cover" : {
       "comment" : "Menu item that presents an example full-screen cover",
