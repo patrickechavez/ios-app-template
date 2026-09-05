@@ -15,6 +15,7 @@ final class RegisterViewModel {
     var lastName = ""
     var email = ""
     var username = ""
+    var dateOfBirth: Date?
     var password = ""
 
     let action = ActionState()
@@ -25,9 +26,21 @@ final class RegisterViewModel {
 
     private static let minimumPasswordLength = 8
 
+    // Fixed format because the server expects a calendar date, not a localised one.
+    private static let dateOfBirthFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        return formatter
+    }()
+
     init(auth: any AuthRepository) {
         self.auth = auth
     }
+
+    // Nothing later than today can be picked, so the field only has to cap the earliest date.
+    var dateOfBirthRange: ClosedRange<Date> { Date.distantPast...Date() }
 
     var firstNameError: String? { action.message(for: "firstName") }
     var lastNameError: String? { action.message(for: "lastName") }
@@ -51,6 +64,8 @@ final class RegisterViewModel {
         )
     }
 
+    var dateOfBirthError: String? { action.message(for: "dateOfBirth") }
+
     var generalError: String? {
         guard action.error?.validationErrors == nil else { return nil }
         return action.errorMessage
@@ -62,17 +77,19 @@ final class RegisterViewModel {
             && !lastName.trimmed.isEmpty
             && !username.trimmed.isEmpty
             && email.trimmed.isValidEmail
+            && dateOfBirth != nil
             && password.count >= Self.minimumPasswordLength
     }
 
     func submit() async {
-        guard canSubmit else { return }
+        guard canSubmit, let dateOfBirth else { return }
 
         let request = RegisterRequest(
             firstName: firstName.trimmed,
             lastName: lastName.trimmed,
             email: email.trimmed,
             username: username.trimmed,
+            dateOfBirth: Self.dateOfBirthFormatter.string(from: dateOfBirth),
             password: password
         )
 

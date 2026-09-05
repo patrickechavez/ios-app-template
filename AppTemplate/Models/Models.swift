@@ -47,6 +47,8 @@ struct RegisterRequest: Encodable, Sendable {
     let lastName: String
     let email: String
     let username: String
+    // ISO-8601 calendar date, e.g. "1998-04-23".
+    let dateOfBirth: String
     let password: String
 }
 
