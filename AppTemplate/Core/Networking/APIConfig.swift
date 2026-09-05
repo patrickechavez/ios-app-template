@@ -47,6 +47,9 @@ enum APIConfig {
 
     static let updateURL: URL? = string("UPDATE_URL").flatMap(URL.init(string:))
 
+    // nil unless the active environment targets Supabase.
+    static let supabaseAnonKey: String? = string("SUPABASE_ANON_KEY")
+
     static var retryPolicy: RetryPolicy {
         maxAttempts <= 1 ? .none : RetryPolicy(maxAttempts: maxAttempts)
     }
