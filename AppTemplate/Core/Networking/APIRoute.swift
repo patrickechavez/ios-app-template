@@ -9,13 +9,15 @@ import Foundation
 enum APIRoute {
 
     enum Auth {
-        static let login = "auth/login"
-        static let register = "auth/register"
-        static let refresh = "auth/refresh"
-        static let logout = "auth/logout"
-        static let currentUser = "auth/me"
-        static let requestPasswordReset = "auth/forgot-password"
-        static let resetPassword = "auth/reset-password"
+        // login and refresh are the same Supabase endpoint — ?grant_type=
+        // on the request is what tells them apart.
+        static let login = "auth/v1/token"
+        static let refresh = "auth/v1/token"
+        static let register = "auth/v1/signup"
+        static let logout = "auth/v1/logout"
+        static let currentUser = "auth/v1/user"
+        static let requestPasswordReset = "auth/v1/recover"
+        static let resetPassword = "auth/v1/user"
     }
 
     enum Users {
