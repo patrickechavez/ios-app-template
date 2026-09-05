@@ -44,7 +44,7 @@
       "comment" : "Button that opens the blocked users screen\nTitle of the blocked users screen"
     },
     "Cancel" : {
-      "comment" : "Dismisses the date picker without choosing"
+      "comment" : "Dismisses the date picker without choosing\nDismisses the picker without choosing"
     },
     "Cancelled." : {
       "comment" : "A request was cancelled",
@@ -524,7 +524,7 @@
       }
     },
     "Select" : {
-      "comment" : "Placeholder for a date field"
+      "comment" : "Placeholder for a date field\nPlaceholder for a picker field"
     },
     "Send Reset Link" : {
       "comment" : "Button that requests a password reset email",
