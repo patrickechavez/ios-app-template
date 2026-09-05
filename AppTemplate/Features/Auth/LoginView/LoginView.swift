@@ -14,7 +14,7 @@ struct LoginView: View {
     @FocusState private var focusedField: Field?
 
     private enum Field: Hashable {
-        case username, password
+        case email, password
     }
 
     init(viewModel: LoginViewModel) {
@@ -24,11 +24,12 @@ struct LoginView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: Theme.Spacing.lg) {
-                UsernameField(
-                    text: $viewModel.username,
-                    error: viewModel.usernameError
+                EmailField(
+                    text: $viewModel.email,
+                    error: viewModel.emailError,
+                    isRequired: true
                 )
-                .focused($focusedField, equals: .username)
+                .focused($focusedField, equals: .email)
                 .submitLabel(.next)
                 .onSubmit { focusedField = .password }
 
