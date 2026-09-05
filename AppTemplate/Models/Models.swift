@@ -119,9 +119,9 @@ struct DeviceRegistration: Encodable, Sendable {
 }
 
 struct Item: Codable, Identifiable, Equatable, Hashable, Sendable {
-    // UUID, matching a Postgres table's default primary key — change to
-    // Int only if your table actually uses a serial/bigserial id.
-    let id: String
+    // Assumes the items table has a uuid primary key — Supabase's own
+    // default for new tables. Change to Int if yours is serial/bigserial.
+    let id: UUID
     let title: String
     let description: String
     let price: Double

@@ -28,7 +28,7 @@ enum SampleData {
 
     static let items: [Item] = (1...12).map { index in
         Item(
-            id: String(index),
+            id: UUID(uuidString: String(format: "00000000-0000-0000-0000-%012d", index))!,
             title: "Sample Item \(index)",
             description: "A description for sample item \(index). Long enough to wrap onto a second line.",
             price: Double(index) * 9.99,
@@ -145,7 +145,7 @@ final class MockItemRepository: ItemRepository, @unchecked Sendable {
         return SampleData.page(matches)
     }
 
-    func item(id: String) async throws -> Item {
+    func item(id: UUID) async throws -> Item {
         if delay > .zero { try await Task.sleep(for: delay) }
         if let error { throw error }
         guard let item = pages.flatMap(\.items).first(where: { $0.id == id }) else {
@@ -156,15 +156,21 @@ final class MockItemRepository: ItemRepository, @unchecked Sendable {
 
     func create(_ draft: ItemDraft) async throws -> Item {
         if let error { throw error }
-        return Item(id: "999", title: draft.title, description: draft.description, price: draft.price, thumbnail: nil)
+        return Item(
+            id: UUID(uuidString: "00000000-0000-0000-0000-000000000999")!,
+            title: draft.title,
+            description: draft.description,
+            price: draft.price,
+            thumbnail: nil
+        )
     }
 
-    func update(id: String, draft: ItemDraft) async throws -> Item {
+    func update(id: UUID, draft: ItemDraft) async throws -> Item {
         if let error { throw error }
         return Item(id: id, title: draft.title, description: draft.description, price: draft.price, thumbnail: nil)
     }
 
-    func delete(id: String) async throws {
+    func delete(id: UUID) async throws {
         if let error { throw error }
     }
 }
