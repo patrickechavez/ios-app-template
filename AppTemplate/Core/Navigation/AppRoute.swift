@@ -43,8 +43,8 @@ enum AuthRoute: AppRoute {
 
 // Each tab keeps its own route list, so its screens stack independently.
 enum HomeRoute: AppRoute {
-    case itemDetail(id: Int)
-    case itemReviews(id: Int)
+    case itemDetail(id: String)
+    case itemReviews(id: String)
 }
 
 enum FavoritesRoute: AppRoute {

@@ -9,7 +9,7 @@ import SwiftUI
 // Third screen of the Home tab.
 struct ItemReviewsView: View {
 
-    let itemID: Int
+    let itemID: String
 
     @Environment(Router<HomeRoute>.self) private var router
 

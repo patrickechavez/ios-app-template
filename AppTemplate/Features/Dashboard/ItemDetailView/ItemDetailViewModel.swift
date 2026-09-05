@@ -13,7 +13,7 @@ final class ItemDetailViewModel: LoadableViewModel {
 
     var state: LoadState<Item> = .idle
 
-    @ObservationIgnored private let itemID: Int
+    @ObservationIgnored private let itemID: String
     @ObservationIgnored private let repository: any ItemRepository
 
     init(item: Item, repository: any ItemRepository) {
@@ -22,7 +22,7 @@ final class ItemDetailViewModel: LoadableViewModel {
         self.state = .loaded(item)
     }
 
-    init(itemID: Int, repository: any ItemRepository) {
+    init(itemID: String, repository: any ItemRepository) {
         self.itemID = itemID
         self.repository = repository
     }
