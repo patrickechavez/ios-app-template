@@ -90,9 +90,7 @@ final class AppDependencies {
 
         let api = URLSessionAPIClient(session: session, interceptors: apiInterceptors)
 
-        let users: any UserRepository = supabaseAPIKey != nil
-            ? SupabaseUserRepository(api: api)
-            : LiveUserRepository(api: api)
+        let users = LiveUserRepository(api: api)
 
         let sessionManager = SessionManager(
             tokenStore: tokenStore,
