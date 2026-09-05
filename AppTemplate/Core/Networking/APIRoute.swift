@@ -9,8 +9,7 @@ import Foundation
 enum APIRoute {
 
     enum Auth {
-        // login and refresh are the same Supabase endpoint — ?grant_type=
-        // on the request is what tells them apart.
+        // login and refresh share this endpoint; ?grant_type= tells them apart.
         static let login = "auth/v1/token"
         static let refresh = "auth/v1/token"
         static let register = "auth/v1/signup"

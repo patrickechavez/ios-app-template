@@ -57,12 +57,9 @@ struct RegisterResponse: Decodable, Sendable {
     let username: String
 }
 
-// Mirrors Supabase Auth's real user object exactly: id and email sit at
-// the top level, everything from signup's `data` comes back nested under
-// user_metadata with the same keys it was sent with.
+// Mirrors Supabase Auth's user object: id/email top-level, the rest
+// nested under user_metadata with the same keys sent at signup.
 struct User: Codable, Identifiable, Equatable, Sendable {
-    // Supabase Auth always issues a UUID for this — Foundation's UUID
-    // decodes it straight from the JSON string, no custom coding needed.
     let id: UUID
     let email: String
     let userMetadata: UserMetadata
@@ -141,8 +138,7 @@ struct DeviceRegistration: Encodable, Sendable {
 }
 
 struct Item: Codable, Identifiable, Equatable, Hashable, Sendable {
-    // Assumes the items table has a uuid primary key — Supabase's own
-    // default for new tables. Change to Int if yours is serial/bigserial.
+    // Assumes a uuid primary key — change to Int if yours is serial/bigserial.
     let id: UUID
     let title: String
     let description: String

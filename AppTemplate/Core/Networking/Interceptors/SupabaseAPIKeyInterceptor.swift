@@ -6,9 +6,8 @@
 
 import Foundation
 
-// Supabase's gateway rejects every request — even authenticated ones — that
-// doesn't carry this header. It identifies the project; Authorization (added
-// separately, by AuthInterceptor) identifies the signed-in user.
+// Supabase requires this on every request, even authenticated ones —
+// it identifies the project; Authorization identifies the user.
 struct SupabaseAPIKeyInterceptor: RequestInterceptor {
 
     private let anonKey: String

@@ -34,11 +34,8 @@ nonisolated struct LiveUserRepository: UserRepository {
         try await api.get(APIRoute.Auth.currentUser)
     }
 
-    // Supabase updates a user via PUT auth/v1/user with changed fields
-    // nested under "data" — not a PATCH to a users/{id} resource, which
-    // doesn't exist. Email is deliberately omitted: sending it would
-    // trigger Supabase's change-email confirmation even when it hasn't
-    // changed.
+    // Email is omitted — sending it triggers Supabase's change-email
+    // confirmation even when it hasn't changed.
     func updateProfile(_ user: User) async throws -> User {
         let body = UpdateUserRequest(
             data: UpdateUserRequest.Metadata(
@@ -51,10 +48,8 @@ nonisolated struct LiveUserRepository: UserRepository {
         return try await api.send(endpoint)
     }
 
-    // Supabase Storage uploads are raw binary POSTs to a bucket path, not
-    // this multipart flow, and need a bucket choice plus a follow-up call
-    // to store the resulting URL in user_metadata — real new scope, not
-    // an endpoint swap.
+    // Supabase Storage uploads work differently (raw binary, not this
+    // multipart flow) — needs its own implementation.
     func uploadAvatar(_ image: UIImage, compression: ImageCompression) async throws -> User {
         throw APIError.notSupported(message: "Avatar upload isn't implemented for Supabase yet.")
     }
@@ -69,8 +64,7 @@ nonisolated struct LiveUserRepository: UserRepository {
     }
 }
 
-// The one shape User itself can't represent — Supabase's update-user
-// request nests changed fields under "data", not User's own layout.
+// Supabase's update-user request nests fields under "data".
 private struct UpdateUserRequest: Encodable {
     let data: Metadata
 
