@@ -58,8 +58,7 @@ final class AppDependencies {
         let metadata = MetadataInterceptor()
         let logging = LoggingInterceptor()
 
-        // Present only when the active environment targets Supabase —
-        // its absence is what selects the Live* repositories below instead.
+        // nil unless the environment targets Supabase — selects Live* below.
         let supabaseAPIKey = APIConfig.supabaseAnonKey.map(SupabaseAPIKeyInterceptor.init(anonKey:))
 
         var refreshInterceptors: [any RequestInterceptor] = [metadata]

@@ -58,8 +58,7 @@ enum APIError: LocalizedError, Equatable, Sendable {
 
     case server(status: Int, message: String? = nil)
 
-    // A deliberate client-side limit — this backend doesn't support the
-    // operation at all, as opposed to having rejected a real request.
+    // This backend doesn't support the operation at all.
     case notSupported(message: String? = nil)
 
     var errorDescription: String? {

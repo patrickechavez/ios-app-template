@@ -7,9 +7,6 @@
 import Foundation
 
 // Speaks Supabase's Auth API (GoTrue) instead of a generic REST backend.
-// Kept separate from AuthRepository.swift so every Supabase-specific detail —
-// wire shapes, snake_case keys, the login/refresh query params — lives in
-// one file that's easy to find and to delete later.
 nonisolated struct SupabaseAuthRepository: AuthRepository {
 
     private let api: any APIClient
@@ -19,9 +16,7 @@ nonisolated struct SupabaseAuthRepository: AuthRepository {
     }
 
     func login(username: String, password: String) async throws -> AuthTokens {
-        // Supabase authenticates by email, not username — the protocol's
-        // parameter name is unchanged so other backends are unaffected;
-        // this is the one place that treats the value as an email.
+        // Supabase logs in with email — "username" here is really an email.
         let endpoint = Endpoint(
             APIRoute.Auth.login,
             method: .post,
@@ -53,8 +48,7 @@ nonisolated struct SupabaseAuthRepository: AuthRepository {
         guard let idString = response.resolvedID, let id = UUID(uuidString: idString) else {
             throw APIError.decodingFailed(detail: "Supabase signup response had no valid user id.")
         }
-        // Echo back what was submitted — Supabase's own response doesn't
-        // reliably reflect user_metadata immediately after signup.
+        // Echo back the username — signup's response may not include it yet.
         return RegisterResponse(id: id, username: request.username)
     }
 
@@ -67,14 +61,11 @@ nonisolated struct SupabaseAuthRepository: AuthRepository {
     }
 
     func resetPassword(token: String, newPassword: String) async throws {
-        // Supabase resets a password by redeeming the session from its
-        // emailed recovery link, not a typed code — this needs its own
-        // deep-link design, so it's deliberately unsupported for now.
+        // Supabase resets via an emailed link's session, not a typed code.
         throw APIError.notSupported(message: "Password reset isn't implemented for Supabase yet.")
     }
 
     func logout(refreshToken: String?) async throws {
-        // No body — the Bearer access token identifies which session to end.
         try await api.send(Endpoint(APIRoute.Auth.logout, method: .post, requiresAuth: true))
     }
 }
@@ -101,8 +92,6 @@ struct SupabaseTokenRefresher: TokenRefreshing {
 }
 
 // MARK: - Wire types
-
-// Top-level `private` is file-scoped in Swift, so both types above can use these.
 
 private struct SupabaseLoginRequest: Encodable {
     let email: String
@@ -141,8 +130,7 @@ private struct SupabaseSignUpRequest: Encodable {
     }
 }
 
-// Handles both response shapes Supabase can return from /signup: a flat
-// user object, or one nested under "user" when a session comes back too.
+// Signup can return the id flat or nested under "user" — handle both.
 private struct SupabaseSignUpResponse: Decodable {
     let id: String?
     let user: NestedUser?
