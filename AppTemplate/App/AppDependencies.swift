@@ -71,9 +71,7 @@ final class AppDependencies {
             retryPolicy: .none
         )
 
-        let tokenRefresher: any TokenRefreshing = supabaseAPIKey != nil
-            ? SupabaseTokenRefresher(api: refreshClient)
-            : LiveTokenRefresher(api: refreshClient)
+        let tokenRefresher = LiveTokenRefresher(api: refreshClient)
 
         let coordinator = TokenRefreshCoordinator(
             store: tokenStore,
@@ -100,19 +98,11 @@ final class AppDependencies {
         // The one place the link is set — everything above already holds it.
         link.session = sessionManager
 
-        let auth: any AuthRepository = supabaseAPIKey != nil
-            ? SupabaseAuthRepository(api: api)
-            : LiveAuthRepository(api: api)
-
-        let items: any ItemRepository = supabaseAPIKey != nil
-            ? SupabaseItemRepository(api: api)
-            : LiveItemRepository(api: api)
-
         return AppDependencies(
             session: sessionManager,
-            auth: auth,
+            auth: LiveAuthRepository(api: api),
             users: users,
-            items: items,
+            items: LiveItemRepository(api: api),
             imageLoader: ImageLoader.shared,
             tokenStore: tokenStore,
             deepLinks: DeepLinkParser(),

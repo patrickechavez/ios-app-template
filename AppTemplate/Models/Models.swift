@@ -6,42 +6,6 @@
 
 import Foundation
 
-struct LoginRequest: Encodable, Sendable {
-    let username: String
-    let password: String
-}
-
-struct RefreshRequest: Encodable, Sendable {
-    let refreshToken: String
-}
-
-struct LogoutRequest: Encodable, Sendable {
-    let refreshToken: String?
-}
-
-struct ForgotPasswordRequest: Encodable, Sendable {
-    let email: String
-}
-
-struct ResetPasswordRequest: Encodable, Sendable {
-    let token: String
-    let password: String
-}
-
-struct AuthResponse: Decodable, Sendable {
-    let accessToken: String
-    let refreshToken: String?
-    let expiresIn: TimeInterval?
-
-    var tokens: AuthTokens {
-        AuthTokens(
-            accessToken: accessToken,
-            refreshToken: refreshToken,
-            expiresAt: expiresIn.map { Date().addingTimeInterval($0) }
-        )
-    }
-}
-
 struct RegisterRequest: Encodable, Sendable {
     let firstName: String
     let lastName: String
