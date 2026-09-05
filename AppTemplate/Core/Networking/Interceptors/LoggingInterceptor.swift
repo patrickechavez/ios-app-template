@@ -39,7 +39,8 @@ struct LoggingInterceptor: RequestInterceptor {
         AppLogger.network.debug(
             """
             → \(method, privacy: .public) \(url, privacy: .public)
-              headers: \(headers, privacy: .public)\(body, privacy: .public)
+              headers:
+            \(headers, privacy: .public)\(body, privacy: .public)
             """
         )
         return request
@@ -72,10 +73,10 @@ struct LoggingInterceptor: RequestInterceptor {
             .sorted { $0.key < $1.key }
             .map { key, value in
                 redactedHeaders.contains(key.lowercased())
-                    ? "\(key): <redacted>"
-                    : "\(key): \(value)"
+                    ? "    \(key): <redacted>"
+                    : "    \(key): \(value)"
             }
-            .joined(separator: ", ")
+            .joined(separator: "\n")
     }
 
     private static func describe(body: Data, contentType: String?) -> String {
