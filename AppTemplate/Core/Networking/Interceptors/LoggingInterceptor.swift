@@ -9,8 +9,10 @@ import os
 
 struct LoggingInterceptor: RequestInterceptor {
 
+    // Authorization shown on purpose for Supabase testing — this log only
+    // runs when API_LOGGING_ENABLED is YES, which is Development only.
     private static let redactedHeaders: Set<String> = [
-        "authorization", "cookie", "set-cookie", "x-api-key", "proxy-authorization"
+        "cookie", "set-cookie", "x-api-key", "proxy-authorization"
     ]
 
     private static let redactedBodyKeys: Set<String> = [
@@ -39,7 +41,8 @@ struct LoggingInterceptor: RequestInterceptor {
         AppLogger.network.debug(
             """
             → \(method, privacy: .public) \(url, privacy: .public)
-              headers: \(headers, privacy: .public)\(body, privacy: .public)
+              headers:
+            \(headers, privacy: .public)\(body, privacy: .public)
             """
         )
         return request
@@ -72,10 +75,10 @@ struct LoggingInterceptor: RequestInterceptor {
             .sorted { $0.key < $1.key }
             .map { key, value in
                 redactedHeaders.contains(key.lowercased())
-                    ? "\(key): <redacted>"
-                    : "\(key): \(value)"
+                    ? "    \(key): <redacted>"
+                    : "    \(key): \(value)"
             }
-            .joined(separator: ", ")
+            .joined(separator: "\n")
     }
 
     private static func describe(body: Data, contentType: String?) -> String {
