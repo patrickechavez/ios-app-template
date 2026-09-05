@@ -9,6 +9,8 @@
 	<!-- API -->
 	<key>API_BASE_URL</key>
 	<string>$(API_BASE_URL)</string>
+	<key>SUPABASE_ANON_KEY</key>
+	<string>$(SUPABASE_ANON_KEY)</string>
 	<key>API_TIMEOUT_SECONDS</key>
 	<string>$(API_TIMEOUT_SECONDS)</string>
 	<key>API_MAX_RETRIES</key>
