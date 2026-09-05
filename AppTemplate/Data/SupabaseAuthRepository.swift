@@ -50,8 +50,8 @@ nonisolated struct SupabaseAuthRepository: AuthRepository {
             requiresAuth: false
         )
 
-        guard let id = response.resolvedID else {
-            throw APIError.decodingFailed(detail: "Supabase signup response had no user id.")
+        guard let idString = response.resolvedID, let id = UUID(uuidString: idString) else {
+            throw APIError.decodingFailed(detail: "Supabase signup response had no valid user id.")
         }
         // Echo back what was submitted — Supabase's own response doesn't
         // reliably reflect user_metadata immediately after signup.
