@@ -10,7 +10,7 @@ enum APIRoute {
 
     enum Auth {
         static let login = "auth/login"
-        static let register = "users/add"
+        static let register = "auth/register"
         static let refresh = "auth/refresh"
         static let logout = "auth/logout"
         static let currentUser = "auth/me"
@@ -35,8 +35,8 @@ enum APIRoute {
     }
 
     enum Items {
-        static let list = "products"
-        static let search = "products/search"
-        static func detail(_ id: Int) -> String { "products/\(id)" }
+        static let list = "items"
+        static let search = "items/search"
+        static func detail(_ id: Int) -> String { "items/\(id)" }
     }
 }
