@@ -9,7 +9,7 @@ import Foundation
 struct Page<Element: Decodable & Sendable>: Decodable, Sendable {
 
     static var collectionKeys: [String] {
-        ["items", "data", "results", "records", "content", "products"]
+        ["items", "data", "results", "records", "content"]
     }
 
     let items: [Element]
@@ -136,7 +136,7 @@ struct PageRequest: Sendable, Equatable {
         if let cursor {
             items.append(URLQueryItem(name: "cursor", value: cursor))
         } else {
-            items.append(URLQueryItem(name: "skip", value: String(offset)))
+            items.append(URLQueryItem(name: "offset", value: String(offset)))
         }
         return items
     }
