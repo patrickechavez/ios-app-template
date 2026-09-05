@@ -58,6 +58,10 @@ enum APIError: LocalizedError, Equatable, Sendable {
 
     case server(status: Int, message: String? = nil)
 
+    // A deliberate client-side limit — this backend doesn't support the
+    // operation at all, as opposed to having rejected a real request.
+    case notSupported(message: String? = nil)
+
     var errorDescription: String? {
         switch self {
         case .offline:
@@ -122,6 +126,10 @@ enum APIError: LocalizedError, Equatable, Sendable {
         case let .server(_, message):
             message ?? String(localized: "Something went wrong on our end. Please try again.",
                               comment: "Generic server error")
+
+        case let .notSupported(message):
+            message ?? String(localized: "This isn't available yet.",
+                              comment: "Error shown when a feature has no backend support")
         }
     }
 
@@ -148,7 +156,8 @@ enum APIError: LocalizedError, Equatable, Sendable {
 
             status >= 500
         case .cancelled, .invalidURL, .invalidResponse, .decodingFailed, .serverTrustFailed,
-             .unauthorized, .forbidden, .notFound, .conflict, .validation, .updateRequired:
+             .unauthorized, .forbidden, .notFound, .conflict, .validation, .updateRequired,
+             .notSupported:
             false
         }
     }
@@ -190,6 +199,7 @@ enum APIError: LocalizedError, Equatable, Sendable {
         case .updateRequired: "update_required"
         case .maintenance: "maintenance"
         case let .server(status, _): "server_\(status)"
+        case .notSupported: "not_supported"
         }
     }
 
@@ -203,7 +213,8 @@ enum APIError: LocalizedError, Equatable, Sendable {
         case let .server(status, _):
             status >= 500
         case .offline, .timedOut, .cancelled, .transport, .unauthorized, .forbidden,
-             .notFound, .conflict, .validation, .rateLimited, .updateRequired, .maintenance:
+             .notFound, .conflict, .validation, .rateLimited, .updateRequired, .maintenance,
+             .notSupported:
             false
         }
     }
