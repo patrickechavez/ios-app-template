@@ -27,10 +27,10 @@ struct PreviewHost<Content: View>: View {
             }
         }
         .task {
-            // Public test account. Swap for your own once you have a backend.
+            // Placeholder credentials — swap for a real account on your backend.
             let login = dependencies.makeLoginViewModel()
-            login.username = "emilys"
-            login.password = "emilyspass"
+            login.email = "preview@example.com"
+            login.password = "password"
             await login.signIn()
 
             isSignedIn = true
