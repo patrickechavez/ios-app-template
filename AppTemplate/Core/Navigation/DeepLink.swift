@@ -81,7 +81,7 @@ struct DeepLinkParser: Sendable {
         case nil, "home", "":
             return .home
 
-        case "items", "item", "products":
+        case "items", "item":
 
             guard segments.count > 1 else { return .home }
             guard let id = Int(segments[1]) else { return nil }
