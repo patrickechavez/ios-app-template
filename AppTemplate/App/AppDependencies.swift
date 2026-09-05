@@ -58,28 +58,37 @@ final class AppDependencies {
         let metadata = MetadataInterceptor()
         let logging = LoggingInterceptor()
 
+        // Present only when the active environment targets Supabase —
+        // its absence is what selects the Live* repositories below instead.
+        let supabaseAPIKey = APIConfig.supabaseAnonKey.map(SupabaseAPIKeyInterceptor.init(anonKey:))
+
+        var refreshInterceptors: [any RequestInterceptor] = [metadata]
+        if let supabaseAPIKey { refreshInterceptors.append(supabaseAPIKey) }
+        refreshInterceptors.append(logging)
+
         let refreshClient = URLSessionAPIClient(
             session: session,
-            interceptors: [metadata, logging],
-
+            interceptors: refreshInterceptors,
             retryPolicy: .none
         )
 
+        let tokenRefresher: any TokenRefreshing = supabaseAPIKey != nil
+            ? SupabaseTokenRefresher(api: refreshClient)
+            : LiveTokenRefresher(api: refreshClient)
+
         let coordinator = TokenRefreshCoordinator(
             store: tokenStore,
-            refresher: LiveTokenRefresher(api: refreshClient),
+            refresher: tokenRefresher,
             link: link
         )
 
-        let api = URLSessionAPIClient(
-            session: session,
-            interceptors: [
-                metadata,
-                AuthInterceptor(coordinator: coordinator),
-                SessionPolicyInterceptor(link: link),
-                logging
-            ]
-        )
+        var apiInterceptors: [any RequestInterceptor] = [metadata]
+        if let supabaseAPIKey { apiInterceptors.append(supabaseAPIKey) }
+        apiInterceptors.append(AuthInterceptor(coordinator: coordinator))
+        apiInterceptors.append(SessionPolicyInterceptor(link: link))
+        apiInterceptors.append(logging)
+
+        let api = URLSessionAPIClient(session: session, interceptors: apiInterceptors)
 
         let users = LiveUserRepository(api: api)
 
@@ -92,9 +101,13 @@ final class AppDependencies {
         // The one place the link is set — everything above already holds it.
         link.session = sessionManager
 
+        let auth: any AuthRepository = supabaseAPIKey != nil
+            ? SupabaseAuthRepository(api: api)
+            : LiveAuthRepository(api: api)
+
         return AppDependencies(
             session: sessionManager,
-            auth: LiveAuthRepository(api: api),
+            auth: auth,
             users: users,
             items: LiveItemRepository(api: api),
             imageLoader: ImageLoader.shared,
