@@ -23,6 +23,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2D137207304C036D002A96B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2D137208304C036D002A96B5 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		2D1CA87C301A21BA00C6EFD2 /* AppTemplate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AppTemplate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0FFEE0000000000000000C1 /* Development.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Development.xcconfig; sourceTree = "<group>"; };
 		C0FFEE0000000000000000C2 /* Staging.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Staging.xcconfig; sourceTree = "<group>"; };
@@ -100,6 +102,8 @@
 		C0FFEE0000000000000000C0 /* Config */ = {
 			isa = PBXGroup;
 			children = (
+				2D137207304C036D002A96B5 /* Info.plist */,
+				2D137208304C036D002A96B5 /* Secrets.xcconfig */,
 				C0FFEE0000000000000000C4 /* Shared.xcconfig */,
 				C0FFEE0000000000000000C1 /* Development.xcconfig */,
 				C0FFEE0000000000000000C2 /* Staging.xcconfig */,

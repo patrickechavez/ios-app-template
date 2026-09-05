@@ -24,7 +24,9 @@ APP_URL_SCHEME = apptemplate-dev
 // API
 
 // "//" is a comment here, so escape the double slash as /$()/
-API_BASE_URL = https:/$()/api-dev.example.com
+API_BASE_URL = https:/$()/hqentpdwutdevlxxrths.supabase.co
+
+SUPABASE_ANON_KEY = $(DEV_SUPABASE_ANON_KEY)
 
 // Short, so failures show up fast
 API_TIMEOUT_SECONDS = 20
