@@ -496,7 +496,7 @@
     "Reviews" : {
       "comment" : "Button that opens the item reviews screen\nTitle of the item reviews screen"
     },
-    "Reviews for item %lld" : {
+    "Reviews for item %@" : {
       "comment" : "Placeholder line on the item reviews screen"
     },
     "Search" : {
@@ -717,6 +717,9 @@
           }
         }
       }
+    },
+    "This isn't available yet." : {
+      "comment" : "Error shown when a feature has no backend support"
     },
     "This version of the app is no longer supported. Please update." : {
       "comment" : "Error shown when the app build is too old for the API",
