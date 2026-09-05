@@ -18,12 +18,17 @@ nonisolated struct SupabaseUserRepository: UserRepository {
 
     private let api: any APIClient
 
+    // currentUser() ends up identical to Live's version now that User
+    // decodes Supabase's shape directly — delegate rather than repeat it.
+    private let live: LiveUserRepository
+
     init(api: any APIClient) {
         self.api = api
+        self.live = LiveUserRepository(api: api)
     }
 
     func currentUser() async throws -> User {
-        try await api.get(APIRoute.Auth.currentUser)
+        try await live.currentUser()
     }
 
     func updateProfile(_ user: User) async throws -> User {
