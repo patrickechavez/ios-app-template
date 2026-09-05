@@ -90,7 +90,7 @@ struct ItemDetailView: View {
 #Preview {
     PreviewHost { dependencies in
         NavigationStack {
-            ItemDetailView(viewModel: dependencies.makeItemDetailViewModel(id: 1))
+            ItemDetailView(viewModel: dependencies.makeItemDetailViewModel(id: "1"))
         }
         .environment(Router<HomeRoute>())
     }

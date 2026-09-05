@@ -9,10 +9,10 @@ import Foundation
 protocol ItemRepository: Sendable {
     func items(_ request: PageRequest) async throws -> Page<Item>
     func search(_ term: String, page: PageRequest) async throws -> Page<Item>
-    func item(id: Int) async throws -> Item
+    func item(id: String) async throws -> Item
     func create(_ draft: ItemDraft) async throws -> Item
-    func update(id: Int, draft: ItemDraft) async throws -> Item
-    func delete(id: Int) async throws
+    func update(id: String, draft: ItemDraft) async throws -> Item
+    func delete(id: String) async throws
 }
 
 extension ItemRepository {
@@ -40,7 +40,7 @@ nonisolated struct LiveItemRepository: ItemRepository {
         return try await api.get(APIRoute.Items.search, query: query)
     }
 
-    func item(id: Int) async throws -> Item {
+    func item(id: String) async throws -> Item {
         try await api.get(APIRoute.Items.detail(id))
     }
 
@@ -48,11 +48,11 @@ nonisolated struct LiveItemRepository: ItemRepository {
         try await api.post(APIRoute.Items.list, body: draft)
     }
 
-    func update(id: Int, draft: ItemDraft) async throws -> Item {
+    func update(id: String, draft: ItemDraft) async throws -> Item {
         try await api.patch(APIRoute.Items.detail(id), body: draft)
     }
 
-    func delete(id: Int) async throws {
+    func delete(id: String) async throws {
         try await api.delete(APIRoute.Items.detail(id))
     }
 }

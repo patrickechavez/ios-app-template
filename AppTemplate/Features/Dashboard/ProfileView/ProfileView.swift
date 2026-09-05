@@ -116,7 +116,7 @@ struct ProfileView: View {
 
             LabeledContent {
 
-                Text(user.id, format: .number.grouping(.never))
+                Text(verbatim: user.id.uuidString)
             } label: {
                 Text("User ID", comment: "Label for the user ID row on the profile screen")
             }

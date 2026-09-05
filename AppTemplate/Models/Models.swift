@@ -59,7 +59,9 @@ struct RegisterResponse: Decodable, Sendable {
 }
 
 struct User: Codable, Identifiable, Equatable, Sendable {
-    let id: Int
+    // Supabase Auth always issues a UUID for this — Foundation's UUID
+    // decodes it straight from the JSON string, no custom coding needed.
+    let id: UUID
     let username: String
     let email: String
     let firstName: String
@@ -117,7 +119,9 @@ struct DeviceRegistration: Encodable, Sendable {
 }
 
 struct Item: Codable, Identifiable, Equatable, Hashable, Sendable {
-    let id: Int
+    // UUID, matching a Postgres table's default primary key — change to
+    // Int only if your table actually uses a serial/bigserial id.
+    let id: String
     let title: String
     let description: String
     let price: Double

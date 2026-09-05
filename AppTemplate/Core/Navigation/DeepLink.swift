@@ -9,7 +9,7 @@ import os
 
 enum DeepLink: Equatable, Sendable {
     case home
-    case item(id: Int)
+    case item(id: String)
     case profile
     case settings
     case resetPassword(token: String)
@@ -83,9 +83,8 @@ struct DeepLinkParser: Sendable {
 
         case "items", "item":
 
-            guard segments.count > 1 else { return .home }
-            guard let id = Int(segments[1]) else { return nil }
-            return .item(id: id)
+            guard segments.count > 1, !segments[1].isEmpty else { return .home }
+            return .item(id: segments[1])
 
         case "profile", "me", "account":
             return .profile
