@@ -103,7 +103,7 @@ final class SessionManager {
     /// says who it happened to rather than just what happened.
     private func setCurrentUser(_ user: User?) {
         currentUser = user
-        crashes.setUser(id: user.map { String($0.id) })
+        crashes.setUser(id: user.map { $0.id.uuidString })
     }
 
     func dismissServiceStatus() {

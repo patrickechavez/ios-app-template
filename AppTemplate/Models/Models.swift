@@ -53,12 +53,12 @@ struct RegisterRequest: Encodable, Sendable {
 }
 
 struct RegisterResponse: Decodable, Sendable {
-    let id: Int
+    let id: UUID
     let username: String
 }
 
 struct User: Codable, Identifiable, Equatable, Sendable {
-    let id: Int
+    let id: UUID
     let username: String
     let email: String
     let firstName: String
@@ -116,7 +116,7 @@ struct DeviceRegistration: Encodable, Sendable {
 }
 
 struct Item: Codable, Identifiable, Equatable, Hashable, Sendable {
-    let id: Int
+    let id: UUID
     let title: String
     let description: String
     let price: Double

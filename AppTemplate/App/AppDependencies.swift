@@ -146,7 +146,7 @@ final class AppDependencies {
         ItemDetailViewModel(item: item, repository: items)
     }
 
-    func makeItemDetailViewModel(id: Int) -> ItemDetailViewModel {
+    func makeItemDetailViewModel(id: UUID) -> ItemDetailViewModel {
         ItemDetailViewModel(itemID: id, repository: items)
     }
 
