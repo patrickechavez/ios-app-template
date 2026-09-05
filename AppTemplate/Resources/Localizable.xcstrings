@@ -43,6 +43,9 @@
     "Blocked Users" : {
       "comment" : "Button that opens the blocked users screen\nTitle of the blocked users screen"
     },
+    "Cancel" : {
+      "comment" : "Dismisses the date picker without choosing"
+    },
     "Cancelled." : {
       "comment" : "A request was cancelled",
       "extractionState" : "manual",
@@ -169,8 +172,11 @@
         }
       }
     },
+    "Date of birth" : {
+      "comment" : "Label for the date of birth field"
+    },
     "Done" : {
-      "comment" : "Button that dismisses the example sheet"
+      "comment" : "Button that dismisses the example sheet\nConfirms the chosen date"
     },
     "Edit Profile" : {
       "comment" : "Title of the placeholder edit-profile screen",
@@ -516,6 +522,9 @@
           }
         }
       }
+    },
+    "Select" : {
+      "comment" : "Placeholder for a date field"
     },
     "Send Reset Link" : {
       "comment" : "Button that requests a password reset email",
