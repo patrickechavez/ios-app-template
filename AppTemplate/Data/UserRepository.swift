@@ -35,7 +35,7 @@ nonisolated struct LiveUserRepository: UserRepository {
     }
 
     func updateProfile(_ user: User) async throws -> User {
-        try await api.patch(APIRoute.Users.profile(user.id.uuidString), body: user)
+        try await api.patch(APIRoute.Users.profile(user.id), body: user)
     }
 
     func uploadAvatar(_ image: UIImage, compression: ImageCompression) async throws -> User {

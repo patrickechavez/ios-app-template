@@ -22,7 +22,7 @@ enum APIRoute {
 
     enum Users {
         static let avatar = "user/avatar"
-        static func profile(_ id: String) -> String { "users/\(id)" }
+        static func profile(_ id: UUID) -> String { "users/\(id.uuidString)" }
     }
 
     enum System {
@@ -39,6 +39,6 @@ enum APIRoute {
     enum Items {
         static let list = "items"
         static let search = "items/search"
-        static func detail(_ id: String) -> String { "items/\(id)" }
+        static func detail(_ id: UUID) -> String { "items/\(id.uuidString)" }
     }
 }
