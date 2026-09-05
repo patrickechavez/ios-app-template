@@ -93,11 +93,14 @@ struct LiveTokenRefresher: TokenRefreshing {
     }
 
     func refresh(using refreshToken: String) async throws -> AuthTokens {
-        let response: AuthResponse = try await api.post(
+        let endpoint = Endpoint(
             APIRoute.Auth.refresh,
-            body: RefreshRequest(refreshToken: refreshToken),
+            method: .post,
+            query: [URLQueryItem(name: "grant_type", value: "refresh_token")],
+            body: try .json(SupabaseRefreshRequest(refreshToken: refreshToken)),
             requiresAuth: false
         )
+        let response: SupabaseAuthResponse = try await api.send(endpoint)
         return response.tokens
     }
 }
