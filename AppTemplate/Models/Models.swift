@@ -53,8 +53,7 @@ struct RegisterRequest: Encodable, Sendable {
 }
 
 struct RegisterResponse: Decodable, Sendable {
-    // A String, not Int — some backends (Supabase included) assign UUIDs.
-    let id: String
+    let id: UUID
     let username: String
 }
 
