@@ -105,11 +105,15 @@ final class AppDependencies {
             ? SupabaseAuthRepository(api: api)
             : LiveAuthRepository(api: api)
 
+        let items: any ItemRepository = supabaseAPIKey != nil
+            ? SupabaseItemRepository(api: api)
+            : LiveItemRepository(api: api)
+
         return AppDependencies(
             session: sessionManager,
             auth: auth,
             users: users,
-            items: LiveItemRepository(api: api),
+            items: items,
             imageLoader: ImageLoader.shared,
             tokenStore: tokenStore,
             deepLinks: DeepLinkParser(),
