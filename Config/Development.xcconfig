@@ -24,7 +24,7 @@ APP_URL_SCHEME = apptemplate-dev
 // API
 
 // "//" is a comment here, so escape the double slash as /$()/
-API_BASE_URL = https:/$()/dummyjson.com
+API_BASE_URL = https:/$()/api-dev.example.com
 
 // Short, so failures show up fast
 API_TIMEOUT_SECONDS = 20
