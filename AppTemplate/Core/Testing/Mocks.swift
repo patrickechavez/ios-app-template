@@ -13,11 +13,13 @@ enum SampleData {
 
     static let user = User(
         id: UUID(uuidString: "00000000-0000-0000-0000-000000000001")!,
-        username: "raven",
         email: "raven@example.com",
-        firstName: "Raven",
-        lastName: "Solis",
-        image: nil
+        userMetadata: User.UserMetadata(
+            username: "raven",
+            firstName: "Raven",
+            lastName: "Solis",
+            image: nil
+        )
     )
 
     static let tokens = AuthTokens(

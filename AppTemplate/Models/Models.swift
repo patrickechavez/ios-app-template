@@ -57,23 +57,46 @@ struct RegisterResponse: Decodable, Sendable {
     let username: String
 }
 
+// Mirrors Supabase Auth's real user object exactly: id and email sit at
+// the top level, everything from signup's `data` comes back nested under
+// user_metadata with the same keys it was sent with.
 struct User: Codable, Identifiable, Equatable, Sendable {
     // Supabase Auth always issues a UUID for this — Foundation's UUID
     // decodes it straight from the JSON string, no custom coding needed.
     let id: UUID
-    let username: String
     let email: String
-    let firstName: String
-    let lastName: String
-    let image: String?
+    let userMetadata: UserMetadata
+
+    struct UserMetadata: Codable, Equatable, Sendable {
+        let username: String
+        let firstName: String
+        let lastName: String
+        let image: String?
+
+        enum CodingKeys: String, CodingKey {
+            case username
+            case firstName = "first_name"
+            case lastName = "last_name"
+            case image
+        }
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case email
+        case userMetadata = "user_metadata"
+    }
 
     var fullName: String {
 
-        PersonNameComponents(givenName: firstName, familyName: lastName).formatted()
+        PersonNameComponents(
+            givenName: userMetadata.firstName,
+            familyName: userMetadata.lastName
+        ).formatted()
     }
 
     var initials: String {
-        [firstName, lastName]
+        [userMetadata.firstName, userMetadata.lastName]
             .compactMap(\.first)
             .map(String.init)
             .joined()
@@ -81,7 +104,7 @@ struct User: Codable, Identifiable, Equatable, Sendable {
     }
 
     var avatarURL: URL? {
-        image.flatMap(URL.init(string:))
+        userMetadata.image.flatMap(URL.init(string:))
     }
 }
 

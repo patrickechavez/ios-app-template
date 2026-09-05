@@ -109,7 +109,7 @@ struct ProfileView: View {
     private func accountSection(_ user: User) -> some View {
         Section {
             LabeledContent {
-                Text(user.username)
+                Text(user.userMetadata.username)
             } label: {
                 Text("Username", comment: "Label for the username row on the profile screen")
             }
