@@ -10,7 +10,10 @@ import UIKit
 // Speaks Supabase Auth's user object instead of a generic REST backend.
 // Profile fields live in auth.users.user_metadata — no separate table —
 // so both reading and writing go through the same /auth/v1/user endpoint
-// the client already uses for the signed-in session.
+// the client already uses for the signed-in session. User itself now
+// mirrors that shape, so reads need no translation — only the update
+// *request* still needs its own shape (see SupabaseUpdateUserRequest
+// below), since Supabase expects {"data": {...}}, not User's own shape.
 nonisolated struct SupabaseUserRepository: UserRepository {
 
     private let api: any APIClient
@@ -20,8 +23,7 @@ nonisolated struct SupabaseUserRepository: UserRepository {
     }
 
     func currentUser() async throws -> User {
-        let response: SupabaseUserResponse = try await api.get(APIRoute.Auth.currentUser)
-        return response.user
+        try await api.get(APIRoute.Auth.currentUser)
     }
 
     func updateProfile(_ user: User) async throws -> User {
@@ -29,14 +31,13 @@ nonisolated struct SupabaseUserRepository: UserRepository {
         // change-email confirmation flow even when it hasn't changed.
         let body = SupabaseUpdateUserRequest(
             data: SupabaseUpdateUserRequest.Metadata(
-                firstName: user.firstName,
-                lastName: user.lastName,
-                username: user.username
+                firstName: user.userMetadata.firstName,
+                lastName: user.userMetadata.lastName,
+                username: user.userMetadata.username
             )
         )
         let endpoint = try Endpoint(APIRoute.Auth.currentUser, method: .put, body: .json(body))
-        let response: SupabaseUserResponse = try await api.send(endpoint)
-        return response.user
+        return try await api.send(endpoint)
     }
 
     func uploadAvatar(_ image: UIImage, compression: ImageCompression) async throws -> User {
@@ -52,8 +53,8 @@ nonisolated struct SupabaseUserRepository: UserRepository {
     }
 }
 
-// MARK: - Wire types
-
+// The one shape User itself can't represent — Supabase's update-user
+// request nests changed fields under "data", not User's own layout.
 private struct SupabaseUpdateUserRequest: Encodable {
     let data: Metadata
 
@@ -67,42 +68,5 @@ private struct SupabaseUpdateUserRequest: Encodable {
             case lastName = "last_name"
             case username
         }
-    }
-}
-
-// Supabase's user object: id/email at the top level, everything from
-// signup's `data` nested under user_metadata with the same keys.
-private struct SupabaseUserResponse: Decodable {
-    let id: UUID
-    let email: String
-    let userMetadata: Metadata
-
-    struct Metadata: Decodable {
-        let firstName: String?
-        let lastName: String?
-        let username: String?
-
-        enum CodingKeys: String, CodingKey {
-            case firstName = "first_name"
-            case lastName = "last_name"
-            case username
-        }
-    }
-
-    enum CodingKeys: String, CodingKey {
-        case id, email
-        case userMetadata = "user_metadata"
-    }
-
-    var user: User {
-        User(
-            id: id,
-            username: userMetadata.username ?? "",
-            email: email,
-            firstName: userMetadata.firstName ?? "",
-            lastName: userMetadata.lastName ?? "",
-            // No avatar wiring yet — uploadAvatar throws .notSupported.
-            image: nil
-        )
     }
 }
