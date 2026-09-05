@@ -45,7 +45,7 @@ final class MockAuthRepository: AuthRepository, @unchecked Sendable {
 
     var loginResult: Result<AuthTokens, APIError> = .success(SampleData.tokens)
     var registerResult: Result<RegisterResponse, APIError> = .success(
-        RegisterResponse(id: 1, username: "raven")
+        RegisterResponse(id: "1", username: "raven")
     )
     var passwordResetResult: Result<Void, APIError> = .success(())
     var logoutResult: Result<Void, APIError> = .success(())
