@@ -51,6 +51,14 @@ struct RegisterView: View {
                     isRequired: true
                 )
 
+                DateField(
+                    label: String(localized: "Date of birth", comment: "Label for the date of birth field"),
+                    date: $viewModel.dateOfBirth,
+                    error: viewModel.dateOfBirthError,
+                    isRequired: true,
+                    range: viewModel.dateOfBirthRange
+                )
+
                 PasswordField(
                     text: $viewModel.password,
                     error: viewModel.passwordError,
