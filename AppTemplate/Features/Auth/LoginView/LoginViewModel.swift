@@ -11,7 +11,7 @@ import Observation
 @MainActor
 final class LoginViewModel {
 
-    var username = ""
+    var email = ""
     var password = ""
 
     let action = ActionState()
@@ -31,10 +31,10 @@ final class LoginViewModel {
     }
 
     var canSubmit: Bool {
-        !username.trimmed.isEmpty && !password.isEmpty && !action.isRunning
+        !email.trimmed.isEmpty && !password.isEmpty && !action.isRunning
     }
 
-    var usernameError: String? { action.message(for: "username") }
+    var emailError: String? { action.message(for: "email") }
     var passwordError: String? { action.message(for: "password") }
 
     var generalError: String? {
@@ -47,9 +47,9 @@ final class LoginViewModel {
 
         analytics.track("login_attempt")
 
-        let credentials = (username: username.trimmed, password: password)
+        let credentials = (email: email.trimmed, password: password)
         let tokens = await action.run { [auth] in
-            try await auth.login(username: credentials.username, password: credentials.password)
+            try await auth.login(username: credentials.email, password: credentials.password)
         }
 
         guard let tokens else {
