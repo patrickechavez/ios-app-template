@@ -44,7 +44,8 @@ nonisolated struct LiveAuthRepository: AuthRepository {
                 firstName: request.firstName,
                 lastName: request.lastName,
                 username: request.username,
-                dateOfBirth: request.dateOfBirth
+                dateOfBirth: request.dateOfBirth,
+                phone: request.phone
             )
         )
         let response: SupabaseSignUpResponse = try await api.post(
@@ -107,12 +108,16 @@ private struct SupabaseSignUpRequest: Encodable {
         let lastName: String
         let username: String
         let dateOfBirth: String
+        // In metadata, not top-level — a top-level "phone" would start
+        // Supabase's phone-based signup instead of just storing it.
+        let phone: String?
 
         enum CodingKeys: String, CodingKey {
             case firstName = "first_name"
             case lastName = "last_name"
             case username
             case dateOfBirth = "date_of_birth"
+            case phone
         }
     }
 }

@@ -16,6 +16,8 @@ final class RegisterViewModel {
     var email = ""
     var username = ""
     var dateOfBirth: Date?
+    var phoneCountry: Country?
+    var phoneNumber = ""
     var password = ""
 
     let action = ActionState()
@@ -66,6 +68,14 @@ final class RegisterViewModel {
 
     var dateOfBirthError: String? { action.message(for: "dateOfBirth") }
 
+    var phoneError: String? { action.message(for: "phone") }
+
+    // Optional — nil unless a number was actually typed. E.164 for the wire.
+    private var phone: String? {
+        guard let phoneCountry, phoneNumber.contains(where: \.isNumber) else { return nil }
+        return phoneCountry.e164(nationalNumber: phoneNumber)
+    }
+
     var generalError: String? {
         guard action.error?.validationErrors == nil else { return nil }
         return action.errorMessage
@@ -90,6 +100,7 @@ final class RegisterViewModel {
             email: email.trimmed,
             username: username.trimmed,
             dateOfBirth: Self.dateOfBirthFormatter.string(from: dateOfBirth),
+            phone: phone,
             password: password
         )
 
