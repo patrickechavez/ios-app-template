@@ -64,8 +64,8 @@ struct PickerField<Item: Hashable>: View {
     }
 }
 
-// Kept file-private: nothing outside PickerField presents it.
-private struct SelectionSheet<Item: Hashable>: View {
+// Also used by PhoneField for its country picker.
+struct SelectionSheet<Item: Hashable>: View {
 
     let title: String
     let items: [Item]

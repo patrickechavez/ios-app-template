@@ -4,8 +4,24 @@
     "" : {
 
     },
+    "—" : {
+
+    },
     "*" : {
 
+    },
+    "%@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "917 123 4567" : {
+      "comment" : "Placeholder for the phone number field"
     },
     "Account" : {
       "comment" : "Header of the account section on the profile screen",
@@ -135,6 +151,12 @@
           }
         }
       }
+    },
+    "Country" : {
+      "comment" : "Title of the country picker sheet"
+    },
+    "Country calling code" : {
+      "comment" : "Accessibility label for the country code picker"
     },
     "Create Account" : {
       "comment" : "Primary button on the registration screen",
@@ -438,6 +460,9 @@
           }
         }
       }
+    },
+    "Phone" : {
+      "comment" : "Label for the phone number field"
     },
     "Please check the highlighted fields." : {
       "comment" : "Error shown when form validation fails server-side",

@@ -59,6 +59,12 @@ struct RegisterView: View {
                     range: viewModel.dateOfBirthRange
                 )
 
+                PhoneField(
+                    country: $viewModel.phoneCountry,
+                    nationalNumber: $viewModel.phoneNumber,
+                    error: viewModel.phoneError
+                )
+
                 PasswordField(
                     text: $viewModel.password,
                     error: viewModel.passwordError,
