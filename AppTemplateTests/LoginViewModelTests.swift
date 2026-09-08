@@ -20,9 +20,9 @@ struct LoginViewModelTests {
 
     // MARK: - canSubmit
 
-    @Test func blocksSubmitWhenUsernameIsEmpty() {
+    @Test func blocksSubmitWhenEmailIsEmpty() {
         let viewModel = makeViewModel()
-        viewModel.username = ""
+        viewModel.email = ""
         viewModel.password = "hunter2"
 
         #expect(!viewModel.canSubmit)
@@ -30,7 +30,7 @@ struct LoginViewModelTests {
 
     @Test func blocksSubmitWhenPasswordIsEmpty() {
         let viewModel = makeViewModel()
-        viewModel.username = "raven"
+        viewModel.email = "raven@example.com"
         viewModel.password = ""
 
         #expect(!viewModel.canSubmit)
@@ -38,7 +38,7 @@ struct LoginViewModelTests {
 
     @Test func allowsSubmitWhenBothFieldsAreFilled() {
         let viewModel = makeViewModel()
-        viewModel.username = "raven"
+        viewModel.email = "raven@example.com"
         viewModel.password = "hunter2"
 
         #expect(viewModel.canSubmit)
@@ -48,7 +48,7 @@ struct LoginViewModelTests {
 
     @Test func successfulLoginClearsThePassword() async {
         let viewModel = makeViewModel()
-        viewModel.username = "raven"
+        viewModel.email = "raven@example.com"
         viewModel.password = "hunter2"
 
         await viewModel.signIn()
@@ -63,7 +63,7 @@ struct LoginViewModelTests {
             users: MockUserRepository()
         )
         let viewModel = LoginViewModel(auth: auth, session: session)
-        viewModel.username = "raven"
+        viewModel.email = "raven@example.com"
         viewModel.password = "hunter2"
 
         await viewModel.signIn()
@@ -71,32 +71,32 @@ struct LoginViewModelTests {
         #expect(session.state == .authenticated)
     }
 
-    @Test func trimsWhitespaceFromTheUsernameBeforeSendingIt() async {
+    @Test func trimsWhitespaceFromTheEmailBeforeSendingIt() async {
         let auth = MockAuthRepository()
         let viewModel = makeViewModel(auth: auth)
-        viewModel.username = "  raven  "
+        viewModel.email = "  raven@example.com  "
         viewModel.password = "hunter2"
 
         await viewModel.signIn()
 
-        #expect(auth.lastLoginUsername == "raven")
+        #expect(auth.lastLoginUsername == "raven@example.com")
     }
 
     // MARK: - Failure path
 
-    @Test func usernameValidationErrorSurfacesOnTheUsernameField() async {
+    @Test func emailValidationErrorSurfacesOnTheEmailField() async {
         let auth = MockAuthRepository()
         auth.loginResult = .failure(.validation(ValidationErrors(
-            fields: ["username": ["No account with that username."]],
+            fields: ["email": ["No account with that email."]],
             summary: nil
         )))
         let viewModel = makeViewModel(auth: auth)
-        viewModel.username = "ghost"
+        viewModel.email = "ghost@example.com"
         viewModel.password = "hunter2"
 
         await viewModel.signIn()
 
-        #expect(viewModel.usernameError == "No account with that username.")
+        #expect(viewModel.emailError == "No account with that email.")
     }
 
     @Test func passwordValidationErrorSurfacesOnThePasswordField() async {
@@ -106,7 +106,7 @@ struct LoginViewModelTests {
             summary: nil
         )))
         let viewModel = makeViewModel(auth: auth)
-        viewModel.username = "raven"
+        viewModel.email = "raven@example.com"
         viewModel.password = "wrong"
 
         await viewModel.signIn()
@@ -118,7 +118,7 @@ struct LoginViewModelTests {
         let auth = MockAuthRepository()
         auth.loginResult = .failure(.unauthorized())
         let viewModel = makeViewModel(auth: auth)
-        viewModel.username = "raven"
+        viewModel.email = "raven@example.com"
         viewModel.password = "hunter2"
 
         await viewModel.signIn()
@@ -129,11 +129,11 @@ struct LoginViewModelTests {
     @Test func generalErrorIsSuppressedWhenFieldErrorsExist() async {
         let auth = MockAuthRepository()
         auth.loginResult = .failure(.validation(ValidationErrors(
-            fields: ["username": ["No account with that username."]],
+            fields: ["email": ["No account with that email."]],
             summary: nil
         )))
         let viewModel = makeViewModel(auth: auth)
-        viewModel.username = "ghost"
+        viewModel.email = "ghost@example.com"
         viewModel.password = "hunter2"
 
         await viewModel.signIn()
@@ -146,7 +146,7 @@ struct LoginViewModelTests {
     @Test func signInDoesNothingWhenCanSubmitIsFalse() async {
         let auth = MockAuthRepository()
         let viewModel = makeViewModel(auth: auth)
-        viewModel.username = ""
+        viewModel.email = ""
         viewModel.password = ""
 
         await viewModel.signIn()
@@ -157,7 +157,7 @@ struct LoginViewModelTests {
     @Test func aSecondSubmitWhileTheFirstIsRunningIsIgnored() async {
         let auth = MockAuthRepository()
         let viewModel = makeViewModel(auth: auth)
-        viewModel.username = "raven"
+        viewModel.email = "raven@example.com"
         viewModel.password = "hunter2"
 
         async let first: Void = viewModel.signIn()
