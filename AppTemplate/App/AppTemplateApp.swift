@@ -63,6 +63,7 @@ struct AppTemplateApp: App {
                         PrivacyShieldView()
                     }
                 }
+                .environmentRibbon()
 
                 .onOpenURL { url in
                     navigator.open(url, isAuthenticated: dependencies.session.state == .authenticated)
