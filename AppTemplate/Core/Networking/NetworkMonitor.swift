@@ -47,6 +47,6 @@ final class NetworkMonitor {
         guard connected != isConnected else { return }
         isConnected = connected
 
-        AppLogger.network.notice("Connectivity \(connected ? "restored" : "lost", privacy: .public)")
+        AppLogger.network.breadcrumb("Connectivity \(connected ? "restored" : "lost")")
     }
 }

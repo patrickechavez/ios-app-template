@@ -53,14 +53,14 @@ final class SessionManager {
         do {
             setCurrentUser(try await users.currentUser())
             state = .authenticated
-            AppLogger.lifecycle.notice("Resumed existing session")
+            AppLogger.lifecycle.breadcrumb("Resumed existing session")
         } catch let error as APIError where error.invalidatesSession {
 
             await signOut()
         } catch {
 
-            AppLogger.lifecycle.notice(
-                "Could not verify session (\(error.localizedDescription, privacy: .public)); continuing optimistically."
+            AppLogger.lifecycle.breadcrumb(
+                "Could not verify session (\(error.localizedDescription)); continuing optimistically."
             )
             state = .authenticated
         }
@@ -87,7 +87,7 @@ final class SessionManager {
         await tokenStore.clear()
         setCurrentUser(nil)
         state = .unauthenticated
-        AppLogger.lifecycle.notice("Signed out")
+        AppLogger.lifecycle.breadcrumb("Signed out")
     }
 
     func refreshCurrentUser() async {
@@ -114,7 +114,7 @@ final class SessionManager {
     /// session, unless it has already ended.
     func expire() async {
         guard state == .authenticated else { return }
-        AppLogger.auth.notice("Session expired — returning to sign-in")
+        AppLogger.auth.breadcrumb("Session expired — returning to sign-in")
         await signOut()
     }
 
