@@ -40,8 +40,8 @@ struct AuthInterceptor: RequestInterceptor {
         let current = await coordinator.currentTokens()
 
         guard let current, current.canRefresh else {
-            AppLogger.auth.notice(
-                "401 on \(endpoint.path, privacy: .public) with no way to refresh — ending session."
+            AppLogger.auth.breadcrumb(
+                "401 on \(endpoint.path) with no way to refresh — ending session."
             )
             await coordinator.invalidate()
             return .fail(error)
