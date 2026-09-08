@@ -7,8 +7,7 @@
 import SwiftUI
 import UIKit
 
-// Password field with an eye button to show or hide what was typed.
-// Set isNewPassword when signing up so the OS offers a strong password.
+// Password field with a reveal button; set isNewPassword when signing up.
 struct PasswordField: View {
 
     @Binding var text: String

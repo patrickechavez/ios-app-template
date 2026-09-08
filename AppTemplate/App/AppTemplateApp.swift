@@ -14,8 +14,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-        // Not in App.init() — the reporters aren't installed yet there. Debug
-        // builds always have a debugger attached, so reporting would be noise.
+        // Not in App.init() — reporters aren't installed yet, and debug always attaches.
         #if !DEBUG
         reportDeviceSecurity()
         #endif
@@ -46,8 +45,7 @@ struct AppTemplateApp: App {
 
     @Environment(\.scenePhase) private var scenePhase
 
-    // Covers the screen while the app is away, so the switcher snapshot stays
-    // private. Driven by transitions — see updateShield.
+    // Covers the screen while the app is away; see updateShield.
     @State private var isShielded = false
 
     init() {
@@ -93,9 +91,7 @@ struct AppTemplateApp: App {
         }
     }
 
-    /// Raised on the way out and lowered on the way back. Keying off "not
-    /// active" instead would hold it through the whole return animation, and
-    /// would also flash it on a cold launch, which starts inactive.
+    /// Raised on the way out, lowered on the way back — "not active" would linger.
     private func updateShield(from previous: ScenePhase, to phase: ScenePhase) {
         switch phase {
         case .active:

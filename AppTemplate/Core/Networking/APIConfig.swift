@@ -27,16 +27,12 @@ enum APIConfig {
 
     static let isLoggingEnabled: Bool = bool("API_LOGGING_ENABLED")
 
-    /// Unused, and not a kill switch — the live gate is a 426 from the server,
-    /// which fires whatever this is set to. Kept for a client-side version
-    /// check, alongside `VersionCheck`.
+    /// Unused — the live gate is a 426 from the server, not this flag.
     static let isForceUpdateEnabled: Bool = bool("FORCE_UPDATE_ENABLED")
 
     static let isCertificatePinningEnabled: Bool = bool("CERT_PINNING_ENABLED")
 
-    /// Allowed public-key (SPKI) hashes for certificate pinning. Empty unless
-    /// pinning is enabled — and the pinner then falls back to default TLS
-    /// trust — so leaving the list blank is a safe, no-op default.
+    /// SPKI hashes for pinning; blank is a safe no-op that falls back to TLS trust.
     static let pinnedPublicKeyHashes: [String] = {
         guard isCertificatePinningEnabled else { return [] }
         return (string("PINNED_PUBLIC_KEY_HASHES") ?? "")

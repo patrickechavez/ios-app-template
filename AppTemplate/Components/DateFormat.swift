@@ -6,8 +6,7 @@
 
 import SwiftUI
 
-// The display patterns DateField can render, so call sites pick a case
-// instead of retyping a format string. Use .custom for anything not listed.
+// Patterns DateField can render; use .custom for anything not listed.
 enum DateFormat: Hashable, Sendable {
 
     // Numeric dates
@@ -64,8 +63,7 @@ enum DateFormat: Hashable, Sendable {
         }
     }
 
-    // Keeps the picker in step with the pattern: a format that prints a time
-    // has to let the user choose one.
+    // A format that prints a time has to let the user choose one.
     var components: DatePicker.Components {
         switch self {
         case .time12, .time24, .time24WithSeconds:

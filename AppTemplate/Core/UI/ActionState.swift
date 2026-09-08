@@ -6,13 +6,7 @@
 
 import Foundation
 
-/// Runs a single user action — sign in, save, upload — and turns whatever is
-/// thrown into something the form can show. For one-shot buttons; use
-/// `LoadState` for screens that load content.
-///
-///     let user = await action.run { [repository] in
-///         try await repository.uploadAvatar(image)
-///     }
+/// Runs one user action for a button; use `LoadState` for screens that load.
 @Observable
 @MainActor
 final class ActionState {
@@ -42,8 +36,7 @@ final class ActionState {
         error = nil
     }
 
-    /// Runs `operation`. Returns nil when one is already running or it
-    /// failed — check `error` and `fieldErrors` to tell the user why.
+    /// Returns nil when one is already running or it failed — see `error`.
     @discardableResult
     func run<T>(_ operation: @Sendable () async throws -> T) async -> T? {
         guard !isRunning else { return nil }
