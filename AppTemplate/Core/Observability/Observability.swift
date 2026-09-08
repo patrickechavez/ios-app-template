@@ -17,5 +17,6 @@ enum Observability {
     static func install(analytics: any AnalyticsTracking, crashes: any CrashReporting) {
         Self.analytics = analytics
         Self.crashes = crashes
+        Breadcrumb.install(crashes)
     }
 }
