@@ -13,11 +13,6 @@ struct PrivacyShieldView: View {
         Rectangle()
             .fill(Color("LaunchBackground"))
             .ignoresSafeArea()
-            .overlay {
-                Image(systemName: "lock.fill")
-                    .font(.system(size: 40))
-                    .foregroundStyle(Theme.Color.secondaryText)
-            }
             .accessibilityHidden(true)
     }
 }
