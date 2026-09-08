@@ -31,7 +31,7 @@ final class AppNavigator {
     @discardableResult
     func open(_ url: URL, isAuthenticated: Bool) -> Bool {
         guard let link = parser.parse(url) else {
-            AppLogger.navigation.notice("Ignoring unhandled URL: \(url.absoluteString, privacy: .public)")
+            AppLogger.navigation.breadcrumb("Ignoring unhandled URL: \(url.absoluteString)")
             return false
         }
         open(link, isAuthenticated: isAuthenticated)
@@ -48,7 +48,7 @@ final class AppNavigator {
     func open(_ link: DeepLink, isAuthenticated: Bool) {
         guard isAuthenticated || link.isPublic else {
 
-            AppLogger.navigation.notice("Deferring deep link until signed in: \(link.path, privacy: .public)")
+            AppLogger.navigation.breadcrumb("Deferring deep link until signed in: \(link.path)")
             pendingLink = link
             return
         }
@@ -59,7 +59,7 @@ final class AppNavigator {
     func resumePendingLink() {
         guard let link = pendingLink else { return }
         pendingLink = nil
-        AppLogger.navigation.notice("Resuming deferred deep link: \(link.path, privacy: .public)")
+        AppLogger.navigation.breadcrumb("Resuming deferred deep link: \(link.path)")
         apply(link)
     }
 
