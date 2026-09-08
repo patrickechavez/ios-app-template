@@ -137,9 +137,6 @@
         }
       }
     },
-    "Close" : {
-      "comment" : "Button that dismisses the example full-screen cover"
-    },
     "Confirm password" : {
       "comment" : "Label for the password confirmation field",
       "extractionState" : "manual",
@@ -278,9 +275,6 @@
         }
       }
     },
-    "Full-Screen Cover" : {
-      "comment" : "Title of the example full-screen cover"
-    },
     "Hide password" : {
       "comment" : "Accessibility label for the password reveal toggle",
       "extractionState" : "manual",
@@ -355,18 +349,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Loading more items"
-          }
-        }
-      }
-    },
-    "More" : {
-      "comment" : "Accessibility label for the overflow menu",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "More"
           }
         }
       }
@@ -587,21 +569,6 @@
         }
       }
     },
-    "Sheet" : {
-      "comment" : "Title of the example sheet screen"
-    },
-    "Show Cover" : {
-      "comment" : "Menu item that presents an example full-screen cover",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Show Cover"
-          }
-        }
-      }
-    },
     "Show password" : {
       "comment" : "Accessibility label for the password reveal toggle",
       "extractionState" : "manual",
@@ -610,18 +577,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Show password"
-          }
-        }
-      }
-    },
-    "Show Sheet" : {
-      "comment" : "Menu item that presents an example sheet",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Show Sheet"
           }
         }
       }
