@@ -25,8 +25,7 @@ struct OfflineBanner: View {
 
 extension View {
 
-    /// Drops an offline banner in from the top while `monitor` reports no
-    /// connection. Placed above the safe area so it never covers content.
+    /// Drops in above the safe area while `monitor` reports no connection.
     func offlineBanner(_ monitor: NetworkMonitor) -> some View {
         safeAreaInset(edge: .top, spacing: 0) {
             if !monitor.isConnected {

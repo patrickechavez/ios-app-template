@@ -127,8 +127,7 @@ struct ProfileView: View {
 
     private var settingsSection: some View {
         Section {
-            // Settings is its own tab now, so this switches tabs rather than
-            // pushing a screen onto the profile stack.
+            // Settings is its own tab, so this switches tabs instead of pushing.
             Button {
                 navigator.selectedTab = .settings
             } label: {

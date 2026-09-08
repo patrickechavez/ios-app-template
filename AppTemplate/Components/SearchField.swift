@@ -6,8 +6,7 @@
 
 import SwiftUI
 
-// Standalone search box with a magnifier and a clear button.
-// For a search bar attached to a navigation bar, use SwiftUI's .searchable instead.
+// Standalone search box; use SwiftUI's .searchable for a navigation-bar one.
 struct SearchField: View {
 
     @Binding var text: String

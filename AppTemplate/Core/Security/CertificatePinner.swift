@@ -37,14 +37,12 @@ final class CertificatePinner: NSObject, URLSessionDelegate, @unchecked Sendable
         } else {
             AppLogger.network.error("Certificate pinning rejected the server's identity.")
 
-            // Fails the task as cancelled, which the client tells apart from its
-            // own cancellation. `.rejectProtectionSpace` gave no usable signal.
+            // Fails as cancelled; the client tells this apart from its own cancellation.
             completionHandler(.cancelAuthenticationChallenge, nil)
         }
     }
 
-    /// The base64 SHA-256 hash of the leaf certificate's SPKI, matching
-    /// `openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | base64`.
+    /// Base64 SHA-256 of the leaf's SPKI: `openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | base64`.
     static func spkiHash(for serverTrust: SecTrust) -> String? {
         guard
             // The chain runs leaf first, and the leaf is what gets pinned.
@@ -63,12 +61,8 @@ final class CertificatePinner: NSObject, URLSessionDelegate, @unchecked Sendable
         return pinnedHashes.contains(hash)
     }
 
-    /// Rebuilds the SubjectPublicKeyInfo DER for RSA and EC keys so the hash
-    /// matches the SPKI produced by OpenSSL, rather than the raw key bytes.
-    ///
-    /// The key type is inferred from the bytes: an EC public key is an
-    /// uncompressed point starting with `0x04`, while an RSA public key is a
-    /// DER SEQUENCE starting with `0x30`.
+    /// Rebuilds the SPKI DER for RSA and EC keys so the hash matches OpenSSL's.
+    /// EC keys start with `0x04`, RSA keys with a `0x30` DER SEQUENCE.
     private static func spkiDER(for publicKey: SecKey) -> Data? {
         guard let keyData = SecKeyCopyExternalRepresentation(publicKey, nil) as Data? else {
             return nil

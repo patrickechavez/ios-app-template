@@ -30,8 +30,7 @@ struct EnvironmentRibbon: View {
 
 extension View {
 
-    /// Pins a ribbon naming the environment to the top-right corner. Compiled
-    /// out of Production entirely, so the flag can only ever hide it.
+    /// Top-right ribbon naming the environment; compiled out of Production.
     func environmentRibbon() -> some View {
         #if PRODUCTION
         self

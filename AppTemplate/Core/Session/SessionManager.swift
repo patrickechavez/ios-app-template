@@ -99,8 +99,7 @@ final class SessionManager {
         setCurrentUser(user)
     }
 
-    /// Keeps the crash reporter's user ID in step with the session, so a report
-    /// says who it happened to rather than just what happened.
+    /// Keeps the crash reporter's user ID in step with the session.
     private func setCurrentUser(_ user: User?) {
         currentUser = user
         crashes.setUser(id: user.map { $0.id.uuidString })
@@ -110,16 +109,14 @@ final class SessionManager {
         serviceStatus = nil
     }
 
-    /// Called by the networking layer when tokens can't be refreshed. Ends the
-    /// session, unless it has already ended.
+    /// Called when tokens can't be refreshed; ends the session if it hasn't ended.
     func expire() async {
         guard state == .authenticated else { return }
         AppLogger.auth.breadcrumb("Session expired — returning to sign-in")
         await signOut()
     }
 
-    /// Called by the networking layer when the backend says the app is too old
-    /// or is down for maintenance.
+    /// Called when the backend says the app is too old or down for maintenance.
     func show(serviceStatus: ServiceStatus) {
         self.serviceStatus = serviceStatus
     }

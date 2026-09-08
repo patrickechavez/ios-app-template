@@ -108,8 +108,7 @@ private struct SupabaseSignUpRequest: Encodable {
         let lastName: String
         let username: String
         let dateOfBirth: String
-        // In metadata, not top-level — a top-level "phone" would start
-        // Supabase's phone-based signup instead of just storing it.
+        // In metadata, not top-level — a top-level "phone" starts phone-based signup.
         let phone: String?
 
         enum CodingKeys: String, CodingKey {

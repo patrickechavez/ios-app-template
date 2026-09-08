@@ -22,11 +22,9 @@ extension ItemRepository {
     }
 }
 
-// Speaks PostgREST, Supabase's auto-generated table API. Three quirks vs
-// a typical REST API: mounted at rest/v1/, a single row is a query filter
-// (?id=eq.<uuid>) that comes back as an array unless unwrapped via
-// Accept: application/vnd.pgrst.object+json, and INSERT/UPDATE return an
-// empty body unless asked for one via Prefer: return=representation.
+// Speaks PostgREST, Supabase's table API, mounted at rest/v1/.
+// One row is a filter (?id=eq.<uuid>), an array unless Accept: ...object+json.
+// Writes return an empty body unless Prefer: return=representation.
 nonisolated struct LiveItemRepository: ItemRepository {
 
     private let api: any APIClient
@@ -40,8 +38,7 @@ nonisolated struct LiveItemRepository: ItemRepository {
         try await api.get(Self.path, query: request.queryItems)
     }
 
-    // TODO: PostgREST ignores `q` — needs an `or=(title.ilike.*term*,...)`
-    // filter. Returns every row unfiltered for now.
+    // TODO: PostgREST ignores `q` — returns every row until an `or=(...ilike...)` filter.
     func search(_ term: String, page: PageRequest) async throws -> Page<Item> {
         var query = page.queryItems
         query.append(URLQueryItem(name: "q", value: term))

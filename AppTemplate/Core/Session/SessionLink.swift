@@ -6,11 +6,8 @@
 
 import Foundation
 
-/// Lets the networking layer reach SessionManager to end or interrupt a
-/// session. The reference is weak because SessionManager reaches the network
-/// too, and two strong references would keep each other alive forever.
-///
-/// It is set once, in `AppDependencies.live()`, after SessionManager exists.
+/// Lets the networking layer end a session. Weak, or the two would keep each
+/// other alive; set once in `AppDependencies.live()`.
 @MainActor
 final class SessionLink {
 

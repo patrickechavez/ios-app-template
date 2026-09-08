@@ -6,8 +6,7 @@
 
 import Foundation
 
-// A dialling country for PhoneField. Only the calling code is stored —
-// the flag and localised name are both derived from the region code.
+// A dialling country; flag and name are derived from the region code.
 struct Country: Hashable, Identifiable, Sendable {
 
     // ISO 3166-1 alpha-2, e.g. "PH".
@@ -39,8 +38,7 @@ struct Country: Hashable, Identifiable, Sendable {
         .map(Country.init(regionCode:callingCode:))
         .sorted { $0.name.localizedCompare($1.name) == .orderedAscending }
 
-    // The device's Region setting — a sensible default, not the user's
-    // actual location. They can always pick a different one.
+    // The device's Region setting — a default, not the user's actual location.
     static var deviceDefault: Country? {
         guard let region = Locale.current.region?.identifier else { return nil }
         return all.first { $0.regionCode == region }

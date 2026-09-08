@@ -23,8 +23,7 @@ struct RegisterResponse: Decodable, Sendable {
     let username: String
 }
 
-// Mirrors Supabase Auth's user object: id/email top-level, the rest
-// nested under user_metadata with the same keys sent at signup.
+// Mirrors Supabase Auth: id/email top-level, the rest under user_metadata.
 struct User: Codable, Identifiable, Equatable, Sendable {
     let id: UUID
     let email: String
