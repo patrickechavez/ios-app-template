@@ -238,6 +238,7 @@ enum APIError: LocalizedError, Equatable, Sendable {
     @MainActor
     static func classify(_ error: any Error) -> APIError {
         let apiError = error as? APIError ?? .from(transportError: error)
+        Breadcrumb.record("Request failed: \(apiError)")
         if apiError.isWorthReporting { Observability.crashes.record(apiError) }
         return apiError
     }
