@@ -6,7 +6,9 @@
 import Testing
 @testable import AppTemplate
 
-// Serialized because Breadcrumb holds one process-wide reporter.
+// Serialized because Breadcrumb holds one process-wide reporter. Other suites
+// still run alongside, so these assert on what the spy contains, not on it
+// being the only thing recorded.
 @Suite(.serialized)
 struct BreadcrumbTests {
 
@@ -27,7 +29,7 @@ struct BreadcrumbTests {
 
         Breadcrumb.record("Signed in")
 
-        #expect(spy.messages == ["Signed in"])
+        #expect(spy.messages.contains("Signed in"))
     }
 
     @Test func leavesABreadcrumbForEveryLoggedEvent() {
@@ -38,6 +40,7 @@ struct BreadcrumbTests {
         AppLogger.auth.breadcrumb("Access token refreshed")
         AppLogger.lifecycle.breadcrumb("Signed out")
 
-        #expect(spy.messages == ["Access token refreshed", "Signed out"])
+        #expect(spy.messages.contains("Access token refreshed"))
+        #expect(spy.messages.contains("Signed out"))
     }
 }
