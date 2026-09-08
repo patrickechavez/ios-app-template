@@ -31,8 +31,7 @@ actor ImageLoader: ImageLoading {
 
     private let session: URLSession
 
-    // Longest edge an image is decoded to. Covers a full-width image on the
-    // biggest phone; past that is memory we could never show.
+    // Longest edge we decode to — past a full-width phone image is wasted memory.
     private let maxPixelSize: CGFloat
 
     // One download per URL, however many callers ask for it at once.
@@ -61,9 +60,7 @@ actor ImageLoader: ImageLoading {
         return URLSession(configuration: configuration)
     }
 
-    // Cached bytes are used as they are, without asking the server whether they
-    // are stale — the picture at an image URL does not change. When it does,
-    // like a new avatar, the caller evicts that URL.
+    // Cached bytes are used as-is; callers evict the URL when the image changes.
     private static func request(for url: URL) -> URLRequest {
         var request = URLRequest(url: url)
         request.cachePolicy = .returnCacheDataElseLoad
@@ -93,8 +90,7 @@ actor ImageLoader: ImageLoading {
                 throw ImageLoaderError.invalidImageData
             }
 
-            // Image CDNs often send `no-store`, which would leave the disk empty.
-            // Save it ourselves; URLCache still enforces the size limit.
+            // CDNs often send `no-store`; save it ourselves and let URLCache cap the size.
             urlCache?.storeCachedResponse(
                 CachedURLResponse(response: response, data: data, storagePolicy: .allowed),
                 for: request
@@ -131,8 +127,7 @@ actor ImageLoader: ImageLoading {
         memory.removeAllObjects()
     }
 
-    // Decodes straight to the size we draw at. `.frame(width: 56)` only scales
-    // the drawing — the full bitmap would still sit in memory.
+    // Decodes to the size we draw at; `.frame` alone would keep the full bitmap.
     private static func decode(_ data: Data, maxPixelSize: CGFloat) -> UIImage? {
         let options: [CFString: Any] = [
             kCGImageSourceCreateThumbnailFromImageAlways: true,

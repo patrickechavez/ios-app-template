@@ -74,8 +74,7 @@ extension LoadState where Value: Collection {
 
 // MARK: - Loading and failing
 //
-// View models that load content conform to `LoadableViewModel` and call
-// `perform` / `fail` instead of hand-writing do/catch blocks.
+// `LoadableViewModel` conformers call `perform` / `fail` instead of do/catch.
 
 @MainActor
 protocol LoadableViewModel: AnyObject {
@@ -87,14 +86,9 @@ protocol LoadableViewModel: AnyObject {
 
 extension LoadableViewModel {
 
-    /// Runs `operation` and moves `state` through `.loading` to
-    /// `.loaded`, `.empty`, or `.failed`.
-    ///
+    /// Moves `state` through `.loading` to `.loaded`, `.empty`, or `.failed`.
     /// `isRefresh` keeps old content on screen when a reload fails.
-    ///
-    /// Named `perform`, not `load`, so it never shadows a view model's own
-    /// `load()` — that overlap reads like recursion, and becomes recursion
-    /// if the closure is ever left off.
+    /// Named `perform` so it never shadows a view model's own `load()`.
     func perform(
         isRefresh: Bool = false,
         isEmpty: @escaping (Value) -> Bool = { _ in false },
@@ -113,8 +107,7 @@ extension LoadableViewModel {
         }
     }
 
-    /// Shared failure path for loads that also update other properties
-    /// (like pagination cursors).
+    /// Shared failure path for loads that also update other properties.
     func fail(with error: any Error, isRefresh: Bool = false) {
         let apiError = APIError.classify(error)
 

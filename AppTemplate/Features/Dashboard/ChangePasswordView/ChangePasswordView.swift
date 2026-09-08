@@ -13,8 +13,7 @@ struct ChangePasswordView: View {
 
     var body: some View {
         List {
-            // Clears every screen in this tab only. The other tabs stay where
-            // they were.
+            // Clears every screen in this tab only; other tabs stay put.
             Button {
                 router.popToRoot()
             } label: {

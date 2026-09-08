@@ -6,8 +6,7 @@
 
 import SwiftUI
 
-// Tap the row to open a calendar sheet. The binding is optional so the field
-// can show a placeholder until the user actually picks a date.
+// Tap to open a calendar sheet; the optional binding allows a placeholder.
 struct DateField: View {
 
     let label: String
@@ -48,8 +47,7 @@ struct DateField: View {
 
         let formatter = DateFormatter()
         formatter.dateFormat = format.pattern
-        // Current locale, not POSIX: the pattern fixes the field order, and month
-        // and weekday names should still read in the user's language.
+        // Current locale, not POSIX — month and weekday names stay localised.
         formatter.locale = Locale.current
         self.formatter = formatter
     }
