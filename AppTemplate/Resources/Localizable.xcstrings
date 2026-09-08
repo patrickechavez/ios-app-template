@@ -4,8 +4,24 @@
     "" : {
 
     },
+    "—" : {
+
+    },
     "*" : {
 
+    },
+    "%@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "917 123 4567" : {
+      "comment" : "Placeholder for the phone number field"
     },
     "Account" : {
       "comment" : "Header of the account section on the profile screen",
@@ -44,7 +60,7 @@
       "comment" : "Button that opens the blocked users screen\nTitle of the blocked users screen"
     },
     "Cancel" : {
-      "comment" : "Dismisses the date picker without choosing"
+      "comment" : "Dismisses the date picker without choosing\nDismisses the picker without choosing"
     },
     "Cancelled." : {
       "comment" : "A request was cancelled",
@@ -135,6 +151,12 @@
           }
         }
       }
+    },
+    "Country" : {
+      "comment" : "Title of the country picker sheet"
+    },
+    "Country calling code" : {
+      "comment" : "Accessibility label for the country code picker"
     },
     "Create Account" : {
       "comment" : "Primary button on the registration screen",
@@ -439,6 +461,9 @@
         }
       }
     },
+    "Phone" : {
+      "comment" : "Label for the phone number field"
+    },
     "Please check the highlighted fields." : {
       "comment" : "Error shown when form validation fails server-side",
       "extractionState" : "manual",
@@ -496,7 +521,7 @@
     "Reviews" : {
       "comment" : "Button that opens the item reviews screen\nTitle of the item reviews screen"
     },
-    "Reviews for item %lld" : {
+    "Reviews for item %@" : {
       "comment" : "Placeholder line on the item reviews screen"
     },
     "Search" : {
@@ -524,7 +549,7 @@
       }
     },
     "Select" : {
-      "comment" : "Placeholder for a date field"
+      "comment" : "Placeholder for a date field\nPlaceholder for a picker field"
     },
     "Send Reset Link" : {
       "comment" : "Button that requests a password reset email",
