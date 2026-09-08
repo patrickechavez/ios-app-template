@@ -56,6 +56,9 @@ enum APIConfig {
 
     static let urlScheme: String = string("APP_URL_SCHEME") ?? "apptemplate"
 
+    /// Only ever hides the ribbon — Production compiles it out regardless.
+    static let isEnvironmentBannerEnabled: Bool = bool("ENV_BANNER_ENABLED")
+
     private static func string(_ key: String) -> String? {
         guard let value = Bundle.main.object(forInfoDictionaryKey: key) as? String else { return nil }
         let trimmed = value.trimmingCharacters(in: .whitespaces)
