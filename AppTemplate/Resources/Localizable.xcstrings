@@ -60,7 +60,7 @@
       "comment" : "Button that opens the blocked users screen\nTitle of the blocked users screen"
     },
     "Cancel" : {
-      "comment" : "Dismisses the date picker without choosing\nDismisses the picker without choosing"
+      "comment" : "Button that dismisses the favorite sheet without saving\nDismisses the date picker without choosing\nDismisses the picker without choosing"
     },
     "Cancelled." : {
       "comment" : "A request was cancelled",
@@ -137,6 +137,9 @@
         }
       }
     },
+    "Close" : {
+      "comment" : "Button that dismisses the favorite full-screen cover"
+    },
     "Confirm password" : {
       "comment" : "Label for the password confirmation field",
       "extractionState" : "manual",
@@ -154,6 +157,9 @@
     },
     "Country calling code" : {
       "comment" : "Accessibility label for the country code picker"
+    },
+    "Covers the whole screen" : {
+      "comment" : "Body of the favorite full-screen cover"
     },
     "Create Account" : {
       "comment" : "Primary button on the registration screen",
@@ -195,7 +201,10 @@
       "comment" : "Label for the date of birth field"
     },
     "Done" : {
-      "comment" : "Button that dismisses the example sheet\nConfirms the chosen date"
+      "comment" : "Confirms the chosen date"
+    },
+    "Edit Note" : {
+      "comment" : "Title of the favorite sheet screen"
     },
     "Edit Profile" : {
       "comment" : "Title of the placeholder edit-profile screen",
@@ -208,6 +217,9 @@
           }
         }
       }
+    },
+    "Edit the note in a sheet" : {
+      "comment" : "Row that presents the favorite sheet"
     },
     "Email" : {
       "comment" : "Label for the email field",
@@ -274,6 +286,9 @@
           }
         }
       }
+    },
+    "Full-Screen Cover" : {
+      "comment" : "Title of the favorite full-screen cover"
     },
     "Hide password" : {
       "comment" : "Accessibility label for the password reveal toggle",
@@ -395,6 +410,9 @@
     "Not found" : {
 
     },
+    "Note" : {
+      "comment" : "Label for the note field on the favorite sheet"
+    },
     "Notes" : {
       "comment" : "Title of the favorite notes screen"
     },
@@ -415,6 +433,9 @@
     },
     "Open a favorite" : {
       "comment" : "Row that opens the favorite detail screen"
+    },
+    "Open a full-screen cover" : {
+      "comment" : "Row that presents the favorite full-screen cover"
     },
     "Password" : {
       "comment" : "Label for the password field",
@@ -505,6 +526,9 @@
     },
     "Reviews for item %@" : {
       "comment" : "Placeholder line on the item reviews screen"
+    },
+    "Save" : {
+      "comment" : "Button that saves the note and dismisses the favorite sheet"
     },
     "Search" : {
       "comment" : "Placeholder for a search field",
