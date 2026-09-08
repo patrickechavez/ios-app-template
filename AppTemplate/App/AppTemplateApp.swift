@@ -46,6 +46,10 @@ struct AppTemplateApp: App {
 
     @Environment(\.scenePhase) private var scenePhase
 
+    // Covers the screen while the app is away, so the switcher snapshot stays
+    // private. Driven by transitions — see updateShield.
+    @State private var isShielded = false
+
     init() {
         let dependencies = AppDependencies.live()
         _dependencies = State(wrappedValue: dependencies)
@@ -59,7 +63,7 @@ struct AppTemplateApp: App {
             RootView(dependencies: dependencies)
                 .environment(navigator)
                 .overlay {
-                    if scenePhase != .active {
+                    if isShielded {
                         PrivacyShieldView()
                     }
                 }
@@ -79,12 +83,29 @@ struct AppTemplateApp: App {
                         break
                     }
                 }
-                .onChange(of: scenePhase) { _, phase in
+                .onChange(of: scenePhase, initial: true) { previous, phase in
+                    updateShield(from: previous, to: phase)
                     handle(phase)
                 }
                 .onReceive(ScreenshotDetector.publisher) { _ in
                     dependencies.analytics.track("screenshot_captured")
                 }
+        }
+    }
+
+    /// Raised on the way out and lowered on the way back. Keying off "not
+    /// active" instead would hold it through the whole return animation, and
+    /// would also flash it on a cold launch, which starts inactive.
+    private func updateShield(from previous: ScenePhase, to phase: ScenePhase) {
+        switch phase {
+        case .active:
+            isShielded = false
+        case .background:
+            isShielded = true
+        case .inactive:
+            isShielded = previous == .active
+        @unknown default:
+            isShielded = false
         }
     }
 
