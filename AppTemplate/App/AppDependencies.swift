@@ -160,6 +160,4 @@ final class AppDependencies {
         )
     }
 
-    func makeHomeSheetViewModel() -> HomeSheetViewModel { HomeSheetViewModel() }
-    func makeHomeCoverViewModel() -> HomeCoverViewModel { HomeCoverViewModel() }
 }

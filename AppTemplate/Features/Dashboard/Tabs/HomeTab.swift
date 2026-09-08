@@ -6,16 +6,11 @@
 
 import SwiftUI
 
-private enum HomeSheet: Identifiable { case example; var id: Self { self } }
-private enum HomeCover: Identifiable { case example; var id: Self { self } }
-
 struct HomeTab: View {
 
     let dependencies: AppDependencies
 
     @Environment(AppNavigator.self) private var navigator
-    @State private var sheet: HomeSheet?
-    @State private var cover: HomeCover?
 
     @SceneStorage("home.path") private var storedPath: Data?
 
@@ -32,45 +27,14 @@ struct HomeTab: View {
                         ItemReviewsView(itemID: id)
                     }
                 }
-                .toolbar { modalMenu }
         }
         .environment(navigator.home)
         .appAlert($router.alert)
-        .sheet(item: $sheet) { route in
-            switch route {
-            case .example: HomeSheetView(viewModel: dependencies.makeHomeSheetViewModel())
-            }
-        }
-        .fullScreenCover(item: $cover) { route in
-            switch route {
-            case .example: HomeCoverView(viewModel: dependencies.makeHomeCoverViewModel())
-            }
-        }
         .task {
             navigator.home.restore(from: storedPath)
         }
         .onChange(of: navigator.home.path) { _, _ in
             storedPath = navigator.home.restorationData
-        }
-    }
-
-    private var modalMenu: some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing) {
-            Menu {
-                Button {
-                    sheet = .example
-                } label: {
-                    Text("Show Sheet", comment: "Menu item that presents an example sheet")
-                }
-                Button {
-                    cover = .example
-                } label: {
-                    Text("Show Cover", comment: "Menu item that presents an example full-screen cover")
-                }
-            } label: {
-                Image(systemName: "ellipsis.circle")
-            }
-            .accessibilityLabel(Text("More", comment: "Accessibility label for the overflow menu"))
         }
     }
 }
