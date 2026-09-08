@@ -7,6 +7,10 @@
 import Foundation
 
 /// Runs one user action for a button; use `LoadState` for screens that load.
+///
+///     let user = await action.run { [repository] in
+///         try await repository.uploadAvatar(image)
+///     }
 @Observable
 @MainActor
 final class ActionState {
