@@ -9,8 +9,9 @@ import os
 
 struct LoggingInterceptor: RequestInterceptor {
 
+    // Authorization is logged in full; logging is on in Development only.
     private static let redactedHeaders: Set<String> = [
-        "authorization", "cookie", "set-cookie", "x-api-key", "proxy-authorization"
+        "cookie", "set-cookie", "x-api-key", "proxy-authorization"
     ]
 
     private static let redactedBodyKeys: Set<String> = [
