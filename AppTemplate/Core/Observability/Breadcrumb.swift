@@ -7,12 +7,10 @@
 import Foundation
 import os
 
-// Console logs never reach a crash report, so notable events are mirrored into
-// the crash reporter as breadcrumbs.
+// Console logs never reach a crash report, so notable events go to both.
 enum Breadcrumb {
 
-    // Held here rather than behind @MainActor Observability because most
-    // breadcrumbs are dropped off the main actor.
+    // Not behind @MainActor Observability — most breadcrumbs drop off the main actor.
     private static let reporter = OSAllocatedUnfairLock<any CrashReporting>(
         initialState: NoopCrashReporter()
     )

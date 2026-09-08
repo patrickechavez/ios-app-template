@@ -6,8 +6,7 @@
 
 import SwiftUI
 
-// Tap the row to pick from a searchable sheet. Items only need Hashable, so
-// plain arrays of String work as well as model types.
+// Tap to pick from a searchable sheet; items only need Hashable.
 struct PickerField<Item: Hashable>: View {
 
     let label: String

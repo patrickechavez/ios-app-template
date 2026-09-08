@@ -7,8 +7,7 @@
 import SwiftUI
 import UIKit
 
-// Country calling code plus a national number, in one field. Combine the two
-// into E.164 for the wire with country.e164(nationalNumber:).
+// Calling code plus national number; combine with country.e164(nationalNumber:).
 struct PhoneField: View {
 
     @Binding var country: Country?

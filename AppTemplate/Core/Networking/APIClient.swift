@@ -207,10 +207,7 @@ nonisolated final class URLSessionAPIClient: APIClient {
         )
     }
 
-    /// Runs a request through the session's delegate so certificate-pinning
-    /// server-trust challenges reach `CertificatePinner`. `session.data(for:)`
-    /// would bypass the delegate, so a completion-handler task is bridged with
-    /// a continuation instead.
+    /// Goes through the session delegate so pinning challenges reach the pinner.
     private func data(for request: URLRequest) async throws -> (Data, URLResponse) {
         let box = DataTaskBox()
         return try await withTaskCancellationHandler {
@@ -218,8 +215,7 @@ nonisolated final class URLSessionAPIClient: APIClient {
                 let dataTask = session.dataTask(with: request) { data, response, error in
                     if let error {
 
-                        // A cancellation we didn't ask for came from the pinner
-                        // rejecting the server, which cancels the challenge.
+                        // A cancellation we didn't ask for came from the pinner rejecting the server.
                         let isPinRejection = (error as? URLError)?.code == .cancelled
                             && !box.wasCancelled
                         continuation.resume(throwing: isPinRejection ? APIError.serverTrustFailed : error)
@@ -284,8 +280,7 @@ private final class DataTaskBox: Sendable {
 
     private let state = OSAllocatedUnfairLock(initialState: State())
 
-    /// Whether the surrounding async task cancelled this request. A cancellation
-    /// that didn't come from here came from the session delegate.
+    /// Whether the surrounding task cancelled this; anything else was the delegate.
     var wasCancelled: Bool {
         state.withLock { $0.isCancelled }
     }

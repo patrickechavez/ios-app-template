@@ -19,8 +19,7 @@ struct FavoriteDetailView: View {
                 Text("Next", comment: "Button that opens the next screen")
             }
 
-            // The arrow in the navigation bar already does this. Use the code
-            // version when you need to leave after doing something, like saving.
+            // The back arrow already does this; use code when leaving after an action.
             Button {
                 router.pop()
             } label: {

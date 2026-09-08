@@ -176,9 +176,7 @@ enum APIError: LocalizedError, Equatable, Sendable {
         return true
     }
 
-    /// A stable, low-cardinality label for analytics. Deliberately drops the
-    /// associated values — server messages and validation details can carry
-    /// user data, which has no business in an analytics payload.
+    /// Stable analytics label; drops associated values, which can carry user data.
     var analyticsReason: String {
         switch self {
         case .offline: "offline"
@@ -202,9 +200,7 @@ enum APIError: LocalizedError, Equatable, Sendable {
         }
     }
 
-    /// Errors that mean the app or the backend is broken, as opposed to a
-    /// network condition or a rejection the user can act on. Only these are
-    /// worth a non-fatal crash report — the rest would drown it in noise.
+    /// Errors meaning the app or backend is broken — the only ones worth reporting.
     var isWorthReporting: Bool {
         switch self {
         case .invalidURL, .invalidResponse, .decodingFailed, .serverTrustFailed:
@@ -243,8 +239,7 @@ enum APIError: LocalizedError, Equatable, Sendable {
         }
     }
 
-    /// One funnel for every catch block: converts any thrown error to its
-    /// typed form and reports the ones that mean the app or backend is broken.
+    /// One funnel for every catch block: types the error and reports the broken ones.
     @MainActor
     static func classify(_ error: any Error) -> APIError {
         let apiError = error as? APIError ?? .from(transportError: error)

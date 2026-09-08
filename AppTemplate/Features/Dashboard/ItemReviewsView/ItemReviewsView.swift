@@ -18,8 +18,7 @@ struct ItemReviewsView: View {
             Text("Reviews for item \(itemID)", comment: "Placeholder line on the item reviews screen")
                 .foregroundStyle(.secondary)
 
-            // Clears every screen in this tab only. The other tabs stay where
-            // they were.
+            // Clears every screen in this tab only; other tabs stay put.
             Button {
                 router.popToRoot()
             } label: {
