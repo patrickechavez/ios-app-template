@@ -6,7 +6,12 @@
 
 import Foundation
 
-protocol AppRoute: Hashable, Codable, Sendable {}
+protocol AppRoute: Hashable, Codable, Sendable, Identifiable {}
+
+// Lets a route bind straight to .sheet(item:) and .fullScreenCover(item:).
+extension AppRoute {
+    var id: Self { self }
+}
 
 enum AppTab: String, Hashable, Codable, CaseIterable, Identifiable, Sendable {
     case home
@@ -50,6 +55,9 @@ enum HomeRoute: AppRoute {
 enum FavoritesRoute: AppRoute {
     case favoriteDetail
     case favoriteNotes
+    // Carries its input; the result comes back through the coordinator.
+    case favoriteSheet(note: String)
+    case favoriteCover
 }
 
 enum ProfileRoute: AppRoute {

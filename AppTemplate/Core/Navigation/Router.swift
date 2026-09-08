@@ -15,6 +15,10 @@ final class Router<Route: AppRoute> {
 
     var alert: AlertState?
 
+    var sheet: Route?
+
+    var cover: Route?
+
     init(path: [Route] = []) {
         self.path = path
     }
@@ -48,6 +52,22 @@ final class Router<Route: AppRoute> {
 
     func present(alert: AlertState) {
         self.alert = alert
+    }
+
+    func present(sheet route: Route) {
+        sheet = route
+    }
+
+    func present(cover route: Route) {
+        cover = route
+    }
+
+    func dismissSheet() {
+        sheet = nil
+    }
+
+    func dismissCover() {
+        cover = nil
     }
 
     var restorationData: Data? {
