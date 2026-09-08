@@ -42,7 +42,7 @@ final class CertificatePinner: NSObject, URLSessionDelegate, @unchecked Sendable
         }
     }
 
-    /// Base64 SHA-256 of the leaf's SPKI: `openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | base64`.
+    /// Base64 SHA-256 of the leaf certificate's SPKI — the README shows how to get one.
     static func spkiHash(for serverTrust: SecTrust) -> String? {
         guard
             // The chain runs leaf first, and the leaf is what gets pinned.
