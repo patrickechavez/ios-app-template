@@ -18,6 +18,11 @@
 	<key>API_LOGGING_ENABLED</key>
 	<string>$(API_LOGGING_ENABLED)</string>
 
+	<!-- Corner ribbon naming the environment. Never shown in Production,
+	     which compiles the ribbon out whatever this says. -->
+	<key>ENV_BANNER_ENABLED</key>
+	<string>$(ENV_BANNER_ENABLED)</string>
+
 	<!-- Deep links. APP_URL_SCHEME differs per environment so the three apps
 	     can sit on one device without fighting over the same scheme. -->
 	<key>APP_URL_SCHEME</key>
