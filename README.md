@@ -1,6 +1,6 @@
 # AppTemplate
 
-A production-ready SwiftUI app template. MVVM + Repository, Swift 6 strict concurrency, a complete auth lifecycle, and one third-party dependency — Firebase, kept behind protocol seams so the rest of the app never touches it.
+A production-ready SwiftUI app template. MVVM + Repository, Swift 6 strict concurrency, a complete auth lifecycle, and one third-party dependency - Firebase, kept behind protocol seams so the rest of the app never touches it.
 
 - iOS 17+ · Swift 6 · Xcode 26
 
@@ -22,9 +22,9 @@ The three arguments to the script:
 
 | | | |
 |---|---|---|
-| `MyApp` | required | The app name. Becomes the target, the source folder, and a Swift type, so it takes letters and digits only, starting with a letter — no spaces or hyphens. |
+| `MyApp` | required | The app name. Becomes the target, the source folder, and a Swift type, so it takes letters and digits only, starting with a letter - no spaces or hyphens. |
 | `com.acmecorp` | required | Your bundle prefix. Lowercase reverse-DNS, at least two components. |
-| `"My App"` | optional | The home screen name, quoted because it can contain spaces. Leave it off when it matches the app name — `Scripts/rename.sh Runly com.acmecorp` gives an app called Runly. |
+| `"My App"` | optional | The home screen name, quoted because it can contain spaces. Leave it off when it matches the app name - `Scripts/rename.sh Runly com.acmecorp` gives an app called Runly. |
 
 This renames the project, target, schemes, source folder, app entry point, and every file header, and rewrites the bundle IDs, display names, and deep link scheme. It needs a clean working tree, so `git checkout . && git clean -fd` undoes any run.
 
@@ -38,9 +38,9 @@ rm -rf .git && git init && git add -A && git commit -m "Initial commit"
 
 The app builds and runs as-is. Three things the script can't do for you.
 
-- **Your API** — set `API_BASE_URL` in each of the three `Config/*.xcconfig`
-- **App icon and colours** — all ship empty. See [Branding](#branding)
-- **Firebase** — *optional*. Without a `GoogleService-Info.plist` the app builds fine and analytics and crash reporting are off. See [Firebase](#firebase) to turn it on, or to remove it.
+- **Your API** - set `API_BASE_URL` in each of the three `Config/*.xcconfig`
+- **App icon and colours** - all ship empty. See [Branding](#branding)
+- **Firebase** - *optional*. Without a `GoogleService-Info.plist` the app builds fine and analytics and crash reporting are off. See [Firebase](#firebase) to turn it on, or to remove it.
 
 ```bash
 xcodebuild -scheme Development -destination 'platform=iOS Simulator,name=iPhone 16' build
@@ -48,7 +48,7 @@ xcodebuild -scheme Development -destination 'platform=iOS Simulator,name=iPhone 
 
 ## Removing the sample
 
-`Item` is a worked example, not something to build on. Keep it while you write your first real feature — it's the only place pagination, `LoadState`, and the repository pattern are shown working end to end — then delete it.
+`Item` is a worked example, not something to build on. Keep it while you write your first real feature - it's the only place pagination, `LoadState`, and the repository pattern are shown working end to end - then delete it.
 
 ```
 Features/Dashboard/HomeView/          the list screen
@@ -62,18 +62,18 @@ Then remove `makeHomeViewModel`, `makeItemDetailViewModel` (both overloads), and
 
 ## What's inside
 
-- **Networking** — one send path with verb helpers, typed errors, server-message parsing, interceptors, retry with backoff
-- **Auth** — access + refresh tokens, single-flight refresh, 401 to refresh to retry to sign-out, Keychain storage
-- **Navigation** — typed routes, deep links, universal links, deferred links, force-update and maintenance gates
-- **UI** — design system, unified `LoadState`, empty / error / skeleton states, accessibility identifiers, localization via String Catalog
-- **Images** — bounded two-tier cache with LRU eviction and in-flight de-duplication
-- **Connectivity** — `NWPathMonitor` behind an offline banner, so a failing screen reads as a connection problem
-- **Observability** — analytics and crash reporting behind protocols, with Firebase adapters; non-fatals recorded with no per-feature wiring
-- **Build** — three environments, privacy manifest, one-command rename
+- **Networking** - one send path with verb helpers, typed errors, server-message parsing, interceptors, retry with backoff
+- **Auth** - access + refresh tokens, single-flight refresh, 401 to refresh to retry to sign-out, Keychain storage
+- **Navigation** - typed routes, deep links, universal links, deferred links, force-update and maintenance gates
+- **UI** - design system, unified `LoadState`, empty / error / skeleton states, accessibility identifiers, localization via String Catalog
+- **Images** - bounded two-tier cache with LRU eviction and in-flight de-duplication
+- **Connectivity** - `NWPathMonitor` behind an offline banner, so a failing screen reads as a connection problem
+- **Observability** - analytics and crash reporting behind protocols, with Firebase adapters; non-fatals recorded with no per-feature wiring
+- **Build** - three environments, privacy manifest, one-command rename
 
-The service gates are driven by HTTP status, not by a version endpoint. A `426` blocks the app behind "Update Required" and a `503` behind "Back Soon", both routed through `SessionEventBus`. `APIConfig.isForceUpdateEnabled` and the `VersionCheck` model belong to a client-side version-comparison approach that isn't built — delete them, or wire them to a version endpoint if you prefer that shape.
+The service gates are driven by HTTP status, not by a version endpoint. A `426` blocks the app behind "Update Required" and a `503` behind "Back Soon", both routed through `SessionEventBus`. `APIConfig.isForceUpdateEnabled` and the `VersionCheck` model belong to a client-side version-comparison approach that isn't built - delete them, or wire them to a version endpoint if you prefer that shape.
 
-Scaffolded but **not** wired — push notifications, see below.
+Scaffolded but **not** wired - push notifications, see below.
 
 ## Architecture
 
@@ -143,21 +143,21 @@ Values live in `Config/*.xcconfig` and reach code through `APIConfig`. Never har
 
 ## Secrets
 
-Client SDK keys you'd rather not publish go in `Config/Secrets.xcconfig`, which is gitignored. Copy `Secrets.example.xcconfig`, drop the `.example`, fill it in — all three environments already `#include?` it, and the `?` means a clone without the file still builds.
+Client SDK keys you'd rather not publish go in `Config/Secrets.xcconfig`, which is gitignored. Copy `Secrets.example.xcconfig`, drop the `.example`, fill it in - all three environments already `#include?` it, and the `?` means a clone without the file still builds.
 
 Everything there is substituted into Info.plist and ships inside the IPA. It keeps values out of git, not off a device. Server-side keys belong on your server.
 
 ## Hardening
 
-Four opt-in protections. Two of them — jailbreak and anti-debug — are heuristic and report-only by design, so they flag rather than block.
+Four opt-in protections. Two of them - jailbreak and anti-debug - are heuristic and report-only by design, so they flag rather than block.
 
-> **Pinning is optional.** The app is fully safe and behaves like a normal HTTPS app while `PINNED_PUBLIC_KEY_HASHES` is left blank — an empty list means default TLS trust, no extra rules. You only need to fill it in once you have a real production backend and want the extra protection.
+> **Pinning is optional.** The app is fully safe and behaves like a normal HTTPS app while `PINNED_PUBLIC_KEY_HASHES` is left blank - an empty list means default TLS trust, no extra rules. You only need to fill it in once you have a real production backend and want the extra protection.
 
 ### Certificate pinning
 
 Pins the server's **public key** (SPKI), not the certificate, so a certificate renewal with the same key doesn't break the app.
 
-`CERT_PINNING_ENABLED = NO` in all three configs, because there is no backend to pin against yet. Keep it off in Development and Staging even after you have one, so local proxies (Charles, Proxyman) and self-signed certs still work. Turn it on in Production only once `PINNED_PUBLIC_KEY_HASHES` has real values — enabling it with an empty list claims pinning while performing none.
+`CERT_PINNING_ENABLED = NO` in all three configs, because there is no backend to pin against yet. Keep it off in Development and Staging even after you have one, so local proxies (Charles, Proxyman) and self-signed certs still work. Turn it on in Production only once `PINNED_PUBLIC_KEY_HASHES` has real values - enabling it with an empty list claims pinning while performing none.
 
 1. Generate the base64 SPKI hash for each endpoint's leaf certificate:
 
@@ -171,11 +171,11 @@ Pins the server's **public key** (SPKI), not the certificate, so a certificate r
 
 2. Paste the output into `PINNED_PUBLIC_KEY_HASHES` in `Config/Production.xcconfig`, comma-separated for multiple keys.
 
-The pinner compares that to the hash the running app computes from the server's presented certificate. Leave the list empty and it falls back to default TLS trust — a safe no-op until you add real hashes. A failed match surfaces as a `.serverTrustFailed` error.
+The pinner compares that to the hash the running app computes from the server's presented certificate. Leave the list empty and it falls back to default TLS trust - a safe no-op until you add real hashes. A failed match surfaces as a `.serverTrustFailed` error.
 
 ### Screen-capture / app-switcher privacy
 
-A `PrivacyShieldView` covers the UI whenever the app is not active, so the task-switcher snapshot is blank. iOS can't prevent screenshots, so instead the app detects them (`ScreenshotDetector`) and records a `screenshot_captured` analytics event — capture is observable, not blockable.
+A `PrivacyShieldView` covers the UI whenever the app is not active, so the task-switcher snapshot is blank. iOS can't prevent screenshots, so instead the app detects them (`ScreenshotDetector`) and records a `screenshot_captured` analytics event - capture is observable, not blockable.
 
 ### Jailbreak detection
 
@@ -183,11 +183,11 @@ A `PrivacyShieldView` covers the UI whenever the app is not active, so the task-
 
 ### Anti-debug
 
-`DebuggerDetector` reads the `P_TRACED` process flag via `sysctl` and reports an attached debugger. Deliberately no `ptrace(PT_DENY_ATTACH)` — that reads as anti-tampering to App Review and can get a submission rejected. Obfuscation beyond the existing Release symbol-stripping is intentionally not attempted.
+`DebuggerDetector` reads the `P_TRACED` process flag via `sysctl` and reports an attached debugger. Deliberately no `ptrace(PT_DENY_ATTACH)` - that reads as anti-tampering to App Review and can get a submission rejected. Obfuscation beyond the existing Release symbol-stripping is intentionally not attempted.
 
 ## Firebase
 
-Analytics and Crashlytics via SPM, behind protocols — only `FirebaseObservability.swift` imports Firebase.
+Analytics and Crashlytics via SPM, behind protocols - only `FirebaseObservability.swift` imports Firebase.
 
 **It is optional.** With no `GoogleService-Info.plist` the app builds and runs; analytics and crash reporting fall back to no-ops and the build prints:
 
@@ -210,7 +210,7 @@ AppTemplate/Firebase/
 └── Production/GoogleService-Info.plist
 ```
 
-Nothing else — `FirebaseBootstrap.start()` finds the plist at launch and installs the Firebase adapters. Add only the environments you need; the others keep building without it.
+Nothing else - `FirebaseBootstrap.start()` finds the plist at launch and installs the Firebase adapters. Add only the environments you need; the others keep building without it.
 
 The folders are absent from git because the plists are gitignored.
 
@@ -224,7 +224,7 @@ For a project that doesn't use Firebase:
 
 1. Delete `AppTemplate/Core/Observability/FirebaseObservability.swift`
 2. Remove the `firebase-ios-sdk` package in Xcode
-3. Delete `AppTemplate/Firebase/` and both build phases — `Copy GoogleService-Info.plist` and `Upload Crashlytics dSYM`
+3. Delete `AppTemplate/Firebase/` and both build phases - `Copy GoogleService-Info.plist` and `Upload Crashlytics dSYM`
 
 Nothing else changes. Every `Observability.analytics.track(...)` and `Observability.crashes.record(...)` call keeps compiling and does nothing.
 
@@ -244,7 +244,7 @@ Then change the one line in `AppDependencies.live()` that calls `FirebaseBootstr
 
 ### Push is not wired
 
-`UserRepository` declares `registerForPushNotifications(token:)` and `unregisterForPushNotifications(token:)`. **Nothing calls them**, and `FirebaseMessaging` is no longer configured — the `MessagingDelegate` conformance was removed to keep Firebase out of the app's entry point.
+`UserRepository` declares `registerForPushNotifications(token:)` and `unregisterForPushNotifications(token:)`. **Nothing calls them**, and `FirebaseMessaging` is no longer configured - the `MessagingDelegate` conformance was removed to keep Firebase out of the app's entry point.
 
 To finish it:
 
@@ -255,7 +255,7 @@ To finish it:
 - Route taps through `AppNavigator`, which already handles deep links
 - Add the **Push Notifications** capability, and upload an APNs `.p8` to each Firebase project
 
-The last one needs a paid Apple Developer membership. FCM does not replace APNs on iOS — it forwards through it, and the `.p8` authorises Firebase to do that on your behalf.
+The last one needs a paid Apple Developer membership. FCM does not replace APNs on iOS - it forwards through it, and the `.p8` authorises Firebase to do that on your behalf.
 
 ## Structure
 
@@ -283,8 +283,8 @@ Not needed to build, run, or develop against this template. The simulator needs 
 
 A paid membership is required for exactly two things.
 
-- **Push notifications** — the capability and the APNs `.p8` are both members-only
-- **Distribution** — TestFlight and the App Store
+- **Push notifications** - the capability and the APNs `.p8` are both members-only
+- **Distribution** - TestFlight and the App Store
 
 Everything else works without one, which is why push stays scaffolded rather than half-implemented.
 
