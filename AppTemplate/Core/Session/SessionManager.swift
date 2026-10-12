@@ -15,6 +15,7 @@ final class SessionManager {
     enum State: Equatable {
 
         case bootstrapping
+        case onboarding
         case unauthenticated
         case authenticated
     }
@@ -33,26 +34,32 @@ final class SessionManager {
     @ObservationIgnored private let tokenStore: any TokenStore
     @ObservationIgnored private let users: any UserRepository
     @ObservationIgnored private let crashes: any CrashReporting
+    @ObservationIgnored private let onboarding: any OnboardingStoring
+
+    // Where bootstrap landed, held back while onboarding is on screen.
+    @ObservationIgnored private var stateAfterOnboarding: State?
 
     init(
         tokenStore: any TokenStore,
         users: any UserRepository,
-        crashes: any CrashReporting = NoopCrashReporter()
+        crashes: any CrashReporting = NoopCrashReporter(),
+        onboarding: any OnboardingStoring = UserDefaultsOnboardingStore()
     ) {
         self.tokenStore = tokenStore
         self.users = users
         self.crashes = crashes
+        self.onboarding = onboarding
     }
 
     func bootstrap() async {
         guard await tokenStore.load() != nil else {
-            state = .unauthenticated
+            resolve(to: .unauthenticated)
             return
         }
 
         do {
             setCurrentUser(try await users.currentUser())
-            state = .authenticated
+            resolve(to: .authenticated)
             AppLogger.lifecycle.breadcrumb("Resumed existing session")
         } catch let error as APIError where error.invalidatesSession {
 
@@ -62,8 +69,26 @@ final class SessionManager {
             AppLogger.lifecycle.breadcrumb(
                 "Could not verify session (\(error.localizedDescription)); continuing optimistically."
             )
-            state = .authenticated
+            resolve(to: .authenticated)
         }
+    }
+
+    // Onboarding wraps the outcome rather than replacing it, so a reinstall that restored a
+    // Keychain session still shows the flow once before landing on the dashboard.
+    private func resolve(to outcome: State) {
+        guard !onboarding.hasSeen else {
+            state = outcome
+            return
+        }
+
+        stateAfterOnboarding = outcome
+        state = .onboarding
+    }
+
+    func completeOnboarding() {
+        onboarding.markSeen()
+        state = stateAfterOnboarding ?? .unauthenticated
+        stateAfterOnboarding = nil
     }
 
     func didAuthenticate(tokens: AuthTokens, user: User? = nil) async {

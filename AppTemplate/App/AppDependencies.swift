@@ -45,7 +45,10 @@ final class AppDependencies {
         self.network = network
     }
 
-    static func live(tokenStore: any TokenStore = KeychainTokenStore()) -> AppDependencies {
+    static func live(
+        tokenStore: any TokenStore = KeychainTokenStore(),
+        onboarding: any OnboardingStoring = UserDefaultsOnboardingStore()
+    ) -> AppDependencies {
         // No plist, or no Firebase at all — the no-op adapters take over.
         let (analytics, crashes) = FirebaseBootstrap.start()
             ?? (NoopAnalyticsTracker(), NoopCrashReporter())
@@ -86,7 +89,8 @@ final class AppDependencies {
         let sessionManager = SessionManager(
             tokenStore: tokenStore,
             users: users,
-            crashes: crashes
+            crashes: crashes,
+            onboarding: onboarding
         )
 
         // The one place the link is set — everything above already holds it.
@@ -120,6 +124,12 @@ final class AppDependencies {
 
         let pinner = CertificatePinner(pinnedHashes: APIConfig.pinnedPublicKeyHashes)
         return URLSession(configuration: configuration, delegate: pinner, delegateQueue: nil)
+    }
+
+    func makeOnboardingViewModel() -> OnboardingViewModel {
+        OnboardingViewModel { [session] in
+            session.completeOnboarding()
+        }
     }
 
     func makeLoginViewModel() -> LoginViewModel {

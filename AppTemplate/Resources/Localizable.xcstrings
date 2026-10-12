@@ -4,6 +4,9 @@
     "" : {
 
     },
+    "A short line about the feature that matters most." : {
+      "comment" : "Body of the second onboarding page"
+    },
     "—" : {
 
     },
@@ -22,6 +25,12 @@
     },
     "917 123 4567" : {
       "comment" : "Placeholder for the phone number field"
+    },
+    "A short line about what this app is for." : {
+      "comment" : "Body of the first onboarding page"
+    },
+    "A short line inviting the reader to begin." : {
+      "comment" : "Body of the last onboarding page"
     },
     "Account" : {
       "comment" : "Header of the account section on the profile screen",
@@ -257,6 +266,9 @@
         }
       }
     },
+    "Everything in one place" : {
+      "comment" : "Title of the second onboarding page"
+    },
     "Favorite" : {
       "comment" : "Title of the favorite detail screen"
     },
@@ -289,6 +301,9 @@
     },
     "Full-Screen Cover" : {
       "comment" : "Title of the favorite full-screen cover"
+    },
+    "Get Started" : {
+      "comment" : "Button that finishes onboarding"
     },
     "Hide password" : {
       "comment" : "Accessibility label for the password reveal toggle",
@@ -393,7 +408,7 @@
       }
     },
     "Next" : {
-      "comment" : "Button that opens the next screen"
+      "comment" : "Button that opens the next screen\nButton that moves to the next onboarding page"
     },
     "No access" : {
 
@@ -508,6 +523,9 @@
     },
     "Profile unavailable" : {
 
+    },
+    "Ready when you are" : {
+      "comment" : "Title of the last onboarding page"
     },
     "Reset Password" : {
       "comment" : "Title of the forgot-password screen",
@@ -640,6 +658,9 @@
           }
         }
       }
+    },
+    "Skip" : {
+      "comment" : "Button that dismisses onboarding without reading it"
     },
     "Something went wrong" : {
 
@@ -858,7 +879,7 @@
       }
     },
     "Welcome" : {
-      "comment" : "Title of the sign-in screen",
+      "comment" : "Title of the sign-in screen\nTitle of the first onboarding page",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {

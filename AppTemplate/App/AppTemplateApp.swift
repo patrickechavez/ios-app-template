@@ -77,7 +77,9 @@ struct AppTemplateApp: App {
                         navigator.resumePendingLink()
                     case .unauthenticated:
                         navigator.reset()
-                    case .bootstrapping:
+                    // Both hold: `reset()` clears pendingLink, so a link that arrived before
+                    // the user finished onboarding would be lost instead of resumed.
+                    case .bootstrapping, .onboarding:
                         break
                     }
                 }

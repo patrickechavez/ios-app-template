@@ -16,6 +16,10 @@ struct RootView: View {
             case .bootstrapping:
                 LaunchView()
 
+            case .onboarding:
+                OnboardingView(viewModel: dependencies.makeOnboardingViewModel())
+                    .transition(.opacity)
+
             case .unauthenticated:
                 AuthFlowView(dependencies: dependencies)
 
