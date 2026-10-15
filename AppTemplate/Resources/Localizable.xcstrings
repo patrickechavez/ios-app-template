@@ -4,9 +4,6 @@
     "" : {
 
     },
-    "A short line about the feature that matters most." : {
-      "comment" : "Body of the second onboarding page"
-    },
     "—" : {
 
     },
@@ -25,6 +22,9 @@
     },
     "917 123 4567" : {
       "comment" : "Placeholder for the phone number field"
+    },
+    "A short line about the feature that matters most." : {
+      "comment" : "Body of the second onboarding page"
     },
     "A short line about what this app is for." : {
       "comment" : "Body of the first onboarding page"
@@ -408,7 +408,7 @@
       }
     },
     "Next" : {
-      "comment" : "Button that opens the next screen\nButton that moves to the next onboarding page"
+      "comment" : "Button that moves to the next onboarding page\nButton that opens the next screen"
     },
     "No access" : {
 
@@ -879,7 +879,7 @@
       }
     },
     "Welcome" : {
-      "comment" : "Title of the sign-in screen\nTitle of the first onboarding page",
+      "comment" : "Title of the first onboarding page",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {

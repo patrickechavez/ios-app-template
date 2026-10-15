@@ -24,6 +24,9 @@ struct LoginView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: Theme.Spacing.lg) {
+                AppMark()
+                    .padding(.bottom, Theme.Spacing.md)
+
                 EmailField(
                     text: $viewModel.email,
                     error: viewModel.emailError
@@ -72,7 +75,6 @@ struct LoginView: View {
             .padding(Theme.Spacing.lg)
         }
         .scrollDismissesKeyboard(.interactively)
-        .navigationTitle(Text("Welcome", comment: "Title of the sign-in screen"))
     }
 
     private func submit() {
