@@ -69,6 +69,60 @@ struct SessionManagerTests {
         #expect(onboarding.hasSeen)
     }
 
+    // MARK: - A session ending while onboarding is on screen
+
+    // The hole this closes: `expire()` guarded on `state == .authenticated`, which is false while
+    // the real outcome is parked behind onboarding, so the token was cleared and the user was then
+    // promoted to a dashboard they had no session for.
+    @Test func expiringDuringOnboardingLandsOnSignInRatherThanAnEmptyDashboard() async {
+        let session = await makeSession(tokens: AuthTokens(accessToken: "abc123"))
+        await session.bootstrap()
+        #expect(session.state == .onboarding)
+
+        await session.expire()
+        session.completeOnboarding()
+
+        #expect(session.state == .unauthenticated)
+    }
+
+    // Losing a session in the background is not a reason to throw someone out of a screen they
+    // are part way through reading.
+    @Test func expiringDuringOnboardingDoesNotInterruptTheReader() async {
+        let session = await makeSession(tokens: AuthTokens(accessToken: "abc123"))
+        await session.bootstrap()
+
+        await session.expire()
+
+        #expect(session.state == .onboarding)
+    }
+
+    @Test func signingOutDuringOnboardingStillMarksItSeen() async {
+        let onboarding = InMemoryOnboardingStore()
+        let session = await makeSession(
+            tokens: AuthTokens(accessToken: "abc123"),
+            onboarding: onboarding
+        )
+        await session.bootstrap()
+
+        await session.signOut()
+        session.completeOnboarding()
+
+        #expect(onboarding.hasSeen)
+        #expect(session.state == .unauthenticated)
+    }
+
+    // The guard still has to refuse when there is no session to lose, or every launch without a
+    // token would log an expiry it never had.
+    @Test func expiringWithNoSessionToLoseDoesNothing() async {
+        let session = await makeSession()
+        await session.bootstrap()
+
+        await session.expire()
+        session.completeOnboarding()
+
+        #expect(session.state == .unauthenticated)
+    }
+
     // MARK: - Once it has been seen
 
     @Test func anInstallThatHasSeenOnboardingGoesStraightToSignIn() async {

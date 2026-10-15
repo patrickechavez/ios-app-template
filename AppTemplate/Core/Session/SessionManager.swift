@@ -111,7 +111,15 @@ final class SessionManager {
     func signOut() async {
         await tokenStore.clear()
         setCurrentUser(nil)
-        state = .unauthenticated
+
+        // A reader part way through onboarding is not interrupted by a session ending behind
+        // them. Only where they land when they finish changes.
+        if state == .onboarding {
+            stateAfterOnboarding = .unauthenticated
+        } else {
+            state = .unauthenticated
+        }
+
         AppLogger.lifecycle.breadcrumb("Signed out")
     }
 
@@ -136,9 +144,16 @@ final class SessionManager {
 
     /// Called when tokens can't be refreshed; ends the session if it hasn't ended.
     func expire() async {
-        guard state == .authenticated else { return }
-        AppLogger.auth.breadcrumb("Session expired — returning to sign-in")
+        guard hasSession else { return }
+        AppLogger.auth.breadcrumb("Session expired, returning to sign-in")
         await signOut()
+    }
+
+    // A session can be held back behind onboarding, where `state` reports `.onboarding` rather
+    // than `.authenticated`. Comparing against `state` alone would miss it, and the compiler
+    // cannot catch that the way it catches a missing `switch` case.
+    private var hasSession: Bool {
+        state == .authenticated || stateAfterOnboarding == .authenticated
     }
 
     /// Called when the backend says the app is too old or down for maintenance.
