@@ -35,7 +35,7 @@ struct ForgotPasswordView: View {
                     .font(Theme.Font.secondary)
                     .foregroundStyle(Theme.Color.secondaryText)
 
-                    EmailField(text: $viewModel.email, error: viewModel.emailError, isRequired: true)
+                    EmailField(text: $viewModel.email, error: viewModel.emailError)
 
                     if let error = viewModel.generalError {
                         InlineErrorText(error)
@@ -89,7 +89,6 @@ struct ResetPasswordView: View {
                         text: $viewModel.password,
                         label: String(localized: "New password", comment: "Label for the new password field"),
                         error: viewModel.passwordError,
-                        isRequired: true,
                         isNewPassword: true
                     )
 
@@ -100,7 +99,6 @@ struct ResetPasswordView: View {
                             comment: "Label for the password confirmation field"
                         ),
                         error: viewModel.confirmationError,
-                        isRequired: true,
                         isNewPassword: true
                     )
 

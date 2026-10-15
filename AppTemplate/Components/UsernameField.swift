@@ -14,7 +14,6 @@ struct UsernameField: View {
 
     var label: String? = String(localized: "Username", comment: "Label for the username field")
     var error: String?
-    var isRequired: Bool = false
 
     var body: some View {
         AppTextField(
@@ -22,7 +21,6 @@ struct UsernameField: View {
             placeholder: String(localized: "Username", comment: "Placeholder for the username field"),
             label: label,
             error: error,
-            isRequired: isRequired,
             capitalization: .never,
             contentType: .username,
             disableAutocorrection: true

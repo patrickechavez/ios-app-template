@@ -24,7 +24,6 @@ struct RegisterView: View {
                     placeholder: String(localized: "First name", comment: "Placeholder for the first name field"),
                     label: String(localized: "First name", comment: "Label for the first name field"),
                     error: viewModel.firstNameError,
-                    isRequired: true,
                     capitalization: .words,
                     contentType: .givenName
                 )
@@ -34,28 +33,24 @@ struct RegisterView: View {
                     placeholder: String(localized: "Last name", comment: "Placeholder for the last name field"),
                     label: String(localized: "Last name", comment: "Label for the last name field"),
                     error: viewModel.lastNameError,
-                    isRequired: true,
                     capitalization: .words,
                     contentType: .familyName
                 )
 
                 EmailField(
                     text: $viewModel.email,
-                    error: viewModel.emailError,
-                    isRequired: true
+                    error: viewModel.emailError
                 )
 
                 UsernameField(
                     text: $viewModel.username,
-                    error: viewModel.usernameError,
-                    isRequired: true
+                    error: viewModel.usernameError
                 )
 
                 DateField(
                     label: String(localized: "Date of birth", comment: "Label for the date of birth field"),
                     date: $viewModel.dateOfBirth,
                     error: viewModel.dateOfBirthError,
-                    isRequired: true,
                     range: viewModel.dateOfBirthRange
                 )
 
@@ -68,7 +63,6 @@ struct RegisterView: View {
                 PasswordField(
                     text: $viewModel.password,
                     error: viewModel.passwordError,
-                    isRequired: true,
                     isNewPassword: true
                 )
 

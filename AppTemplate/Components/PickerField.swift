@@ -20,13 +20,12 @@ struct PickerField<Item: Hashable>: View {
 
     var placeholder: String = String(localized: "Select", comment: "Placeholder for a picker field")
     var error: String?
-    var isRequired: Bool = false
     var isEnabled: Bool = true
 
     @State private var isPresented = false
 
     var body: some View {
-        FieldContainer(label: label, isRequired: isRequired, error: error) {
+        FieldContainer(label: label, error: error) {
             Button {
                 isPresented = true
             } label: {

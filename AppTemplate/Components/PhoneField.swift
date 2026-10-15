@@ -15,12 +15,11 @@ struct PhoneField: View {
 
     var label: String? = String(localized: "Phone", comment: "Label for the phone number field")
     var error: String?
-    var isRequired: Bool = false
 
     @State private var isPresented = false
 
     var body: some View {
-        FieldContainer(label: label, isRequired: isRequired, error: error) {
+        FieldContainer(label: label, error: error) {
             HStack(spacing: Theme.Spacing.sm) {
                 countryButton
 
