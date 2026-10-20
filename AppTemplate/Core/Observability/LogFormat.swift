@@ -9,9 +9,8 @@ import Foundation
 // Shared by the network and offline logs so both print identically.
 enum LogFormat {
 
-    // Authorization is logged in full; logging is on in Development only.
     private static let redactedHeaders: Set<String> = [
-        "cookie", "set-cookie", "x-api-key", "proxy-authorization"
+        "authorization", "cookie", "set-cookie", "x-api-key", "proxy-authorization"
     ]
 
     private static let redactedBodyKeys: Set<String> = [

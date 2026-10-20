@@ -17,10 +17,10 @@ struct LogFormatTests {
         #expect(LogFormat.headers([:]) == "none")
     }
 
-    @Test func showsAuthorizationInFull() {
+    @Test func redactsAuthorization() {
         let line = LogFormat.headers(["Authorization": "Bearer eyJhbGci"])
 
-        #expect(line == "    Authorization: Bearer eyJhbGci")
+        #expect(line == "    Authorization: <redacted>")
     }
 
     @Test func redactsCookies() {

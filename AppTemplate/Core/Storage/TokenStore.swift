@@ -36,9 +36,17 @@ actor KeychainTokenStore: TokenStore {
 
     init(service: String? = nil) {
         guard let service = service ?? Bundle.main.bundleIdentifier else {
+            AppLogger.auth.error("Bundle.main.bundleIdentifier is missing")
 
+            #if DEBUG
             // A literal fallback would let two apps quietly share one keychain entry.
             preconditionFailure("Bundle.main.bundleIdentifier is missing")
+            #else
+            // A normal build always has a bundle identifier; this only guards a
+            // misconfigured release, where crashing is worse than a shared service.
+            self.service = ProcessInfo.processInfo.processName
+            return
+            #endif
         }
         self.service = service
     }

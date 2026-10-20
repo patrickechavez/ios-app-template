@@ -5,20 +5,29 @@
 //
 
 import Foundation
+import os
 
 enum APIConfig {
 
     static let baseURL: URL = {
-        guard let value = string("API_BASE_URL"), let url = URL(string: value) else {
-            preconditionFailure(
-                """
-                API_BASE_URL is missing or invalid in Info.plist.
-                Set it in Config/<Environment>.xcconfig — remember to escape the \
-                double slash as `https:/$()/example.com`.
-                """
-            )
+        if let value = string("API_BASE_URL"), let url = URL(string: value) {
+            return url
         }
-        return url
+
+        let message = """
+            API_BASE_URL is missing or invalid in Info.plist.
+            Set it in Config/<Environment>.xcconfig — remember to escape the \
+            double slash as `https:/$()/example.com`.
+            """
+        AppLogger.data.error("\(message, privacy: .public)")
+
+        #if DEBUG
+        preconditionFailure(message)
+        #else
+        // Fail closed: a reserved domain, so every request surfaces a clear
+        // transport error instead of a release build crashing on launch.
+        return URL(string: "https://api-base-url-not-configured.invalid")!
+        #endif
     }()
 
     static let timeout: TimeInterval = double("API_TIMEOUT_SECONDS") ?? 30
