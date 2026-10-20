@@ -31,9 +31,23 @@ final class ActionState {
         error?.localizedDescription
     }
 
+    /// The last failure's message, unless it carries field-level errors, which
+    /// are shown next to their fields instead.
+    var generalError: String? {
+        guard error?.validationErrors == nil else { return nil }
+        return errorMessage
+    }
+
     /// The message for one field, when the server flagged it.
     func message(for field: String) -> String? {
         error?.validationErrors?.first(for: field)
+    }
+
+    /// The message for one field, falling back to a local check when the server
+    /// didn't flag it — server messages win, so a view model shows its own
+    /// validation only when the backend stayed silent on that field.
+    func message(for field: String, or local: () -> String?) -> String? {
+        message(for: field) ?? local()
     }
 
     func clear() {

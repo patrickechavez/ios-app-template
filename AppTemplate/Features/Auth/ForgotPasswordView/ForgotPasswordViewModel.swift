@@ -27,17 +27,7 @@ final class ForgotPasswordViewModel {
     }
 
     var emailError: String? {
-        if let serverMessage = action.message(for: "email") { return serverMessage }
-        guard !email.isEmpty, !email.trimmed.isValidEmail else { return nil }
-        return String(
-            localized: "Enter a valid email address.",
-            comment: "Validation message shown for a malformed email address"
-        )
-    }
-
-    var generalError: String? {
-        guard action.error?.validationErrors == nil else { return nil }
-        return action.errorMessage
+        action.message(for: "email") { InputValidation.email(email) }
     }
 
     var confirmation: String {

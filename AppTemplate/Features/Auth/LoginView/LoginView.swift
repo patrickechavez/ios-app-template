@@ -43,7 +43,7 @@ struct LoginView: View {
                 .submitLabel(.go)
                 .onSubmit { submit() }
 
-                if let error = viewModel.generalError {
+                if let error = viewModel.action.generalError {
                     InlineErrorText(error)
                 }
 

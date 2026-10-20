@@ -42,11 +42,6 @@ final class ResetPasswordViewModel {
         )
     }
 
-    var generalError: String? {
-        guard action.error?.validationErrors == nil else { return nil }
-        return action.errorMessage
-    }
-
     var confirmationMessage: String {
         String(
             localized: "Your password has been changed. You can now sign in with it.",

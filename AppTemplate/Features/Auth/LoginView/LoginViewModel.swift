@@ -37,11 +37,6 @@ final class LoginViewModel {
     var emailError: String? { action.message(for: "email") }
     var passwordError: String? { action.message(for: "password") }
 
-    var generalError: String? {
-        guard action.error?.validationErrors == nil else { return nil }
-        return action.errorMessage
-    }
-
     func signIn() async {
         guard canSubmit else { return }
 
@@ -63,12 +58,5 @@ final class LoginViewModel {
 
         password = ""
         await session.didAuthenticate(tokens: tokens)
-    }
-}
-
-extension String {
-
-    var trimmed: String {
-        trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

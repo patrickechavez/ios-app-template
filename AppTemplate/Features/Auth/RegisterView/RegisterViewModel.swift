@@ -49,12 +49,7 @@ final class RegisterViewModel {
     var usernameError: String? { action.message(for: "username") }
 
     var emailError: String? {
-        if let serverMessage = action.message(for: "email") { return serverMessage }
-        guard !email.isEmpty, !email.trimmed.isValidEmail else { return nil }
-        return String(
-            localized: "Enter a valid email address.",
-            comment: "Validation message shown for a malformed email address"
-        )
+        action.message(for: "email") { InputValidation.email(email) }
     }
 
     var passwordError: String? {
@@ -74,11 +69,6 @@ final class RegisterViewModel {
     private var phone: String? {
         guard let phoneCountry, phoneNumber.contains(where: \.isNumber) else { return nil }
         return phoneCountry.e164(nationalNumber: phoneNumber)
-    }
-
-    var generalError: String? {
-        guard action.error?.validationErrors == nil else { return nil }
-        return action.errorMessage
     }
 
     var canSubmit: Bool {
@@ -111,21 +101,5 @@ final class RegisterViewModel {
 
         password = ""
         didRegister = true
-    }
-}
-
-extension String {
-
-    var isValidEmail: Bool {
-        guard !isEmpty, !contains(" "), count <= 254 else { return false }
-
-        let parts = split(separator: "@", omittingEmptySubsequences: false)
-        guard parts.count == 2, !parts[0].isEmpty else { return false }
-
-        let domain = parts[1]
-        return domain.contains(".")
-            && !domain.hasPrefix(".")
-            && !domain.hasSuffix(".")
-            && !domain.contains("..")
     }
 }

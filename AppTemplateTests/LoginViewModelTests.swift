@@ -123,7 +123,7 @@ struct LoginViewModelTests {
 
         await viewModel.signIn()
 
-        #expect(viewModel.generalError != nil)
+        #expect(viewModel.action.generalError != nil)
     }
 
     @Test func generalErrorIsSuppressedWhenFieldErrorsExist() async {
@@ -138,7 +138,7 @@ struct LoginViewModelTests {
 
         await viewModel.signIn()
 
-        #expect(viewModel.generalError == nil)
+        #expect(viewModel.action.generalError == nil)
     }
 
     // MARK: - Guard rails

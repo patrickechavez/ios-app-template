@@ -37,7 +37,7 @@ struct ForgotPasswordView: View {
 
                     EmailField(text: $viewModel.email, error: viewModel.emailError)
 
-                    if let error = viewModel.generalError {
+                    if let error = viewModel.action.generalError {
                         InlineErrorText(error)
                     }
 
@@ -102,7 +102,7 @@ struct ResetPasswordView: View {
                         isNewPassword: true
                     )
 
-                    if let error = viewModel.generalError {
+                    if let error = viewModel.action.generalError {
                         InlineErrorText(error)
                     }
 

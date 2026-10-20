@@ -66,7 +66,7 @@ struct RegisterView: View {
                     isNewPassword: true
                 )
 
-                if let error = viewModel.generalError {
+                if let error = viewModel.action.generalError {
                     InlineErrorText(error)
                 }
 
