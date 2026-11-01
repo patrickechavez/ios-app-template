@@ -20,14 +20,14 @@ enum AuthRoute: AppRoute {
 }
 
 // Every screen behind the login lives in one stack rooted at Home, in the order the Next button walks them.
-enum DashboardRoute: AppRoute {
+enum MainRoute: AppRoute {
 
     case favorites
     case profile
     case settings
 
     // The screen reached by the Next button, or nil on the last screen in the chain.
-    var next: DashboardRoute? {
+    var next: MainRoute? {
         switch self {
         case .favorites: .profile
         case .profile: .settings
@@ -36,5 +36,5 @@ enum DashboardRoute: AppRoute {
     }
 
     // Home is the root, so the first Next button is the only one that isn't described by a route.
-    static let firstScreen: DashboardRoute = .favorites
+    static let firstScreen: MainRoute = .favorites
 }

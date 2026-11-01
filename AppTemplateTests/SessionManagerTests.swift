@@ -41,7 +41,7 @@ struct SessionManagerTests {
     }
 
     // The Keychain outlives an uninstall, so a reinstall can restore a session. That user has
-    // still never seen onboarding, and should see it once before reaching the dashboard.
+    // still never seen onboarding, and should see it once before reaching the signed-in app.
     @Test func aRestoredSessionStillSeesOnboardingOnce() async {
         let session = await makeSession(tokens: AuthTokens(accessToken: "abc123"))
 
@@ -50,7 +50,7 @@ struct SessionManagerTests {
         #expect(session.state == .onboarding)
     }
 
-    @Test func finishingOnboardingWithARestoredSessionLandsOnTheDashboard() async {
+    @Test func finishingOnboardingWithARestoredSessionLandsOnTheSignedInApp() async {
         let session = await makeSession(tokens: AuthTokens(accessToken: "abc123"))
         await session.bootstrap()
 
@@ -73,8 +73,8 @@ struct SessionManagerTests {
 
     // The hole this closes: `expire()` guarded on `state == .authenticated`, which is false while
     // the real outcome is parked behind onboarding, so the token was cleared and the user was then
-    // promoted to a dashboard they had no session for.
-    @Test func expiringDuringOnboardingLandsOnSignInRatherThanAnEmptyDashboard() async {
+    // promoted to a signed-in app they had no session for.
+    @Test func expiringDuringOnboardingLandsOnSignInRatherThanTheSignedInApp() async {
         let session = await makeSession(tokens: AuthTokens(accessToken: "abc123"))
         await session.bootstrap()
         #expect(session.state == .onboarding)
@@ -133,7 +133,7 @@ struct SessionManagerTests {
         #expect(session.state == .unauthenticated)
     }
 
-    @Test func anInstallThatHasSeenOnboardingGoesStraightToTheDashboard() async {
+    @Test func anInstallThatHasSeenOnboardingGoesStraightToTheSignedInApp() async {
         let session = await makeSession(
             tokens: AuthTokens(accessToken: "abc123"),
             onboarding: InMemoryOnboardingStore(hasSeen: true)

@@ -1,5 +1,5 @@
 //
-//  DashboardView.swift
+//  MainFlowView.swift
 //  AppTemplate
 //  Created by John Patrick Echavez on 7/29/26.
 //
@@ -7,31 +7,31 @@
 import SwiftUI
 
 // One stack rooted at Home. The Next button walks Home to Favorites to Profile to Settings.
-struct DashboardView: View {
+struct MainFlowView: View {
 
     let dependencies: AppDependencies
 
     @Environment(AppNavigator.self) private var navigator
 
-    @SceneStorage("dashboard.path") private var storedPath: Data?
+    @SceneStorage("main.path") private var storedPath: Data?
 
     var body: some View {
-        @Bindable var router = navigator.dashboard
+        @Bindable var router = navigator.main
 
         NavigationStack(path: $router.path) {
             HomeView(viewModel: dependencies.makeHomeViewModel())
-                .dashboardChrome(next: DashboardRoute.firstScreen, signOut: signOut)
-                .navigationDestination(for: DashboardRoute.self) { route in
+                .mainFlowChrome(next: MainRoute.firstScreen, signOut: signOut)
+                .navigationDestination(for: MainRoute.self) { route in
                     screen(route)
                 }
         }
-        .environment(navigator.dashboard)
+        .environment(navigator.main)
         .appAlert($router.alert)
         .task {
-            navigator.dashboard.restore(from: storedPath)
+            navigator.main.restore(from: storedPath)
         }
-        .onChange(of: navigator.dashboard.path) { _, _ in
-            storedPath = navigator.dashboard.restorationData
+        .onChange(of: navigator.main.path) { _, _ in
+            storedPath = navigator.main.restorationData
         }
     }
 
@@ -40,7 +40,7 @@ struct DashboardView: View {
     }
 
     @ViewBuilder
-    private func screen(_ route: DashboardRoute) -> some View {
+    private func screen(_ route: MainRoute) -> some View {
         Group {
             switch route {
             case .favorites:
@@ -53,6 +53,6 @@ struct DashboardView: View {
                 SettingsView()
             }
         }
-        .dashboardChrome(next: route.next, signOut: signOut)
+        .mainFlowChrome(next: route.next, signOut: signOut)
     }
 }

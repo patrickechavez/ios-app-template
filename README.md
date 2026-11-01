@@ -51,14 +51,15 @@ xcodebuild -scheme Development -destination 'platform=iOS Simulator,name=iPhone 
 `Item` is a worked example, not something to build on. Keep it while you write your first real feature - it's the only place pagination, `LoadState`, and the repository pattern are shown working end to end - then delete it.
 
 ```
-Features/Dashboard/HomeView/          the list screen
-Features/Dashboard/ItemDetailView/    the detail screen
+Features/Main/HomeView/               the list screen
 Data/ItemRepository.swift
 Models/Models.swift                   the Item and ItemDraft types
 Core/Testing/Mocks.swift              SampleData.items and MockItemRepository
 ```
 
-Then remove `makeHomeViewModel`, `makeItemDetailViewModel` (both overloads), and the `items` property from `AppDependencies`, and drop `.itemDetail` from `HomeRoute`. The compiler finds anything you miss.
+Then remove `makeHomeViewModel` and the `items` property from `AppDependencies`. The compiler finds anything you miss.
+
+`HomeView` is the root of the signed-in stack, so put your own screen in its place in `MainFlowView` rather than leaving the root empty.
 
 ## What's inside
 

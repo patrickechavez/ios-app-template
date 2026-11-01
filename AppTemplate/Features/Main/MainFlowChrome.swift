@@ -1,18 +1,18 @@
 //
-//  DashboardChrome.swift
+//  MainFlowChrome.swift
 //  AppTemplate
 //
 
 import SwiftUI
 
 // The buttons every main screen carries: log out, go to the next screen, and jump back to Home.
-private struct DashboardChrome: ViewModifier {
+private struct MainFlowChrome: ViewModifier {
 
-    let next: DashboardRoute?
+    let next: MainRoute?
 
     let signOut: SignOutAction
 
-    @Environment(Router<DashboardRoute>.self) private var router
+    @Environment(Router<MainRoute>.self) private var router
 
     func body(content: Content) -> some View {
         content.toolbar {
@@ -51,7 +51,7 @@ private struct DashboardChrome: ViewModifier {
 
 extension View {
 
-    func dashboardChrome(next: DashboardRoute?, signOut: SignOutAction) -> some View {
-        modifier(DashboardChrome(next: next, signOut: signOut))
+    func mainFlowChrome(next: MainRoute?, signOut: SignOutAction) -> some View {
+        modifier(MainFlowChrome(next: next, signOut: signOut))
     }
 }

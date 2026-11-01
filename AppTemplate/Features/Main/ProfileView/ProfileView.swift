@@ -12,7 +12,7 @@ struct ProfileView: View {
     @State private var viewModel: ProfileViewModel
     @State private var pickedImage: UIImage?
 
-    @Environment(Router<DashboardRoute>.self) private var router
+    @Environment(Router<MainRoute>.self) private var router
 
     init(viewModel: ProfileViewModel) {
         _viewModel = State(wrappedValue: viewModel)
@@ -169,7 +169,7 @@ struct ProfileView: View {
         NavigationStack {
             ProfileView(viewModel: dependencies.makeProfileViewModel())
         }
-        .environment(Router<DashboardRoute>())
+        .environment(Router<MainRoute>())
         .environment(AppNavigator())
     }
 }

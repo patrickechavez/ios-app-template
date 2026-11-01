@@ -74,7 +74,7 @@ final class SessionManager {
     }
 
     // Onboarding wraps the outcome rather than replacing it, so a reinstall that restored a
-    // Keychain session still shows the flow once before landing on the dashboard.
+    // Keychain session still shows the flow once before landing on the signed-in app.
     private func resolve(to outcome: State) {
         guard !onboarding.hasSeen else {
             state = outcome

@@ -26,7 +26,7 @@ struct RootView: View {
                     .transition(.opacity)
 
             case .authenticated:
-                DashboardView(dependencies: dependencies)
+                MainFlowView(dependencies: dependencies)
                     .transition(.opacity)
             }
         }
