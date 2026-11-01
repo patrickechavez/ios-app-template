@@ -53,14 +53,11 @@
         }
       }
     },
-    "Back" : {
-      "comment" : "Button that returns to the previous screen"
-    },
     "Back Soon" : {
 
     },
     "Cancel" : {
-      "comment" : "Button that dismisses the favorite sheet without saving\nDismisses the date picker without choosing\nDismisses the picker without choosing"
+      "comment" : "Dismisses the date picker without choosing\nDismisses the picker without choosing"
     },
     "Cancelled." : {
       "comment" : "A request was cancelled",
@@ -133,9 +130,6 @@
           }
         }
       }
-    },
-    "Close" : {
-      "comment" : "Button that dismisses the favorite full-screen cover"
     },
     "Confirm password" : {
       "comment" : "Label for the password confirmation field",
@@ -236,9 +230,6 @@
     "Everything in one place" : {
       "comment" : "Title of the second onboarding page"
     },
-    "Favorite" : {
-      "comment" : "Title of the favorite detail screen"
-    },
     "Favorites" : {
       "comment" : "Title of the favorites screen"
     },
@@ -269,9 +260,6 @@
     "Get Started" : {
       "comment" : "Button that finishes onboarding"
     },
-    "Home" : {
-      "comment" : "Button that returns to the Home screen"
-    },
     "Hide password" : {
       "comment" : "Accessibility label for the password reveal toggle",
       "extractionState" : "manual",
@@ -283,6 +271,9 @@
           }
         }
       }
+    },
+    "Home" : {
+      "comment" : "Button that returns to the Home screen"
     },
     "If an account exists for that address, we've sent a link to reset your password." : {
       "comment" : "Confirmation shown after requesting a password reset",
@@ -487,9 +478,6 @@
           }
         }
       }
-    },
-    "Save" : {
-      "comment" : "Button that saves the note and dismisses the favorite sheet"
     },
     "Search" : {
       "comment" : "Placeholder for a search field",
