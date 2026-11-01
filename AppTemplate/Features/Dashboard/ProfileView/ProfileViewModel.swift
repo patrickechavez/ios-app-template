@@ -18,22 +18,19 @@ final class ProfileViewModel: LoadableViewModel {
     let avatarUpload = ActionState()
 
     @ObservationIgnored private let repository: any UserRepository
-    @ObservationIgnored private let auth: any AuthRepository
     @ObservationIgnored private let session: SessionManager
-    @ObservationIgnored private let tokenStore: any TokenStore
+    @ObservationIgnored private let signOutAction: SignOutAction
     @ObservationIgnored private let imageLoader: any ImageLoading
 
     init(
         repository: any UserRepository,
-        auth: any AuthRepository,
+        signOut: SignOutAction,
         session: SessionManager,
-        tokenStore: any TokenStore,
         imageLoader: any ImageLoading
     ) {
         self.repository = repository
-        self.auth = auth
+        self.signOutAction = signOut
         self.session = session
-        self.tokenStore = tokenStore
         self.imageLoader = imageLoader
 
         if let user = session.currentUser {
@@ -68,16 +65,6 @@ final class ProfileViewModel: LoadableViewModel {
     }
 
     func signOut() async {
-        let refreshToken = await tokenStore.load()?.refreshToken
-
-        do {
-            try await auth.logout(refreshToken: refreshToken)
-        } catch {
-            AppLogger.auth.breadcrumb(
-                "Server-side logout failed (\(error.localizedDescription)); clearing locally anyway."
-            )
-        }
-
-        await session.signOut()
+        await signOutAction()
     }
 }

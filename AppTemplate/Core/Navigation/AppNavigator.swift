@@ -12,12 +12,7 @@ import os
 @MainActor
 final class AppNavigator {
 
-    var selectedTab: AppTab = .home
-
-    let home = Router<HomeRoute>()
-    let favorites = Router<FavoritesRoute>()
-    let profile = Router<ProfileRoute>()
-    let settings = Router<SettingsRoute>()
+    let dashboard = Router<DashboardRoute>()
     let auth = Router<AuthRoute>()
 
     private(set) var pendingLink: DeepLink?
@@ -68,11 +63,7 @@ final class AppNavigator {
     }
 
     func reset() {
-        selectedTab = .home
-        home.popToRoot()
-        favorites.popToRoot()
-        profile.popToRoot()
-        settings.popToRoot()
+        dashboard.popToRoot()
         auth.popToRoot()
         pendingLink = nil
     }
@@ -80,21 +71,17 @@ final class AppNavigator {
     private func apply(_ link: DeepLink) {
         switch link {
         case .home:
-            selectedTab = .home
-            home.popToRoot()
+            dashboard.popToRoot()
 
         case let .item(id):
-            selectedTab = .home
+            dashboard.set([.itemDetail(id: id)])
 
-            home.set([.itemDetail(id: id)])
-
+        // Lands on the screen with the screens before it still underneath, so Back walks the usual chain.
         case .profile:
-            selectedTab = .profile
-            profile.popToRoot()
+            dashboard.set([.favorites, .profile])
 
         case .settings:
-            selectedTab = .settings
-            settings.popToRoot()
+            dashboard.set([.favorites, .profile, .settings])
 
         case let .resetPassword(token):
 

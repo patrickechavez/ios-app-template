@@ -10,7 +10,7 @@ struct ItemDetailView: View {
 
     @State private var viewModel: ItemDetailViewModel
 
-    @Environment(Router<HomeRoute>.self) private var router
+    @Environment(Router<DashboardRoute>.self) private var router
 
     init(viewModel: ItemDetailViewModel) {
         _viewModel = State(wrappedValue: viewModel)
@@ -92,7 +92,7 @@ struct ItemDetailView: View {
         NavigationStack {
             ItemDetailView(viewModel: dependencies.makeItemDetailViewModel(id: SampleData.items[0].id))
         }
-        .environment(Router<HomeRoute>())
+        .environment(Router<DashboardRoute>())
     }
 }
 

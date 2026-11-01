@@ -11,7 +11,7 @@ import Testing
 struct RouterTests {
 
     @Test func presentsAndDismissesASheet() {
-        let router = Router<FavoritesRoute>()
+        let router = Router<DashboardRoute>()
 
         router.present(sheet: .favoriteSheet(note: "Weekend trip"))
         #expect(router.sheet == .favoriteSheet(note: "Weekend trip"))
@@ -21,7 +21,7 @@ struct RouterTests {
     }
 
     @Test func presentsAndDismissesACover() {
-        let router = Router<FavoritesRoute>()
+        let router = Router<DashboardRoute>()
 
         router.present(cover: .favoriteCover)
         #expect(router.cover == .favoriteCover)
@@ -31,7 +31,7 @@ struct RouterTests {
     }
 
     @Test func keepsSheetAndCoverIndependent() {
-        let router = Router<FavoritesRoute>()
+        let router = Router<DashboardRoute>()
 
         router.present(sheet: .favoriteSheet(note: "a"))
         router.present(cover: .favoriteCover)
@@ -42,12 +42,12 @@ struct RouterTests {
     }
 
     @Test func leavesModalsOutOfRestoration() throws {
-        let router = Router<FavoritesRoute>()
+        let router = Router<DashboardRoute>()
         router.push(.favoriteDetail)
         router.present(sheet: .favoriteSheet(note: "a"))
         router.present(cover: .favoriteCover)
 
-        let restored = Router<FavoritesRoute>()
+        let restored = Router<DashboardRoute>()
         restored.restore(from: router.restorationData)
 
         #expect(restored.path == [.favoriteDetail])
@@ -56,7 +56,7 @@ struct RouterTests {
     }
 
     @Test func doesNotPresentAModalWhenPushing() {
-        let router = Router<FavoritesRoute>()
+        let router = Router<DashboardRoute>()
 
         router.push(.favoriteDetail)
 

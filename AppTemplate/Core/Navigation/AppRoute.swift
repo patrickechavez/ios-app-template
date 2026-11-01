@@ -13,59 +13,44 @@ extension AppRoute {
     var id: Self { self }
 }
 
-enum AppTab: String, Hashable, Codable, CaseIterable, Identifiable, Sendable {
-    case home
-    case favorites
-    case profile
-    case settings
-
-    var id: String { rawValue }
-
-    var title: String {
-        switch self {
-        case .home: String(localized: "Items", comment: "Home tab title")
-        case .favorites: String(localized: "Favorites", comment: "Favorites tab title")
-        case .profile: String(localized: "Profile", comment: "Profile tab title")
-        case .settings: String(localized: "Settings", comment: "Settings tab title")
-        }
-    }
-
-    var systemImage: String {
-        switch self {
-        case .home: "square.grid.2x2"
-        case .favorites: "heart"
-        case .profile: "person.crop.circle"
-        case .settings: "gearshape"
-        }
-    }
-}
-
 enum AuthRoute: AppRoute {
     case register
     case forgotPassword
     case resetPassword(token: String)
 }
 
-// Each tab keeps its own route list, so its screens stack independently.
-enum HomeRoute: AppRoute {
+// Every screen behind the login lives in one stack rooted at Home, so one list of routes covers them all.
+enum DashboardRoute: AppRoute {
+
+    // The main screens, in the order the Next button walks through them.
+    case favorites
+    case profile
+    case settings
+
     case itemDetail(id: UUID)
     case itemReviews(id: UUID)
-}
 
-enum FavoritesRoute: AppRoute {
     case favoriteDetail
     case favoriteNotes
     // Carries its input; the result comes back through the coordinator.
     case favoriteSheet(note: String)
     case favoriteCover
-}
 
-enum ProfileRoute: AppRoute {
     case editProfile
     case changePassword
-}
 
-enum SettingsRoute: AppRoute {
     case notifications
     case blockedUsers
+
+    // The screen reached by the Next button, or nil on the last screen in the chain.
+    var next: DashboardRoute? {
+        switch self {
+        case .favorites: .profile
+        case .profile: .settings
+        default: nil
+        }
+    }
+
+    // Home is the root, so the first Next button is the only one that isn't described by a route.
+    static let firstScreen: DashboardRoute = .favorites
 }

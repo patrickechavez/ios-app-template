@@ -163,11 +163,14 @@ final class AppDependencies {
     func makeProfileViewModel() -> ProfileViewModel {
         ProfileViewModel(
             repository: users,
-            auth: auth,
+            signOut: makeSignOutAction(),
             session: session,
-            tokenStore: tokenStore,
             imageLoader: imageLoader
         )
+    }
+
+    func makeSignOutAction() -> SignOutAction {
+        SignOutAction(auth: auth, session: session, tokenStore: tokenStore)
     }
 
 }

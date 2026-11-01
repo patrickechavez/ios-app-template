@@ -9,7 +9,7 @@ import SwiftUI
 struct HomeView: View {
 
     @State private var viewModel: HomeViewModel
-    @Environment(Router<HomeRoute>.self) private var router
+    @Environment(Router<DashboardRoute>.self) private var router
 
     init(viewModel: HomeViewModel) {
         _viewModel = State(wrappedValue: viewModel)
@@ -138,7 +138,7 @@ private struct ItemRow: View {
         NavigationStack {
             HomeView(viewModel: dependencies.makeHomeViewModel())
         }
-        .environment(Router<HomeRoute>())
+        .environment(Router<DashboardRoute>())
     }
 }
 

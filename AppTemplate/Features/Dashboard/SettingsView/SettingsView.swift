@@ -6,10 +6,10 @@
 
 import SwiftUI
 
-// First screen of the Settings tab.
+// Main screen reached from Profile.
 struct SettingsView: View {
 
-    @Environment(Router<SettingsRoute>.self) private var router
+    @Environment(Router<DashboardRoute>.self) private var router
 
     var body: some View {
         List {

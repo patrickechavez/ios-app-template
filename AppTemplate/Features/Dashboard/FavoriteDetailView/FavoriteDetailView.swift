@@ -6,10 +6,10 @@
 
 import SwiftUI
 
-// Second screen of the Favorites tab.
+// Second screen under Favorites.
 struct FavoriteDetailView: View {
 
-    @Environment(Router<FavoritesRoute>.self) private var router
+    @Environment(Router<DashboardRoute>.self) private var router
 
     var body: some View {
         List {

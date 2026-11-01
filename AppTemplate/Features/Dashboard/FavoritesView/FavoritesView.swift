@@ -6,13 +6,13 @@
 
 import SwiftUI
 
-// First screen of the Favorites tab.
+// Main screen reached from Home.
 struct FavoritesView: View {
 
-    // Owned by FavoritesTab, so the sheet's result has somewhere to land.
+    // Owned by DashboardView, so the sheet's result has somewhere to land.
     @Binding var note: String
 
-    @Environment(Router<FavoritesRoute>.self) private var router
+    @Environment(Router<DashboardRoute>.self) private var router
 
     var body: some View {
         List {
@@ -62,7 +62,7 @@ struct FavoritesView: View {
     NavigationStack {
         FavoritesView(note: .constant("Weekend trip"))
     }
-    .environment(Router<FavoritesRoute>())
+    .environment(Router<DashboardRoute>())
 }
 
 #endif

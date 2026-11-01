@@ -60,7 +60,7 @@
 
     },
     "Back to Root" : {
-      "comment" : "Button that returns to the first screen of the tab"
+      "comment" : "Button that returns to the Home screen at the root of the stack"
     },
     "Blocked Users" : {
       "comment" : "Button that opens the blocked users screen\nTitle of the blocked users screen"
@@ -270,7 +270,7 @@
       "comment" : "Title of the favorite detail screen"
     },
     "Favorites" : {
-      "comment" : "Favorites tab title\nTitle of the favorites screen"
+      "comment" : "Title of the favorites screen"
     },
     "First name" : {
       "comment" : "Placeholder for the first name field",
@@ -302,6 +302,9 @@
     "Get Started" : {
       "comment" : "Button that finishes onboarding"
     },
+    "Home" : {
+      "comment" : "Button that returns to the Home screen"
+    },
     "Hide password" : {
       "comment" : "Accessibility label for the password reveal toggle",
       "extractionState" : "manual",
@@ -330,7 +333,7 @@
 
     },
     "Items" : {
-      "comment" : "Home tab title",
+      "comment" : "Title of the items list screen",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -492,7 +495,7 @@
       }
     },
     "Profile" : {
-      "comment" : "Profile tab title",
+      "comment" : "Title of the profile screen",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {

@@ -6,18 +6,18 @@
 
 import SwiftUI
 
-// Third screen of the Profile tab.
+// Third screen under Profile.
 struct ChangePasswordView: View {
 
-    @Environment(Router<ProfileRoute>.self) private var router
+    @Environment(Router<DashboardRoute>.self) private var router
 
     var body: some View {
         List {
-            // Clears every screen in this tab only; other tabs stay put.
+            // Clears the whole stack, which lands back on Home.
             Button {
                 router.popToRoot()
             } label: {
-                Text("Back to Root", comment: "Button that returns to the first screen of the tab")
+                Text("Back to Root", comment: "Button that returns to the Home screen at the root of the stack")
             }
         }
         .navigationTitle(Text("Change Password", comment: "Title of the change password screen"))

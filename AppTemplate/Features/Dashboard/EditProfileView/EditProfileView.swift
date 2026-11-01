@@ -6,10 +6,10 @@
 
 import SwiftUI
 
-// Second screen of the Profile tab.
+// Second screen under Profile.
 struct EditProfileView: View {
 
-    @Environment(Router<ProfileRoute>.self) private var router
+    @Environment(Router<DashboardRoute>.self) private var router
 
     var body: some View {
         List {

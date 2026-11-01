@@ -6,10 +6,10 @@
 
 import SwiftUI
 
-// Second screen of the Settings tab.
+// Second screen under Settings.
 struct NotificationsView: View {
 
-    @Environment(Router<SettingsRoute>.self) private var router
+    @Environment(Router<DashboardRoute>.self) private var router
 
     var body: some View {
         List {
