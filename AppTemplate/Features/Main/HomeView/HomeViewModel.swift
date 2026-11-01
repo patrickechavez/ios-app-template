@@ -22,8 +22,15 @@ final class HomeViewModel: LoadableViewModel {
 
     @ObservationIgnored private let repository: any ItemRepository
 
-    init(repository: any ItemRepository) {
+    @ObservationIgnored private let signOutAction: SignOutAction
+
+    init(repository: any ItemRepository, signOut: SignOutAction) {
         self.repository = repository
+        self.signOutAction = signOut
+    }
+
+    func signOut() async {
+        await signOutAction()
     }
 
     var hasMorePages: Bool { nextPage != nil }

@@ -55,6 +55,9 @@ struct ProfileView: View {
                 pickedImage = nil
             }
         }
+        .safeAreaInset(edge: .bottom) {
+            SignOutButton(signOut: viewModel.signOut)
+        }
     }
 
     private func profile(_ user: User) -> some View {
@@ -62,7 +65,6 @@ struct ProfileView: View {
             headerSection(user)
             accountSection(user)
             settingsSection
-            signOutSection
         }
     }
 
@@ -138,28 +140,6 @@ struct ProfileView: View {
         }
     }
 
-    private var signOutSection: some View {
-        Section {
-            Button(role: .destructive) {
-                router.present(alert: .confirmDestructive(
-                    String(
-                        localized: "Sign out of your account?",
-                        comment: "Title of the sign-out confirmation alert"
-                    ),
-                    message: String(
-                        localized: "You'll need to sign in again to use the app.",
-                        comment: "Message of the sign-out confirmation alert"
-                    ),
-                    confirm: String(localized: "Sign Out", comment: "Confirm button of the sign-out alert"),
-                    onConfirm: {
-                        Task { await viewModel.signOut() }
-                    }
-                ))
-            } label: {
-                Text("Sign Out", comment: "Button that signs the user out")
-            }
-        }
-    }
 }
 
 #if DEBUG

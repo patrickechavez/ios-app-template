@@ -56,6 +56,10 @@ struct HomeView: View {
         .refreshable {
             await viewModel.load(isRefresh: true)
         }
+        // Outside the state switch, so a failed load still leaves a way out of the app.
+        .safeAreaInset(edge: .bottom) {
+            SignOutButton(signOut: viewModel.signOut)
+        }
     }
 
     private func list(_ items: [Item]) -> some View {

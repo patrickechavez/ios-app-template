@@ -149,7 +149,15 @@ final class AppDependencies {
     }
 
     func makeHomeViewModel() -> HomeViewModel {
-        HomeViewModel(repository: items)
+        HomeViewModel(repository: items, signOut: makeSignOutAction())
+    }
+
+    func makeFavoritesViewModel() -> FavoritesViewModel {
+        FavoritesViewModel(signOut: makeSignOutAction())
+    }
+
+    func makeSettingsViewModel() -> SettingsViewModel {
+        SettingsViewModel(signOut: makeSignOutAction())
     }
 
     func makeProfileViewModel() -> ProfileViewModel {

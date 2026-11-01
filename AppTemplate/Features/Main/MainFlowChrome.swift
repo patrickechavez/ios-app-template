@@ -5,25 +5,15 @@
 
 import SwiftUI
 
-// The buttons every main screen carries: log out, go to the next screen, and jump back to Home.
+// The toolbar buttons that move through the chain. Signing out is a button on each screen instead.
 private struct MainFlowChrome: ViewModifier {
 
     let next: MainRoute?
-
-    let signOut: SignOutAction
 
     @Environment(Router<MainRoute>.self) private var router
 
     func body(content: Content) -> some View {
         content.toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button(role: .destructive) {
-                    Task { await signOut() }
-                } label: {
-                    Text("Sign Out", comment: "Button that signs the user out")
-                }
-            }
-
             // Home is the root, so it has nowhere to jump back to.
             if !router.isAtRoot {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -51,7 +41,7 @@ private struct MainFlowChrome: ViewModifier {
 
 extension View {
 
-    func mainFlowChrome(next: MainRoute?, signOut: SignOutAction) -> some View {
-        modifier(MainFlowChrome(next: next, signOut: signOut))
+    func mainFlowChrome(next: MainRoute?) -> some View {
+        modifier(MainFlowChrome(next: next))
     }
 }

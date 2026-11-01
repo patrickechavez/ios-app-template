@@ -20,7 +20,7 @@ struct MainFlowView: View {
 
         NavigationStack(path: $router.path) {
             HomeView(viewModel: dependencies.makeHomeViewModel())
-                .mainFlowChrome(next: MainRoute.firstScreen, signOut: signOut)
+                .mainFlowChrome(next: MainRoute.firstScreen)
                 .navigationDestination(for: MainRoute.self) { route in
                     screen(route)
                 }
@@ -35,24 +35,20 @@ struct MainFlowView: View {
         }
     }
 
-    private var signOut: SignOutAction {
-        dependencies.makeSignOutAction()
-    }
-
     @ViewBuilder
     private func screen(_ route: MainRoute) -> some View {
         Group {
             switch route {
             case .favorites:
-                FavoritesView()
+                FavoritesView(viewModel: dependencies.makeFavoritesViewModel())
 
             case .profile:
                 ProfileView(viewModel: dependencies.makeProfileViewModel())
 
             case .settings:
-                SettingsView()
+                SettingsView(viewModel: dependencies.makeSettingsViewModel())
             }
         }
-        .mainFlowChrome(next: route.next, signOut: signOut)
+        .mainFlowChrome(next: route.next)
     }
 }
