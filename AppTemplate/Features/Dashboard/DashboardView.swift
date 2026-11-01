@@ -15,9 +15,6 @@ struct DashboardView: View {
 
     @SceneStorage("dashboard.path") private var storedPath: Data?
 
-    // The coordinator owns it — a route carries data in but no closure back out.
-    @State private var favoriteNote = "Weekend trip"
-
     var body: some View {
         @Bindable var router = navigator.dashboard
 
@@ -25,27 +22,11 @@ struct DashboardView: View {
             HomeView(viewModel: dependencies.makeHomeViewModel())
                 .dashboardChrome(next: DashboardRoute.firstScreen, signOut: signOut)
                 .navigationDestination(for: DashboardRoute.self) { route in
-                    destination(for: route)
+                    screen(route)
                 }
         }
         .environment(navigator.dashboard)
         .appAlert($router.alert)
-        .sheet(item: $router.sheet) { route in
-            switch route {
-            case let .favoriteSheet(note):
-                FavoriteSheetView(note: note) { favoriteNote = $0 }
-            default:
-                EmptyView()
-            }
-        }
-        .fullScreenCover(item: $router.cover) { route in
-            switch route {
-            case .favoriteCover:
-                FavoriteCoverView()
-            default:
-                EmptyView()
-            }
-        }
         .task {
             navigator.dashboard.restore(from: storedPath)
         }
@@ -59,71 +40,19 @@ struct DashboardView: View {
     }
 
     @ViewBuilder
-    private func destination(for route: DashboardRoute) -> some View {
-        switch route {
-        case .favorites, .profile, .settings:
-            mainScreen(route)
-
-        case .itemDetail, .itemReviews, .favoriteDetail, .favoriteNotes,
-             .editProfile, .changePassword, .notifications, .blockedUsers:
-            detailScreen(route)
-
-        // Presented rather than pushed, so they never appear as a destination.
-        case .favoriteSheet, .favoriteCover:
-            EmptyView()
-        }
-    }
-
-    // The screens in the chain, which are the only ones carrying the chain's buttons.
-    @ViewBuilder
-    private func mainScreen(_ route: DashboardRoute) -> some View {
+    private func screen(_ route: DashboardRoute) -> some View {
         Group {
             switch route {
             case .favorites:
-                FavoritesView(note: $favoriteNote)
+                FavoritesView()
 
             case .profile:
                 ProfileView(viewModel: dependencies.makeProfileViewModel())
 
             case .settings:
                 SettingsView()
-
-            default:
-                EmptyView()
             }
         }
         .dashboardChrome(next: route.next, signOut: signOut)
-    }
-
-    @ViewBuilder
-    private func detailScreen(_ route: DashboardRoute) -> some View {
-        switch route {
-        case let .itemDetail(id):
-            ItemDetailView(viewModel: dependencies.makeItemDetailViewModel(id: id))
-
-        case let .itemReviews(id):
-            ItemReviewsView(itemID: id)
-
-        case .favoriteDetail:
-            FavoriteDetailView()
-
-        case .favoriteNotes:
-            FavoriteNotesView()
-
-        case .editProfile:
-            EditProfileView()
-
-        case .changePassword:
-            ChangePasswordView()
-
-        case .notifications:
-            NotificationsView()
-
-        case .blockedUsers:
-            BlockedUsersView()
-
-        default:
-            EmptyView()
-        }
     }
 }

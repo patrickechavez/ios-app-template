@@ -6,22 +6,11 @@
 
 import SwiftUI
 
-// Main screen reached from Profile.
+// Main screen reached from Profile. Empty until the app has settings to show.
 struct SettingsView: View {
-
-    @Environment(Router<DashboardRoute>.self) private var router
 
     var body: some View {
         List {
-            Button {
-                router.push(.notifications)
-            } label: {
-                Label {
-                    Text("Notifications", comment: "Row that opens the notification settings screen")
-                } icon: {
-                    Image(systemName: "bell")
-                }
-            }
         }
         .navigationTitle(Text("Settings", comment: "Title of the settings screen"))
     }

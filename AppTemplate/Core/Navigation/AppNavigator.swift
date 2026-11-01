@@ -73,9 +73,6 @@ final class AppNavigator {
         case .home:
             dashboard.popToRoot()
 
-        case let .item(id):
-            dashboard.set([.itemDetail(id: id)])
-
         // Lands on the screen with the screens before it still underneath, so Back walks the usual chain.
         case .profile:
             dashboard.set([.favorites, .profile])

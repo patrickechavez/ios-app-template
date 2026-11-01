@@ -9,7 +9,6 @@ import os
 
 enum DeepLink: Equatable, Sendable {
     case home
-    case item(id: UUID)
     case profile
     case settings
     case resetPassword(token: String)
@@ -17,14 +16,13 @@ enum DeepLink: Equatable, Sendable {
     var isPublic: Bool {
         switch self {
         case .resetPassword: true
-        case .home, .item, .profile, .settings: false
+        case .home, .profile, .settings: false
         }
     }
 
     var path: String {
         switch self {
         case .home: "/home"
-        case let .item(id): "/items/\(id.uuidString)"
         case .profile: "/profile"
         case .settings: "/settings"
         case .resetPassword: "/reset-password"
@@ -80,12 +78,6 @@ struct DeepLinkParser: Sendable {
         switch segments.first?.lowercased() {
         case nil, "home", "":
             return .home
-
-        case "items", "item":
-
-            guard segments.count > 1 else { return .home }
-            guard let id = UUID(uuidString: segments[1]) else { return nil }
-            return .item(id: id)
 
         case "profile", "me", "account":
             return .profile

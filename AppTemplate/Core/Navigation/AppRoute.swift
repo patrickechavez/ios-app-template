@@ -19,35 +19,19 @@ enum AuthRoute: AppRoute {
     case resetPassword(token: String)
 }
 
-// Every screen behind the login lives in one stack rooted at Home, so one list of routes covers them all.
+// Every screen behind the login lives in one stack rooted at Home, in the order the Next button walks them.
 enum DashboardRoute: AppRoute {
 
-    // The main screens, in the order the Next button walks through them.
     case favorites
     case profile
     case settings
-
-    case itemDetail(id: UUID)
-    case itemReviews(id: UUID)
-
-    case favoriteDetail
-    case favoriteNotes
-    // Carries its input; the result comes back through the coordinator.
-    case favoriteSheet(note: String)
-    case favoriteCover
-
-    case editProfile
-    case changePassword
-
-    case notifications
-    case blockedUsers
 
     // The screen reached by the Next button, or nil on the last screen in the chain.
     var next: DashboardRoute? {
         switch self {
         case .favorites: .profile
         case .profile: .settings
-        default: nil
+        case .settings: nil
         }
     }
 

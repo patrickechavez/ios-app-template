@@ -59,12 +59,6 @@
     "Back Soon" : {
 
     },
-    "Back to Root" : {
-      "comment" : "Button that returns to the Home screen at the root of the stack"
-    },
-    "Blocked Users" : {
-      "comment" : "Button that opens the blocked users screen\nTitle of the blocked users screen"
-    },
     "Cancel" : {
       "comment" : "Button that dismisses the favorite sheet without saving\nDismisses the date picker without choosing\nDismisses the picker without choosing"
     },
@@ -79,9 +73,6 @@
           }
         }
       }
-    },
-    "Change Password" : {
-      "comment" : "Button that opens the change password screen\nTitle of the change password screen"
     },
     "Change Photo" : {
       "comment" : "Button that opens the photo picker",
@@ -164,9 +155,6 @@
     "Country calling code" : {
       "comment" : "Accessibility label for the country code picker"
     },
-    "Covers the whole screen" : {
-      "comment" : "Body of the favorite full-screen cover"
-    },
     "Create Account" : {
       "comment" : "Primary button on the registration screen",
       "extractionState" : "manual",
@@ -208,24 +196,6 @@
     },
     "Done" : {
       "comment" : "Confirms the chosen date"
-    },
-    "Edit Note" : {
-      "comment" : "Title of the favorite sheet screen"
-    },
-    "Edit Profile" : {
-      "comment" : "Title of the placeholder edit-profile screen",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Edit Profile"
-          }
-        }
-      }
-    },
-    "Edit the note in a sheet" : {
-      "comment" : "Row that presents the favorite sheet"
     },
     "Email" : {
       "comment" : "Label for the email field",
@@ -296,9 +266,6 @@
         }
       }
     },
-    "Full-Screen Cover" : {
-      "comment" : "Title of the favorite full-screen cover"
-    },
     "Get Started" : {
       "comment" : "Button that finishes onboarding"
     },
@@ -328,9 +295,6 @@
           }
         }
       }
-    },
-    "Item unavailable" : {
-
     },
     "Items" : {
       "comment" : "Title of the items list screen",
@@ -425,15 +389,6 @@
     "Not found" : {
 
     },
-    "Note" : {
-      "comment" : "Label for the note field on the favorite sheet"
-    },
-    "Notes" : {
-      "comment" : "Title of the favorite notes screen"
-    },
-    "Notifications" : {
-      "comment" : "Row that opens the notification settings screen\nTitle of the notification settings screen"
-    },
     "OK" : {
       "comment" : "Alert dismiss button",
       "extractionState" : "manual",
@@ -445,12 +400,6 @@
           }
         }
       }
-    },
-    "Open a favorite" : {
-      "comment" : "Row that opens the favorite detail screen"
-    },
-    "Open a full-screen cover" : {
-      "comment" : "Row that presents the favorite full-screen cover"
     },
     "Password" : {
       "comment" : "Label for the password field",
@@ -538,12 +487,6 @@
           }
         }
       }
-    },
-    "Reviews" : {
-      "comment" : "Button that opens the item reviews screen\nTitle of the item reviews screen"
-    },
-    "Reviews for item %@" : {
-      "comment" : "Placeholder line on the item reviews screen"
     },
     "Save" : {
       "comment" : "Button that saves the note and dismisses the favorite sheet"

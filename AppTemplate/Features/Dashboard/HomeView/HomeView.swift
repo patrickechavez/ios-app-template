@@ -9,7 +9,6 @@ import SwiftUI
 struct HomeView: View {
 
     @State private var viewModel: HomeViewModel
-    @Environment(Router<DashboardRoute>.self) private var router
 
     init(viewModel: HomeViewModel) {
         _viewModel = State(wrappedValue: viewModel)
@@ -62,18 +61,13 @@ struct HomeView: View {
     private func list(_ items: [Item]) -> some View {
         List {
             ForEach(items) { item in
-                Button {
-                    router.push(.itemDetail(id: item.id))
-                } label: {
-                    ItemRow(item: item)
-                }
-                .buttonStyle(.plain)
-                .task {
+                ItemRow(item: item)
+                    .task {
 
-                    if viewModel.shouldLoadMore(after: item) {
-                        await viewModel.loadMore()
+                        if viewModel.shouldLoadMore(after: item) {
+                            await viewModel.loadMore()
+                        }
                     }
-                }
             }
 
             if viewModel.isLoadingMore {
@@ -118,16 +112,10 @@ private struct ItemRow: View {
             }
 
             Spacer(minLength: Theme.Spacing.sm)
-
-            Image(systemName: "chevron.right")
-                .font(.footnote)
-                .foregroundStyle(Theme.Color.tertiaryText)
-                .accessibilityHidden(true)
         }
         .padding(.vertical, Theme.Spacing.xs)
 
         .accessibilityElement(children: .combine)
-        .accessibilityAddTraits(.isButton)
     }
 }
 
@@ -138,7 +126,6 @@ private struct ItemRow: View {
         NavigationStack {
             HomeView(viewModel: dependencies.makeHomeViewModel())
         }
-        .environment(Router<DashboardRoute>())
     }
 }
 

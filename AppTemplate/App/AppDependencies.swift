@@ -152,14 +152,6 @@ final class AppDependencies {
         HomeViewModel(repository: items)
     }
 
-    func makeItemDetailViewModel(item: Item) -> ItemDetailViewModel {
-        ItemDetailViewModel(item: item, repository: items)
-    }
-
-    func makeItemDetailViewModel(id: UUID) -> ItemDetailViewModel {
-        ItemDetailViewModel(itemID: id, repository: items)
-    }
-
     func makeProfileViewModel() -> ProfileViewModel {
         ProfileViewModel(
             repository: users,

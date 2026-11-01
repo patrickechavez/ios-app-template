@@ -11,54 +11,54 @@ import Testing
 struct RouterTests {
 
     @Test func presentsAndDismissesASheet() {
-        let router = Router<DashboardRoute>()
+        let router = Router<AuthRoute>()
 
-        router.present(sheet: .favoriteSheet(note: "Weekend trip"))
-        #expect(router.sheet == .favoriteSheet(note: "Weekend trip"))
+        router.present(sheet: .resetPassword(token: "abc123"))
+        #expect(router.sheet == .resetPassword(token: "abc123"))
 
         router.dismissSheet()
         #expect(router.sheet == nil)
     }
 
     @Test func presentsAndDismissesACover() {
-        let router = Router<DashboardRoute>()
+        let router = Router<AuthRoute>()
 
-        router.present(cover: .favoriteCover)
-        #expect(router.cover == .favoriteCover)
+        router.present(cover: .register)
+        #expect(router.cover == .register)
 
         router.dismissCover()
         #expect(router.cover == nil)
     }
 
     @Test func keepsSheetAndCoverIndependent() {
-        let router = Router<DashboardRoute>()
+        let router = Router<AuthRoute>()
 
-        router.present(sheet: .favoriteSheet(note: "a"))
-        router.present(cover: .favoriteCover)
+        router.present(sheet: .resetPassword(token: "abc123"))
+        router.present(cover: .register)
         router.dismissSheet()
 
         #expect(router.sheet == nil)
-        #expect(router.cover == .favoriteCover)
+        #expect(router.cover == .register)
     }
 
-    @Test func leavesModalsOutOfRestoration() throws {
-        let router = Router<DashboardRoute>()
-        router.push(.favoriteDetail)
-        router.present(sheet: .favoriteSheet(note: "a"))
-        router.present(cover: .favoriteCover)
+    @Test func leavesModalsOutOfRestoration() {
+        let router = Router<AuthRoute>()
+        router.push(.forgotPassword)
+        router.present(sheet: .resetPassword(token: "abc123"))
+        router.present(cover: .register)
 
-        let restored = Router<DashboardRoute>()
+        let restored = Router<AuthRoute>()
         restored.restore(from: router.restorationData)
 
-        #expect(restored.path == [.favoriteDetail])
+        #expect(restored.path == [.forgotPassword])
         #expect(restored.sheet == nil)
         #expect(restored.cover == nil)
     }
 
     @Test func doesNotPresentAModalWhenPushing() {
-        let router = Router<DashboardRoute>()
+        let router = Router<AuthRoute>()
 
-        router.push(.favoriteDetail)
+        router.push(.forgotPassword)
 
         #expect(router.sheet == nil)
         #expect(router.cover == nil)

@@ -51,7 +51,6 @@ private struct DashboardChrome: ViewModifier {
 
 extension View {
 
-    // Applied to the four main screens only; the detail screens behind them keep their own Back button.
     func dashboardChrome(next: DashboardRoute?, signOut: SignOutAction) -> some View {
         modifier(DashboardChrome(next: next, signOut: signOut))
     }
