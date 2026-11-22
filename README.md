@@ -1,6 +1,6 @@
 # AppTemplate
 
-A production-ready SwiftUI app template. MVVM + Repository, Swift 6 strict concurrency, a complete auth lifecycle, and one third-party dependency - Firebase, kept behind protocol seams so the rest of the app never touches it.
+A production-ready SwiftUI app template. MVVM + Repository, Swift 6 strict concurrency, a complete auth lifecycle, and no third-party runtime dependencies - everything below is Apple frameworks only.
 
 - iOS 17+ · Swift 6 · Xcode 26
 
@@ -36,11 +36,11 @@ rm -rf .git && git init && git add -A && git commit -m "Initial commit"
 
 ### 3. Finish the setup
 
-The app builds and runs as-is. Three things the script can't do for you.
+The app builds and runs as-is. Two things the script can't do for you, plus one decision.
 
 - **Your API** - set `API_BASE_URL` in each of the three `Config/*.xcconfig`
 - **App icon and colours** - all ship empty. See [Branding](#branding)
-- **Firebase** - *optional*. Without a `GoogleService-Info.plist` the app builds fine and analytics and crash reporting are off. See [Firebase](#firebase) to turn it on, or to remove it.
+- **Analytics** - *none ships*. There is no analytics or crash-reporting SDK. See [Observability](#observability) for where to add one.
 
 ```bash
 xcodebuild -scheme Development -destination 'platform=iOS Simulator,name=iPhone 16' build
@@ -69,12 +69,12 @@ Then remove `makeHomeViewModel` and the `items` property from `AppDependencies`.
 - **UI** - design system, unified `LoadState`, empty / error / skeleton states, accessibility identifiers, localization via String Catalog
 - **Images** - bounded two-tier cache with LRU eviction and in-flight de-duplication
 - **Connectivity** - `NWPathMonitor` behind an offline banner, so a failing screen reads as a connection problem
-- **Observability** - analytics and crash reporting behind protocols, with Firebase adapters; non-fatals recorded with no per-feature wiring
+- **Logging** - `AppLogger` over `OSLog`, one category per area; every request failure funnels through `APIError.classify`
 - **Build** - three environments, privacy manifest, one-command rename
 
 The service gates are driven by HTTP status, not by a version endpoint. A `426` blocks the app behind "Update Required" and a `503` behind "Back Soon", both routed through `SessionEventBus`. `APIConfig.isForceUpdateEnabled` and the `VersionCheck` model belong to a client-side version-comparison approach that isn't built - delete them, or wire them to a version endpoint if you prefer that shape.
 
-Scaffolded but **not** wired - push notifications, see below.
+Deliberately **not** included - analytics, crash reporting, and push notifications. See [Observability](#observability) and [Push is not wired](#push-is-not-wired).
 
 ## Architecture
 
@@ -176,87 +176,49 @@ The pinner compares that to the hash the running app computes from the server's 
 
 ### Screen-capture / app-switcher privacy
 
-A `PrivacyShieldView` covers the UI whenever the app is not active, so the task-switcher snapshot is blank. iOS can't prevent screenshots, so instead the app detects them (`ScreenshotDetector`) and records a `screenshot_captured` analytics event - capture is observable, not blockable.
+A `PrivacyShieldView` covers the UI whenever the app is not active, so the task-switcher snapshot is blank. iOS can't prevent screenshots, so instead the app detects them (`ScreenshotDetector`) and writes a line to `AppLogger.security` - capture is observable, not blockable.
 
 ### Jailbreak detection
 
-`JailbreakDetector` checks for the usual filesystem indicators (Cydia, Sileo, sshd, …). It is **report-only**: jailbreak checks are trivially bypassable and can false-positive, so the app flags the device in analytics rather than refusing to run.
+`JailbreakDetector` checks for the usual filesystem indicators (Cydia, Sileo, sshd, …). It is **report-only**: jailbreak checks are trivially bypassable and can false-positive, so the app logs the device to `AppLogger.security` rather than refusing to run.
 
 ### Anti-debug
 
 `DebuggerDetector` reads the `P_TRACED` process flag via `sysctl` and reports an attached debugger. Deliberately no `ptrace(PT_DENY_ATTACH)` - that reads as anti-tampering to App Review and can get a submission rejected. Obfuscation beyond the existing Release symbol-stripping is intentionally not attempted.
 
-## Firebase
+## Observability
 
-Analytics and Crashlytics via SPM, behind protocols - only `FirebaseObservability.swift` imports Firebase.
+**Nothing is sent anywhere.** There is no analytics SDK, no crash reporter, and no network telemetry. The app's only instrumentation is `AppLogger`, a thin wrapper over `OSLog` with one category per area (`network`, `auth`, `data`, `images`, `navigation`, `lifecycle`, `security`). Those lines go to Console.app and the device log, and no further.
 
-**It is optional.** With no `GoogleService-Info.plist` the app builds and runs; analytics and crash reporting fall back to no-ops and the build prints:
+Two places are worth knowing about.
 
-```
-warning: No Firebase plist at ... - building without Firebase.
-```
+- `APIError.classify` is the single funnel every `catch` block runs through. It types the error and logs it, loudly when `isWorthReporting` says the app or backend is broken, quietly when the network is just flaky.
+- `AppLogger.security` carries the report-only hardening events - jailbreak indicators, an attached debugger, a screenshot. See [Hardening](#hardening).
 
-That is the normal state of a fresh clone, not a broken checkout.
+### Adding a crash reporter or analytics
 
-### Turning it on
+Nothing in the app knows about a reporter, so there is no seam to fill in and no protocol to conform to. Pick your SDK, call its configure method from `AppDependencies.live()`, and send events from wherever you want them.
 
-1. Create a Firebase project per environment.
-2. Register an iOS app in each, using that environment's bundle ID.
-3. Drop each `GoogleService-Info.plist` into its folder, creating folders as needed.
+If you want the old shape back - a protocol per concern so features never import the SDK - it is two small files: a protocol with the calls you need and a no-op implementation for tests and for builds without a key. Hold the live instance on `AppDependencies` and inject it into the view models that report.
 
-```
-AppTemplate/Firebase/
-├── Development/GoogleService-Info.plist
-├── Staging/GoogleService-Info.plist
-└── Production/GoogleService-Info.plist
-```
+Two things to get right whichever SDK you choose.
 
-Nothing else - `FirebaseBootstrap.start()` finds the plist at launch and installs the Firebase adapters. Add only the environments you need; the others keep building without it.
-
-The folders are absent from git because the plists are gitignored.
-
-Leave **Target Membership unchecked** on every plist. The `Copy GoogleService-Info.plist` phase picks the right one from `$CONFIGURATION` and fails the build if its `BUNDLE_ID` doesn't match the target's. Checking membership makes Xcode copy it too, and the build stops with `Multiple commands produce`.
-
-Crashlytics symbols upload automatically. `Upload Crashlytics dSYM` skips Development, which keeps its symbols in the binary, and skips any configuration with no plist.
-
-### Removing it
-
-For a project that doesn't use Firebase:
-
-1. Delete `AppTemplate/Core/Observability/FirebaseObservability.swift`
-2. Remove the `firebase-ios-sdk` package in Xcode
-3. Delete `AppTemplate/Firebase/` and both build phases - `Copy GoogleService-Info.plist` and `Upload Crashlytics dSYM`
-
-Nothing else changes. Every `Observability.analytics.track(...)` and `Observability.crashes.record(...)` call keeps compiling and does nothing.
-
-### Using something else
-
-Write one file conforming to `AnalyticsTracking` and `CrashReporting`:
-
-```swift
-struct SentryCrashReporter: CrashReporting {
-    func record(_ error: any Error) { SentrySDK.capture(error: error) }
-    func log(_ message: String) { SentrySDK.addBreadcrumb(.init(message: message)) }
-    func setUser(id: String?) { SentrySDK.setUser(id.map { User(userId: $0) }) }
-}
-```
-
-Then change the one line in `AppDependencies.live()` that calls `FirebaseBootstrap.start()`. No view, view model, or call site changes.
+- **The privacy manifest.** `PrivacyInfo.xcprivacy` currently declares no tracking and no required-reason APIs beyond the template's own. Most analytics SDKs change both, and Apple validates the manifest against the binary. A mismatch is a rejection.
+- **What you log.** `APIError`'s associated values can carry server messages and user input. Send a stable label rather than the error itself if you report failures.
 
 ### Push is not wired
 
-`UserRepository` declares `registerForPushNotifications(token:)` and `unregisterForPushNotifications(token:)`. **Nothing calls them**, and `FirebaseMessaging` is no longer configured - the `MessagingDelegate` conformance was removed to keep Firebase out of the app's entry point.
+`UserRepository` declares `registerForPushNotifications(token:)` and `unregisterForPushNotifications(token:)`. **Nothing calls them.** There is no push SDK and no `MessagingDelegate` anywhere.
 
-To finish it:
+To finish it with APNs directly:
 
-- Add `import FirebaseMessaging` and the `MessagingDelegate` conformance back to `AppDelegate`, and set `Messaging.messaging().delegate` after `FirebaseBootstrap.start()` has run
-- Ask for permission and call `registerForRemoteNotifications()`
-- Set `Messaging.messaging().apnsToken` in `didRegisterForRemoteNotificationsWithDeviceToken`
-- Send the FCM token to your backend, and clear it on sign-out
+- Ask for permission with `UNUserNotificationCenter`, then call `registerForRemoteNotifications()`
+- Implement `didRegisterForRemoteNotificationsWithDeviceToken` in `AppDelegate` and pass the token to `registerForPushNotifications(token:)`
+- Clear it on sign-out, in `SignOutAction`
 - Route taps through `AppNavigator`, which already handles deep links
-- Add the **Push Notifications** capability, and upload an APNs `.p8` to each Firebase project
+- Add the **Push Notifications** capability and an APNs key or certificate
 
-The last one needs a paid Apple Developer membership. FCM does not replace APNs on iOS - it forwards through it, and the `.p8` authorises Firebase to do that on your behalf.
+That last one needs a paid Apple Developer membership, which is why push stays scaffolded rather than half-implemented.
 
 ## Structure
 
@@ -268,10 +230,11 @@ AppTemplate/
 │   ├── Images/       two-tier image cache
 │   ├── Navigation/   typed routes, deep links
 │   ├── Networking/   client, endpoints, errors, interceptors
+│   ├── Observability/ AppLogger over OSLog
+│   ├── Security/     pinning, jailbreak, debugger, screenshots
 │   ├── Session/      tokens, refresh, session state
-│   └── UI/           LoadState, AsyncContentView
+│   └── UI/           LoadState, load and error states
 ├── Data/             repositories
-├── Firebase/         one GoogleService-Info.plist per environment
 ├── DesignSystem/     theme, accessibility identifiers
 ├── Features/         one folder per screen
 ├── Models/           models, pagination
@@ -287,12 +250,11 @@ A paid membership is required for exactly two things.
 - **Push notifications** - the capability and the APNs `.p8` are both members-only
 - **Distribution** - TestFlight and the App Store
 
-Everything else works without one, which is why push stays scaffolded rather than half-implemented.
+Everything else works without one.
 
 ## Before you ship
 
 - Real API URLs in all three xcconfigs
-- All three `GoogleService-Info.plist` files in place
 - The `Item` sample removed
 - Review `PrivacyInfo.xcprivacy` against what your backend stores
 - App icon and accent color

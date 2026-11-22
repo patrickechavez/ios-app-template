@@ -14,23 +14,21 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-        // Not in App.init() — reporters aren't installed yet, and debug always attaches.
+        // Debug always has a debugger attached, so the checks would always fire.
         #if !DEBUG
         reportDeviceSecurity()
         #endif
         return true
     }
 
-    /// Report-only hardening checks. Flags the device, never blocks it.
+    /// Report-only hardening checks. Flags the device in the log, never blocks it.
     private func reportDeviceSecurity() {
         if DefaultJailbreakDetector().isJailbroken {
-            Observability.analytics.track("device_jailbroken")
-            AppLogger.lifecycle.warning("Jailbreak indicators detected on device")
+            AppLogger.security.warning("Jailbreak indicators detected on device")
         }
 
         if DefaultDebuggerDetector().isDebuggerAttached {
-            Observability.analytics.track("debugger_attached")
-            AppLogger.lifecycle.warning("Debugger is attached to the process")
+            AppLogger.security.warning("Debugger is attached to the process")
         }
     }
 }
@@ -86,8 +84,9 @@ struct AppTemplateApp: App {
                     updateShield(from: previous, to: phase)
                     handle(phase)
                 }
+                // iOS can't block a screenshot, so it is recorded rather than prevented.
                 .onReceive(ScreenshotDetector.publisher) { _ in
-                    dependencies.analytics.track("screenshot_captured")
+                    AppLogger.security.notice("Screenshot captured")
                 }
         }
     }

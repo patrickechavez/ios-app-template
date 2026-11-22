@@ -11,8 +11,6 @@ final class AppDependencies {
 
     let session: SessionManager
     let deepLinks: DeepLinkParser
-    let analytics: any AnalyticsTracking
-    let crashes: any CrashReporting
     let network: NetworkMonitor
 
     private let auth: any AuthRepository
@@ -29,8 +27,6 @@ final class AppDependencies {
         imageLoader: any ImageLoading,
         tokenStore: any TokenStore,
         deepLinks: DeepLinkParser,
-        analytics: any AnalyticsTracking,
-        crashes: any CrashReporting,
         network: NetworkMonitor = NetworkMonitor()
     ) {
         self.session = session
@@ -40,8 +36,6 @@ final class AppDependencies {
         self.imageLoader = imageLoader
         self.tokenStore = tokenStore
         self.deepLinks = deepLinks
-        self.analytics = analytics
-        self.crashes = crashes
         self.network = network
     }
 
@@ -49,12 +43,6 @@ final class AppDependencies {
         tokenStore: any TokenStore = KeychainTokenStore(),
         onboarding: any OnboardingStoring = UserDefaultsOnboardingStore()
     ) -> AppDependencies {
-        // No plist, or no Firebase at all — the no-op adapters take over.
-        let (analytics, crashes) = FirebaseBootstrap.start()
-            ?? (NoopAnalyticsTracker(), NoopCrashReporter())
-
-        Observability.install(analytics: analytics, crashes: crashes)
-
         let link = SessionLink()
         let session = Self.urlSession()
 
@@ -89,7 +77,6 @@ final class AppDependencies {
         let sessionManager = SessionManager(
             tokenStore: tokenStore,
             users: users,
-            crashes: crashes,
             onboarding: onboarding
         )
 
@@ -103,9 +90,7 @@ final class AppDependencies {
             items: LiveItemRepository(api: api),
             imageLoader: ImageLoader.shared,
             tokenStore: tokenStore,
-            deepLinks: DeepLinkParser(),
-            analytics: analytics,
-            crashes: crashes
+            deepLinks: DeepLinkParser()
         )
     }
 
@@ -133,7 +118,7 @@ final class AppDependencies {
     }
 
     func makeLoginViewModel() -> LoginViewModel {
-        LoginViewModel(auth: auth, session: session, analytics: analytics)
+        LoginViewModel(auth: auth, session: session)
     }
 
     func makeRegisterViewModel() -> RegisterViewModel {

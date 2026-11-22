@@ -18,16 +18,10 @@ final class LoginViewModel {
 
     @ObservationIgnored private let auth: any AuthRepository
     @ObservationIgnored private let session: SessionManager
-    @ObservationIgnored private let analytics: any AnalyticsTracking
 
-    init(
-        auth: any AuthRepository,
-        session: SessionManager,
-        analytics: any AnalyticsTracking = NoopAnalyticsTracker()
-    ) {
+    init(auth: any AuthRepository, session: SessionManager) {
         self.auth = auth
         self.session = session
-        self.analytics = analytics
     }
 
     var canSubmit: Bool {
@@ -40,21 +34,13 @@ final class LoginViewModel {
     func signIn() async {
         guard canSubmit else { return }
 
-        analytics.track("login_attempt")
-
         let credentials = (email: email.trimmed, password: password)
         let tokens = await action.run { [auth] in
             try await auth.login(username: credentials.email, password: credentials.password)
         }
 
-        guard let tokens else {
-            if let error = action.error {
-                analytics.track("login_failed", parameters: ["reason": error.analyticsReason])
-            }
-            return
-        }
-
-        analytics.track("login_succeeded")
+        // The failure is already on `action.error`, and APIError.classify logged it.
+        guard let tokens else { return }
 
         password = ""
         await session.didAuthenticate(tokens: tokens)

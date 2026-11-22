@@ -26,8 +26,11 @@ struct SignOutAction {
         do {
             try await auth.logout(refreshToken: refreshToken)
         } catch {
-            AppLogger.auth.breadcrumb(
-                "Server-side logout failed (\(error.localizedDescription)); clearing locally anyway."
+            AppLogger.auth.notice(
+                """
+                Server-side logout failed \
+                (\(error.localizedDescription, privacy: .public)); clearing locally anyway.
+                """
             )
         }
 

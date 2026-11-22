@@ -47,11 +47,11 @@ actor TokenRefreshCoordinator {
 
             guard let refreshToken = current.refreshToken, !refreshToken.isEmpty else {
 
-                AppLogger.auth.breadcrumb("401 with no refresh token available — ending session.")
+                AppLogger.auth.notice("401 with no refresh token available — ending session.")
                 throw APIError.unauthorized()
             }
 
-            AppLogger.auth.breadcrumb("Refreshing access token")
+            AppLogger.auth.notice("Refreshing access token")
             let renewed = try await refresher.refresh(using: refreshToken)
             try await store.save(renewed)
             return renewed
@@ -61,7 +61,7 @@ actor TokenRefreshCoordinator {
         do {
             let renewed = try await task.value
             inFlight = nil
-            AppLogger.auth.breadcrumb("Access token refreshed")
+            AppLogger.auth.notice("Access token refreshed")
             return renewed
         } catch {
             inFlight = nil

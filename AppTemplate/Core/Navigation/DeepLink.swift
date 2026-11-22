@@ -94,7 +94,7 @@ struct DeepLinkParser: Sendable {
 
         default:
             let path = segments.joined(separator: "/")
-            AppLogger.navigation.breadcrumb("Unrecognised deep link path: \(path)")
+            AppLogger.navigation.notice("Unrecognised deep link path: \(path, privacy: .public)")
             return nil
         }
     }

@@ -23,4 +23,7 @@ enum AppLogger {
     static let navigation = Logger(subsystem: subsystem, category: "navigation")
 
     static let lifecycle = Logger(subsystem: subsystem, category: "lifecycle")
+
+    // Report-only hardening: jailbreak, debugger, screenshots.
+    static let security = Logger(subsystem: subsystem, category: "security")
 }

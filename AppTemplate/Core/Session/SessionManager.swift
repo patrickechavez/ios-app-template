@@ -33,7 +33,6 @@ final class SessionManager {
 
     @ObservationIgnored private let tokenStore: any TokenStore
     @ObservationIgnored private let users: any UserRepository
-    @ObservationIgnored private let crashes: any CrashReporting
     @ObservationIgnored private let onboarding: any OnboardingStoring
 
     // Where bootstrap landed, held back while onboarding is on screen.
@@ -42,12 +41,10 @@ final class SessionManager {
     init(
         tokenStore: any TokenStore,
         users: any UserRepository,
-        crashes: any CrashReporting = NoopCrashReporter(),
         onboarding: any OnboardingStoring = UserDefaultsOnboardingStore()
     ) {
         self.tokenStore = tokenStore
         self.users = users
-        self.crashes = crashes
         self.onboarding = onboarding
     }
 
@@ -58,16 +55,19 @@ final class SessionManager {
         }
 
         do {
-            setCurrentUser(try await users.currentUser())
+            currentUser = try await users.currentUser()
             resolve(to: .authenticated)
-            AppLogger.lifecycle.breadcrumb("Resumed existing session")
+            AppLogger.lifecycle.notice("Resumed existing session")
         } catch let error as APIError where error.invalidatesSession {
 
             await signOut()
         } catch {
 
-            AppLogger.lifecycle.breadcrumb(
-                "Could not verify session (\(error.localizedDescription)); continuing optimistically."
+            AppLogger.lifecycle.notice(
+                """
+                Could not verify session \
+                (\(error.localizedDescription, privacy: .public)); continuing optimistically.
+                """
             )
             resolve(to: .authenticated)
         }
@@ -99,7 +99,7 @@ final class SessionManager {
             AppLogger.auth.error("Could not persist tokens: \(error.localizedDescription, privacy: .public)")
         }
 
-        setCurrentUser(user)
+        currentUser = user
         state = .authenticated
 
         if user == nil {
@@ -110,7 +110,7 @@ final class SessionManager {
 
     func signOut() async {
         await tokenStore.clear()
-        setCurrentUser(nil)
+        currentUser = nil
 
         // A reader part way through onboarding is not interrupted by a session ending behind
         // them. Only where they land when they finish changes.
@@ -120,22 +120,16 @@ final class SessionManager {
             state = .unauthenticated
         }
 
-        AppLogger.lifecycle.breadcrumb("Signed out")
+        AppLogger.lifecycle.notice("Signed out")
     }
 
     func refreshCurrentUser() async {
         guard state == .authenticated else { return }
-        setCurrentUser(try? await users.currentUser())
+        currentUser = try? await users.currentUser()
     }
 
     func update(user: User) {
-        setCurrentUser(user)
-    }
-
-    /// Keeps the crash reporter's user ID in step with the session.
-    private func setCurrentUser(_ user: User?) {
         currentUser = user
-        crashes.setUser(id: user.map { $0.id.uuidString })
     }
 
     func dismissServiceStatus() {
@@ -145,7 +139,7 @@ final class SessionManager {
     /// Called when tokens can't be refreshed; ends the session if it hasn't ended.
     func expire() async {
         guard hasSession else { return }
-        AppLogger.auth.breadcrumb("Session expired, returning to sign-in")
+        AppLogger.auth.notice("Session expired, returning to sign-in")
         await signOut()
     }
 

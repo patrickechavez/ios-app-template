@@ -5,6 +5,7 @@
 //
 
 import Foundation
+import os
 
 struct ValidationErrors: Sendable, Equatable {
 
@@ -168,30 +169,8 @@ enum APIError: LocalizedError, Equatable, Sendable {
         return true
     }
 
-    /// Stable analytics label; drops associated values, which can carry user data.
-    var analyticsReason: String {
-        switch self {
-        case .offline: "offline"
-        case .timedOut: "timed_out"
-        case .cancelled: "cancelled"
-        case .transport: "transport"
-        case .serverTrustFailed: "server_trust_failed"
-        case .invalidURL: "invalid_url"
-        case .invalidResponse: "invalid_response"
-        case .decodingFailed: "decoding_failed"
-        case .unauthorized: "unauthorized"
-        case .forbidden: "forbidden"
-        case .notFound: "not_found"
-        case .conflict: "conflict"
-        case .validation: "validation"
-        case .rateLimited: "rate_limited"
-        case .updateRequired: "update_required"
-        case .maintenance: "maintenance"
-        case let .server(status, _): "server_\(status)"
-        }
-    }
-
-    /// Errors meaning the app or backend is broken — the only ones worth reporting.
+    /// Errors meaning the app or backend is broken, rather than the network being
+    /// flaky — the ones worth logging loudly.
     var isWorthReporting: Bool {
         switch self {
         case .invalidURL, .invalidResponse, .decodingFailed, .serverTrustFailed:
@@ -229,12 +208,18 @@ enum APIError: LocalizedError, Equatable, Sendable {
         }
     }
 
-    /// One funnel for every catch block: types the error and reports the broken ones.
-    @MainActor
+    /// One funnel for every catch block: types the error and logs it.
     static func classify(_ error: any Error) -> APIError {
         let apiError = error as? APIError ?? .from(transportError: error)
-        Breadcrumb.record("Request failed: \(apiError)")
-        if apiError.isWorthReporting { Observability.crashes.record(apiError) }
+        let detail = String(describing: apiError)
+
+        // A broken app or backend is worth an error; a flaky network is not.
+        if apiError.isWorthReporting {
+            AppLogger.network.error("Request failed: \(detail, privacy: .public)")
+        } else {
+            AppLogger.network.notice("Request failed: \(detail, privacy: .public)")
+        }
+
         return apiError
     }
 
